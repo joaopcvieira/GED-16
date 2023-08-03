@@ -1,0 +1,68 @@
+---
+lang: pt  
+title: "GED-16: Análise de Regressão"
+subtitle: "AULA01: Prática (2o. semestre/2023)"
+author: "Prof. Denise B. Ferrari"
+date: "2023-08-01"  
+format:
+  html:
+    theme: cosmo
+execute:
+  echo: true
+  eval: true
+  warning: false    
+---
+```{r include = FALSE}
+library(tidyverse)
+```
+
+----
+
+### Introdução
+
+Os dados disponíveis no arquivo `data/owid.csv` foram
+obtidos do portal [Our World in Data](https://ourworldindata.org/), cuja missão é publicar pesquisas e dados relacionados a grandes problemas mundiais como pobreza, doenças, fome, mudanças climáticas, guerras, riscos existenciais e desigualdade.   
+
+Os dados originais foram pré-processados no sentido de remover observações faltantes. Há um total de 985 observações coletadas para 21 variáveis:
+
+1. `continent`: continente em que está o país
+2. `entity`: nome do país
+3. `code`: código do país
+4. `year`: ano
+5. `birth_rate`: número de nascimentos com vida por 1.000 habitantes na população.
+6. `child_mortality`: mortes de crianças menores de 5 anos de idade (% nascimentos)
+7. `co2_emission_pc`: emissões anuais de CO2  per capita (t/pessoa)
+8. `deaths_solid_fuels_pollution`: mortes resultantes de poluição por queima de combustíveis sólidos em ambientes internos (%)
+9. `deaths_particulate_pollution`: mortes resultantes de poluição por material particulado em ambientes externos (%)
+10. `deaths_air_pollution`: mortes resultantes de poluição do ar ambiente (%)
+11. `deaths_ozone`: mortes resultantes de poluição por ozônio em ambientes externos (%)
+12. `deaths_sanitation`: mortes resultantes de falta ou precariedade de acesso a saneamento básico (%)
+13. `electricity_demand`: geração total de eletricidade anual, ajustada por importação e exportação de eletricidade (TWh)
+14. `energy_use_pc`: consumo de energia médio anual (eletricidade, transporte, aquecimento, preparo de alimentos) per capita (KWh/pessoa)
+15. `expected_schooling`: expectativa do número de anos de educação que uma criança que entra no sistema escolar deve receber
+16. `happiness_cantril_ladder`: nível de felicidade médio populacional (0-10)
+17. `gdp_pc`: produto interno bruto per capita ($ internacional, referência 2017)
+18. `life_expectancy`: expectativa de vida no nascimento (anos)
+19. `milk_consumption_pc`: consumo de leite médio anual per capita (kg)
+20. `no_water`: população sem acesso a fontes seguras de água (encanada, poços, fontes, chuva e envasada) (%)
+21. `urban_population_percent`: população habitante de áreas urbanas (% população total)
+
+  
+----
+
+### Análise Exploratória de Dados
+
+Conduza a análise exploratória da massa de dados `owid`, a fim de compreender suas características principais.   
+Voltaremos a utilizar essa massa de dados em atividades futuras.
+
+```{r}
+rm(list=ls())
+owid <- read_delim("data/owid.csv", delim = ",", col_names = TRUE)
+```
+
+
+
+
+
+
+----

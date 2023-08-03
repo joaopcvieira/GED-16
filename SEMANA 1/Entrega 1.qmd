@@ -1,0 +1,96 @@
+---
+lang: pt  
+title: "Semana 1"
+subtitle: "AULA01: Prática"
+author: "João Pedro Vieira, Paulo, Acre"
+date: "2023-08-05"  
+format:
+  html:
+    theme: cosmo
+    toc: true
+execute:
+  echo: true
+  eval: true
+  warning: false    
+---
+# Introdução
+---
+```{r include = FALSE}
+library(tidyverse)
+```
+
+Vamos iniciar a análise dos dados referentes à base [Our World in Data](https://ourworldindata.org/), cuja missão é publicar pesquisas e dados relacionados a grandes problemas mundiais como pobreza, doenças, fome, mudanças climáticas, guerras, riscos existenciais e desigualdade.   
+
+Inicialmente, vamos limpar a área de trabalho e iniciar a leitura dos dados.
+
+```{r}
+# Limpa area de trabalho
+rm(list=ls())
+
+# Carrega os dados em uma tabela
+owid <- read_delim("data/owid.csv", delim = ",", col_names = TRUE)
+```
+
+## Variáveis presentes
+Conforme a instrução fornecida pelo site da base de dados, a base `owid` apresenta 21 variáveis, conforme listadas a seguir:
+
+1. `continent`: continente em que está o país
+2. `entity`: nome do país
+3. `code`: código do país
+4. `year`: ano
+5. `birth_rate`: número de nascimentos com vida por 1.000 habitantes na população.
+6. `child_mortality`: mortes de crianças menores de 5 anos de idade (% nascimentos)
+7. `co2_emission_pc`: emissões anuais de CO2  per capita (t/pessoa)
+8. `deaths_solid_fuels_pollution`: mortes resultantes de poluição por queima de combustíveis sólidos em ambientes internos (%)
+9. `deaths_particulate_pollution`: mortes resultantes de poluição por material particulado em ambientes externos (%)
+10. `deaths_air_pollution`: mortes resultantes de poluição do ar ambiente (%)
+11. `deaths_ozone`: mortes resultantes de poluição por ozônio em ambientes externos (%)
+12. `deaths_sanitation`: mortes resultantes de falta ou precariedade de acesso a saneamento básico (%)
+13. `electricity_demand`: geração total de eletricidade anual, ajustada por importação e exportação de eletricidade (TWh)
+14. `energy_use_pc`: consumo de energia médio anual (eletricidade, transporte, aquecimento, preparo de alimentos) per capita (KWh/pessoa)
+15. `expected_schooling`: expectativa do número de anos de educação que uma criança que entra no sistema escolar deve receber
+16. `happiness_cantril_ladder`: nível de felicidade médio populacional (0-10)
+17. `gdp_pc`: produto interno bruto per capita ($ internacional, referência 2017)
+18. `life_expectancy`: expectativa de vida no nascimento (anos)
+19. `milk_consumption_pc`: consumo de leite médio anual per capita (kg)
+20. `no_water`: população sem acesso a fontes seguras de água (encanada, poços, fontes, chuva e envasada) (%)
+21. `urban_population_percent`: população habitante de áreas urbanas (% população total)
+
+De fato, podemos verificar essa estrutura com o comando `str()`.
+
+```{r}
+str(owid)
+```
+
+Observamos, portanto, um total de 985 dados, sendo três colunas apresentadas como strings (`continent`, `entity` e `country_code`) e as demais como numéricas. Não obstante, os nomes das variáveis são intuitivos e não necessitam de alterações.
+
+## Dados faltantes
+Agora, vamos verificar a presença de dados faltantes na base. Para isso, vamos utilizar o comando `summary()`.
+
+```{r}
+summary(owid)
+
+# print("Posição dos dados faltantes:")
+which(is.na(owid))
+
+```
+
+Portanto, percebemos que não há dados faltantes na base, conforme esperado da filtragem prévia realizada pela professora.
+
+---
+
+
+```{r}
+
+```
+
+# Título
+
+## Subtitulo
+
+texto 
+
+
+```{r}
+
+```

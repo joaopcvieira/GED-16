@@ -1,0 +1,270 @@
+---
+lang: pt  
+title: "GED-16: Análise de Regressão"
+subtitle: "AULA01: Exemplo (1o. semestre/2023)"
+author: "Prof. Denise B. Ferrari"
+date: "2023-03-08"  
+format:
+  html:
+    theme: cosmo
+execute:
+  echo: true
+  eval: true
+  warning: false    
+---
+```{r include = FALSE}
+library(tidyverse)
+```
+
+## Introdução
+
+Exemplo "Consumo de Combustível de Automóveis", retirado do [UCI Machine Learning Repository](https://archive.ics.uci.edu/ml/datasets/auto+mpg).
+
+O objetivo inicial desse estudo era prever o consumo de combustível de automóveis em ambiente urbano (expresso em milhas por galão, mpg), a partir de algumas características do veículo.
+
+Há um total de 398 observações registradas para 9 variáveis de interesse,   
+incluindo a resposta `mpg`:
+
+**Variáveis**  
+
+`mpg`: numérica (contínua)  
+`cylinder`: categórica (ordinal)  
+`displacement`: numérica (contínua)    
+`hp`: numérica (contínua)   
+`weight`: numérica (contínua)   
+`acceleration`: numérica (contínua)   
+`modelyear`: numérica (discreta)   
+`origin`: categórica (nominal)  
+`carname`: categórica  (nominal)   
+
+
+### PARTE 1: Análise Preliminar e Preparação da Massa de Dados
+
+O primeiro passo consiste em limpar a área de trabalho, utilizando o comando `rm(list = ls())`, para então ler os dados que se encontram no arquivo `auto-mpg.data`. O arquivo com os dados foi armazenado em uma pasta chamada `AutoMPG`, que por sua vez, encontra-se em uma pasta chamada `data`, que é o local onde se encontra a massa de dados. Os dados são lidos e armazenados em um objeto do tipo tabela, chamada `auto`. Como sabemos, de antemão, que não há cabeçalho no arquivo de entrada, ou seja, as colunas não têm nomes, fazemos `header = FALSE`.
+
+```{r}
+# Limpa area de trabalho
+rm(list=ls())
+
+# Carrega os dados em uma tabela
+auto <- read.table("data/AutoMPG/auto-mpg.data", header = FALSE)
+```
+
+Podemos obter algumas informações do objeto `auto` utilizando o comando `str(auto)` (para obter a estrutura, *structure*, dos dados):
+
+```{r}
+# Verifica estrutura dos dados
+str(auto)
+```
+
+
+Verificamos que há um total de 398 observações e 9 variáveis. Cada coluna da tabela corresponde a uma variável (atributo) e as diferentes observações estão nas linhas da tabela, e correspondem a toda informação coletada para cada um dos indivíduos avaliados. As variáveis não tem nomes que façam sentido e foram codificadas como variáveis numéricas contínuas, inteiras, ou caracteres. Nota-se que a variável `V4`, que corresponde à potência, foi codificada como uma variável categórica (neste caso, dada por um conjunto de caracteres), quando ela deveria ser numérica; já a variável `V8`, que corresponde à origem do veículo, foi codificada como uma variável "númerica discreta" (ou seja, um número inteiro), quando deveria ser categórica. Precisaremos corrigir esses problemas posteriormente.
+
+É útil dar nomes intutivos às variáveis. Para isso, utilizamos o comando `colnames` aplicado ao objeto `auto` e atribuímos a ele o vetor contendo os nomes das variáveis desejados.  Podemos verificar que os nomes foram atribuídos corretamente.
+
+```{r}
+# Atribui nomes às variáveis (colunas da tabela)
+colnames(auto) <- c("mpg", "cylinder", "displacement", "hp", "weight", "acceleration", "modelyear", "origin", "carname")
+
+# verifica nomes das variáveis
+names(auto)
+```
+
+Agora, recodificando as variáveis:
+```{r}
+## Codificação adequada de variáveis quantitativas (numéricas) e categóricas (fatores)
+## Usand funções nativas do R:
+# auto$mpg          <- as.numeric  (auto$mpg)
+# auto$cylinder     <- as.factor   (auto$cylinder)
+# auto$displacement <- as.numeric  (auto$displacement)
+# auto$hp           <- as.numeric  (auto$hp)
+# auto$weight       <- as.numeric  (auto$weight)
+# auto$acceleration <- as.numeric  (auto$acceleration)
+# auto$modelyear    <- as.numeric  (auto$modelyear)
+# auto$origin       <- as.factor   (auto$origin)
+# auto$carname      <- as.character(auto$carname)
+
+# alternativamente, usando funções do pacote `tidyverse`:
+auto <- auto %>% 
+  mutate_at(c("mpg", "displacement", "hp", 
+              "weight", "acceleration", "modelyear"), as.numeric) %>%
+  mutate_at(c("cylinder", "origin"), as.factor) %>%
+  mutate_at("carname", as.character)
+
+str(auto) # nova verificação
+```
+
+As variáveis parecem estar corretamente codificadas.
+
+**Resumos numéricos unidimensionais**
+
+Resumos numéricos unidimensionais podem ser obtidos utilizando a função `summary.` Para as variáveis categóricas, a função `summary` retorna o número de observações em cada classe.
+
+Para as variáveis quantitativas, a função `summary` fornece o chamado resumo de 5-números (mais a média) . Temos valores mínimo, máximo, 1o. e 3o. quartis, mediana e média.
+
+```{r}
+summary(auto)
+```
+
+Note que há 6 observações faltantes para a variável `hp`. Seria necessário decidir como proceder com relação a elas. Neste exemplo, iremos simplesmente remover estes casos. Esta nem sempre é melhor opção pois, dependendo da qualidade da massa de dados, muitas observações podem acabar sendo excluídas. Note também que há um desbalanceamento no número de observações para as diferentes classes de cilindros; por enquanto, também não faremos nada a respeito disso. Para as demais variáveis não parece haver anomalias óbvias. 
+
+Removendo as observações em que há dados faltantes:
+
+```{r}
+# Remove linhas correspondentes às obs. faltantes da variável `hp`
+auto <- auto %>%
+  drop_na()
+
+# Gera novo resumo
+summary(auto)
+
+# Para utilizar os nomes das variaveis diretamente
+attach(auto) 
+```
+
+Removidas as observações faltantes, restaram 392 observações. Podemos agora gerar alguns resumos gráficos para explorar as relações entre as variáveis.
+
+**Resumos gráficos unidimensionais**
+
+Informação a respeito da distribuição da variável de resposta é importante para a construção da parte estocástica do modelo de regressão.
+
+Podemos representar a distribuição dos valores observados para uma variável através de um histograma, que pode ser gerado utilizando o código abaixo:
+
+```{r}
+# Histograma de `mpg`
+ggplot(auto, aes(x = mpg)) +
+  geom_histogram(aes(y = after_stat(density))) +
+  # adiciona linha de densidade estimada (suavização)
+  geom_density(lwd = 1, colour = 4,
+               fill = 4, alpha = 0.25) +
+  # adiciona dispersão unidimensional de `mpg`
+  geom_rug(alpha = 0.5)
+```
+
+Embora o histograma seja útil para descrever uma distribuição, sua forma depende da discretização, determinada pelo número de caixas (ou colunas) e da localização de suas fronteiras. Poucas caixas tornam o histograma pouco informativo; por outro lado, com caixas em excesso, o histograma se torna ruidoso, apresentando características irrelevantes.
+
+A curva em azul adicionada ao gráfico é a curva de densidade estimada, que corresponde a uma suavização do histograma e também estima a distribuição da variável de resposta. Diferentemente de um histograma, a curva de densidade estimada é contínua e, em geral, proporciona uma melhor representação da distribuição de uma variável numérica que um histograma.
+
+O comando `geom_rug()` fornece um diagrama de dispersão unidimensional para a variável, mostrando a localização de cada uma das observações abaixo do histograma.
+
+O boxplot é outra ferramenta gráfica que fornece um resumo da distribuição dos valores da variável sendo analisada. 
+
+```{r}
+# Boxplot de `mpg`
+ggplot(auto, aes(x = mpg, y = "")) +
+  # adiciona barras de erros
+  geom_errorbar(stat = "boxplot", width = 0.1) +
+  # adiciona boxplot
+  geom_boxplot () +
+  # adiciona dispersão unidimensional de `mpg`
+  geom_rug(alpha = 0.5) +
+  # adiciona rótulo aos eixos
+  labs(y = "", x = "mpg")
+```
+
+O boxplot nos dá 5 estatísticas robustas e também mostra possíveis _outliers_. A caixa é delimitada pelos quartis inferior e superior e a linha no centro corresponde à mediana. Portanto, 50% das observações se encontram entre os valores que determinam as extremidades da caixa. O comprimento da caixa é chamado distância ou amplitude inter-quartis (ou IQR) e corresponde à diferença entre os quartis superior e inferior.
+
+As linhas horizontais que se afastam da caixa são os “whiskers”, cujo comprimento é tal que a distância máxima entre as duas extremidades vale 4 * IQR (4 x a amplitude interquartis). Qualquer valor além dos “whiskers” é marcado como um ponto extremo, ou outlier.
+
+**Resumos gráficos multidimensionais**
+
+Podemos desejar comparar visualmente diferentes distribuições. Por exemplo, podemos querer saber como se comparam os rendimentos de automóveis que possuem motores com diferentes categorias da variável `cylinder`, ou seja, para diferentes números de cilindros. Pode ser útil construir múltiplos boxplots, histogramas ou curvas de densidade estimada, para diferentes categorias, a fim de comparar as distribuições condicionais de uma certa variável. Podemos sobrepor as distribuições, para tornar a comparação imediata.
+
+```{r}
+# Boxplots
+ggplot(auto, aes(x = mpg, y = cylinder)) +
+  geom_boxplot()
+
+# Histogramas 
+ggplot(auto, aes(x = mpg, fill = cylinder)) +
+  geom_histogram(alpha = 0.25, position = "identity")
+
+# Densidades
+ggplot(auto, aes(x = mpg, fill = cylinder)) +
+  geom_density(alpha = 0.5, position = "identity")
+```
+
+É possível perceber que as distribuições dos rendimentos não parecem todas iguais. Lembre-se de que análise exploratória de dados serve para formular hipóteses, não para chegar a conclusões. Portanto, por enquanto, esta é apenas uma conjectura. A fim de que se possa afirmar se existe ou não diferença estatisticamente significativa no rendimento para motores com diferentes números de cilindros, é necessário aplicar procedimentos formais de testes de hipóteses.
+
+Neste exemplo, temos em um único gráfico representações das distribuições de `mpg` para automóveis com diferentes números de cilindros. A escolha da melhor ferramenta de visualização depende de cada caso. Aqui, são mais informativos os boxplots e os gráficos de densidade.
+
+Para avaliar a relação entre pares de variáveis quantitativas, é útil utilizar gráficos de dispersão.
+
+Vamos construir uma matriz de gráficos de dispersão para visualizar as relações par-a-par entre as variáveis.  Para a visualização, são removidas as variáveis das colunas 8 e 9, correspondentes a `origin` e `carname`:
+
+```{r}
+# Matriz de gráficos de dispersão (base R)
+plot(auto[, -c(8,9)])
+
+
+# Matriz de gráficos de dispersão (GGali)
+library(GGally)
+ggpairs(auto[, -c(8,9)])
+```
+
+Examinar as relações entre os pares de variáveis pode exigir tempo e esforço adicionais, embora os ganhos sejam muitos, incluindo:
+
+1. uma melhor apreciação das relações marginais entre as variáveis (o que permite identificar, também, se variáveis explicativas estão relacionadas entre si... );  
+2. *insight* a respeito de possíveis formas funcionais alternativas para a relação de regressão;  
+3. descoberta de erros e anomalias nos dados;  
+4. melhor compreensão de possíveis limitações que os dados impõe aos modelos que serão construídos.  
+
+Note que parece existir algum tipo de relação estatística entre a resposta e cada uma das variáveis explicativas consideradas. Por exemplo, o rendimento dos automóveis observados parece ser, em geral, maior para modelos mais modernos do que para modelos mais antigos. Há alguns pares de variáveis explicativas que também relacionam-se entre si. Isso pode vir a trazer alguns problemas na estimação dos parâmetros dos modelos de regressão, mas retomaremos essa discussão no momento oportuno.
+
+Podemos ainda examinar a relação entre duas variáveis, condicionando a uma outra variável categórica. Por exemplo, podemos construir um gráfico que evidencia a relação entre `mpg` e `hp`, para cada nível da variável `cylinder.`
+
+```{r}
+ggplot(auto, aes(x = hp, y = mpg)) +
+  # adiciona pontos 
+  # (cores e símbolos distintos para diferentes classes da variável `cylinder`)
+  geom_point(aes(color = cylinder, shape = cylinder)) + 
+  # adiciona retas de tendência
+  geom_smooth(aes(color = cylinder), method = "lm", se = FALSE)
+```
+
+As relações condicionais são representadas no gráfico por cores e símbolos distintos. Neste exemplo, não parece haver grande diferença no rendimento de motores de diferentes potências com 8 cilindros. Por outro lado, para motores com 4 cilindros, parece haver uma redução drástica no rendimento do automóvel, conforme aumenta a sua potência.
+
+O diagrama de dispersão de `mpg` e `hp` sugere que a relação estatística entre essas duas variáveis não é linear. Quando isto ocorre, pode ser necessário realizar algum tipo de transformação nos dados.
+
+**Transformações** 
+
+A relação estatística entre `mpg` e `hp` é curvilínea. Vejamos o resultado da aplicação de algumas transformações simples à variável `hp`.
+
+```{r}
+ggplot(auto) +
+  geom_point(aes(x= hp, y = mpg), na.rm = TRUE)
+
+ggplot(auto) +
+  geom_point(aes(x= sqrt(hp), y = mpg), na.rm = TRUE)
+
+ggplot(auto) +
+  geom_point(aes(x= 1/hp, y = mpg), na.rm = TRUE)
+
+ggplot(auto) +
+  geom_point(aes(x= log2(hp), y = mpg), na.rm = TRUE)
+```
+
+O primeiro gráfico mostra a relação original entre `mpg` e `hp`; no segundo, temos a raiz quadrada de `hp`; no terceiro, foi aplicada a transformação inversa; e, no último, temos o log (na base 2) de `hp`. A base da função logarítmica é irrelevante; apenas a interpretação é facilitada se utilizamos base 2, pois um acréscimo de uma unidade em 'log(x)' implica no dobro de 'x', enquanto que se estivermos utilizando a base natural, temos 'x' vezes 'e'. Diferentes bases alteram apenas a constante de multiplicação. 
+
+```{r echo=FALSE, fig.width=16, fig.height = 5}
+par(mar = c(4,4,4,0.5), mfrow=c(1,4), cex = 1.5)
+raiz_hp <- sqrt(hp)
+inv_hp  <- 1/hp
+log_hp  <- log2(hp)
+plot(mpg ~ hp)
+plot(mpg ~ raiz_hp, data=auto, ylab="")
+plot(mpg ~ inv_hp, data=auto, ylab="")
+plot(mpg ~ log_hp, data=auto, ylab="")
+``` 
+
+Neste exemplo, há evidências de uma relação estatística linear positiva entre o rendimento e o inverso da potência do motor.  Vamos verificar a correlação entre o par de variáveis `mpg` e `inv_hp`.
+
+```{r}
+# Coef. de correlacao
+cor (mpg, inv_hp)
+```
+
+O valor do coeficiente correlação amostral suporta as observações realizadas a partir do gráfico de dispersão. 
+Correlação elevada (~1) indica relação fortemente linear. Embora a correlação seja uma medida útil da direção e força da associação linear entre duas variáveis, não podemos utilizá-la para realizar, por exemplo, previsão.  Além disto, a correlação mede apenas a força da relação *linear* para *um par* de variáveis.
+
+Na próxima aula, poderemos proceder com o ajuste de um modelo de regressão linear simples para este par de variáveis.
