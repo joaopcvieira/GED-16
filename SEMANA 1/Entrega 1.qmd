@@ -2,7 +2,7 @@
 lang: pt  
 title: "Semana 1"
 subtitle: "AULA01: Prática"
-author: "João Pedro Vieira, Paulo, Acre"
+author: "João Pedro Vieira, Paulo Andrade"
 date: "2023-08-05"  
 format:
   html:
@@ -78,21 +78,66 @@ which(is.na(owid))
 Portanto, percebemos que não há dados faltantes na base, conforme esperado da filtragem prévia realizada pela professora.Com isso, iremos proseguir para a analise exploratória dos dados
 
 ---
-
+## First approuch
+Neste primeiro estudo, será analisado os dados da coluna 'life_expectancy' e sua relação com diversas outras colunas.Como primeiro passo, será analisado o histograma desse dado.
 
 ```{r}
 ggplot(owid, aes(x = life_expectancy)) +
   geom_histogram(aes(y = after_stat(density))) +
-  # adiciona linha de densidade estimada (suavização)
   geom_density(lwd = 1, colour = 4,
                fill = 4, alpha = 0.25) +
-  # adiciona dispersão unidimensional de `mpg`
   geom_rug(alpha = 0.5)
 ```
 
-texto 
+
+Este histograma complementa as informações apresentadas no summary(owid). Para obter um entendimento mais abrangente, também é possível criar um boxplot para esta variável. A combinação do histograma, boxplot e summary(owid) proporciona uma compreensão mais clara do cenário.
 
 
 ```{r}
-
+ggplot(owid, aes(y = life_expectancy, x =continent )) +
+  geom_boxplot()
 ```
+
+Com base neste último gráfico, é possível identificar informações de relevância significativa. Notavelmente, a Europa apresenta uma expectativa de vida notavelmente elevada, acompanhada por uma distribuição de dados relativamente homogênea, devoida de pontos atípicos proeminentes. Um padrão semelhante emerge ao observarmos a América do Norte, onde também se registra uma expectativa de vida elevada. Contudo, vale mencionar que nesta região há presença considerável de pontos atípicos no extremo inferior da distribuição. Isso se deve à inclusão de países economicamente menos desenvolvidos da América Central na mesma categoria da América do Norte.
+
+
+Continuando a análise da expectativa de vida, exploraremos as correlações entre essa variável e as demais colunas do conjunto de dados. É razoável supor que variáveis como "birth_rate", "child_mortality" e "no_water" estejam correlacionadas com a expectativa de vida, considerando o senso comum. Por outro lado, é plausível que "eletricity_demand" e "deaths_ozone" não apresentem uma correlação significativa com a expectativa de vida.
+```{r}
+  life_expectancy <- owid$life_expectancy
+  birth_rate <- owid$birth_rate
+  child_mortality <- owid$child_mortality
+  no_water <- owid$no_water
+  electricity_demand <- owid$electricity_demand
+  deaths_ozone <- owid$deaths_ozone
+
+  cor (life_expectancy, birth_rate)
+  cor (life_expectancy, child_mortality)
+  cor (life_expectancy, no_water)
+  cor (life_expectancy, electricity_demand)
+  cor (life_expectancy, deaths_ozone)
+```
+
+Os resultados apresentados corroboram a intuição inicial fundamentada no senso comum. Efectivamente, observa-se uma correlação significativa entre "birth_rate", "child_mortality" e "no_water" com a "life_expectancy". No entanto, os resultados também deixam claro que "eletricity_demand" e "deaths_ozone" não possuem uma correlação significativa com a expectativa de vida. Para fortalecer ainda mais essa observação, a elaboração de gráficos de dispersão entre essas variáveis é imprescindível.
+
+```{r}
+ggplot(owid) +
+  geom_point(aes(x= life_expectancy, y = birth_rate), na.rm = TRUE)
+```
+```{r}
+ggplot(owid) +
+  geom_point(aes(x= life_expectancy, y = child_mortality), na.rm = TRUE)
+```
+```{r}
+ggplot(owid) +
+  geom_point(aes(x= life_expectancy, y = no_water), na.rm = TRUE)
+```
+```{r}
+ggplot(owid) +
+  geom_point(aes(x= life_expectancy, y = electricity_demand), na.rm = TRUE)
+```
+```{r}
+ggplot(owid) +
+  geom_point(aes(x= life_expectancy, y = deaths_ozone), na.rm = TRUE)
+```
+
+A análise dos gráficos acima reforça o padrão observado na expectativa de vida em relação a 'deaths_ozone', 'electricity_demand' e 'birth_rate'. No entanto, no que diz respeito às associações entre a expectativa de vida e 'child_mortality' e 'no_water', a relação linear não parece ser a mais adequada. Isso é evidenciado pela aparente presença de uma assíntota em ambos os gráficos, indicando uma tendência que não se ajusta linearmente.
