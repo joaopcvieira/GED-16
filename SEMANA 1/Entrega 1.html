@@ -6,7 +6,6 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="João Pedro Vieira, Paulo, Acre">
 
 <title>Semana 1</title>
 <style>
@@ -84,6 +83,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul class="collapse">
   <li><a href="#variáveis-presentes" id="toc-variáveis-presentes" class="nav-link" data-scroll-target="#variáveis-presentes">Variáveis presentes</a></li>
   <li><a href="#dados-faltantes" id="toc-dados-faltantes" class="nav-link" data-scroll-target="#dados-faltantes">Dados faltantes</a></li>
+  <li><a href="#first-approach" id="toc-first-approach" class="nav-link" data-scroll-target="#first-approach">First approach</a></li>
+  <li><a href="#dispersão-bidimensional" id="toc-dispersão-bidimensional" class="nav-link" data-scroll-target="#dispersão-bidimensional">Dispersão bidimensional</a></li>
+  <li><a href="#análise-de-expectativa-de-vida" id="toc-análise-de-expectativa-de-vida" class="nav-link" data-scroll-target="#análise-de-expectativa-de-vida">Análise de expectativa de vida</a></li>
+  <li><a href="#correlações-associadas-à-expectativa-de-vida" id="toc-correlações-associadas-à-expectativa-de-vida" class="nav-link" data-scroll-target="#correlações-associadas-à-expectativa-de-vida">Correlações associadas à expectativa de vida</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -100,19 +103,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <div class="quarto-title-meta">
 
-    <div>
-    <div class="quarto-title-meta-heading">Autor</div>
-    <div class="quarto-title-meta-contents">
-             <p>João Pedro Vieira, Paulo, Acre </p>
-          </div>
-  </div>
     
-    <div>
-    <div class="quarto-title-meta-heading">Data de Publicação</div>
-    <div class="quarto-title-meta-contents">
-      <p class="date">5 de agosto de 2023</p>
-    </div>
-  </div>
   
     
   </div>
@@ -120,14 +111,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
+<hr>
 <section id="introdução" class="level1">
 <h1>Introdução</h1>
-<hr>
 <p>Vamos iniciar a análise dos dados referentes à base <a href="https://ourworldindata.org/">Our World in Data</a>, cuja missão é publicar pesquisas e dados relacionados a grandes problemas mundiais como pobreza, doenças, fome, mudanças climáticas, guerras, riscos existenciais e desigualdade.</p>
 <p>Inicialmente, vamos limpar a área de trabalho e iniciar a leitura dos dados.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Limpa area de trabalho</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list=</span><span class="fu">ls</span>())</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list =</span> <span class="fu">ls</span>())</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Carrega os dados em uma tabela</span></span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>owid <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="st">"data/owid.csv"</span>, <span class="at">delim =</span> <span class="st">","</span>, <span class="at">col_names =</span> <span class="cn">TRUE</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -268,21 +259,160 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre><code>integer(0)</code></pre>
 </div>
 </div>
-<p>Portanto, percebemos que não há dados faltantes na base, conforme esperado da filtragem prévia realizada pela professora.Com isso, iremos proseguir para a analise exploratória dos dados</p>
+<p>Portanto, percebemos que não há dados faltantes na base, conforme esperado da filtragem prévia realizada pela professora. Com isso, iremos proseguir para a analise exploratória dos dados</p>
 <hr>
+</section>
+<section id="first-approach" class="level2">
+<h2 class="anchored" data-anchor-id="first-approach">First approach</h2>
+<p>Neste primeiro estudo, será analisado os dados da coluna ‘life_expectancy’ e sua relação com diversas outras colunas. Como primeiro passo, será analisado o histograma desse dado.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(owid, <span class="fu">aes</span>(<span class="at">x =</span> life_expectancy)) <span class="sc">+</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">after_stat</span>(density))) <span class="sc">+</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># adiciona linha de densidade estimada (suavização)</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">lwd =</span> <span class="dv">1</span>, <span class="at">colour =</span> <span class="dv">4</span>,</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>               <span class="at">fill =</span> <span class="dv">4</span>, <span class="at">alpha =</span> <span class="fl">0.25</span>) <span class="sc">+</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># adiciona dispersão unidimensional de `mpg`</span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_rug</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">after_stat</span>(density))) <span class="sc">+</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_density</span>(</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">lwd =</span> <span class="dv">1</span>, <span class="at">colour =</span> <span class="dv">4</span>,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">fill =</span> <span class="dv">4</span>, <span class="at">alpha =</span> <span class="fl">0.25</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_rug</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="Entrega-1_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>texto</p>
+<p>Uma abordagem inicial para a análise exploratória dos dados pode ser dada a partir da exploração de algumas grandezas que soam naturalmente interligadas, como diferentes causas de morte e expectativa de vida, por exemplo. Ou uso de energia percapta, emissão de co2 e demanda de eletricidade.</p>
+<p>Para tanto, algumas formas distintas de representação gráfica serão utilizadas. Vamos iniciar com a representação de dispersão bidimensional.</p>
+</section>
+<section id="dispersão-bidimensional" class="level2">
+<h2 class="anchored" data-anchor-id="dispersão-bidimensional">Dispersão bidimensional</h2>
+<p>A representação gráfica de dispersão bidimensional é uma das mais simples e intuitivas. Nela, cada ponto representa um par de valores de duas variáveis distintas. Para isso, vamos utilizar a função <code>ggplot()</code> do pacote <code>ggplot2</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(owid, <span class="fu">aes</span>(<span class="at">x =</span> life_expectancy, <span class="at">y =</span> deaths_air_pollution)) <span class="sc">+</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>()</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Entrega-1_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Um gráfico que podemos plotar é o de correlação entre os diferentes tipos de morte com a expectativa de vida:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(owid[, <span class="fu">c</span>(<span class="st">"life_expectancy"</span>, <span class="st">"deaths_solid_fuels_pollution"</span>, <span class="st">"deaths_air_pollution"</span>, <span class="st">"deaths_ozone"</span>, <span class="st">"deaths_sanitation"</span>)])</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Entrega-1_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="análise-de-expectativa-de-vida" class="level2">
+<h2 class="anchored" data-anchor-id="análise-de-expectativa-de-vida">Análise de expectativa de vida</h2>
+<p>Analisando por continente, percebe-se que a expectativa de vida média apresenta uma variação muito grande.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(owid, <span class="fu">aes</span>(<span class="at">x =</span> life_expectancy, <span class="at">fill =</span> continent)) <span class="sc">+</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_density</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">position =</span> <span class="st">"identity"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Entrega-1_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>A África, por exemplo, apresenta uma concentração maior de expectativa em torno dos 60 anos, enquanto o pico de densidade da Europa e Oceania é superior aos 80 anos.</p>
+<p>Outra maneira de avaliar isso é por meio dos gráficos de <code>boxplot</code>, que apresentam a distribuição dos dados em quartis.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(owid, <span class="fu">aes</span>(<span class="at">x =</span> continent, <span class="at">y =</span> life_expectancy, <span class="at">fill =</span> continent)) <span class="sc">+</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_boxplot</span>()</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Entrega-1_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Nesse gráfico, pode-se perceber algumas coisas interessantes, dentre elas, associado à origem dos <em>outliers</em> demarcados pelo boxplot. Olhando, por exemplo, para a África, o gráfico se mostra extremamente disperso entre 50 e 75 anos, o que pode ser explicado pela grande diversidade realidade econômica dos mais diversos países que compõem o continente (a base de dados apresenta 21 diferentes países). Outro ponto interessante com esse gráfico é que a Oceania demonstrou uma concentração muito grande de expectativa de vida em torno dos 82 anos, o que pode ser explicado considerando que a base de dados apresenta apenas Nova Zelândia e Austrália como países do continente, durante os anos de 2011 a 2015.</p>
+</section>
+<section id="correlações-associadas-à-expectativa-de-vida" class="level2">
+<h2 class="anchored" data-anchor-id="correlações-associadas-à-expectativa-de-vida">Correlações associadas à expectativa de vida</h2>
+<p>Uma das correlações possíveis da expectativa de vida pode ser dada, por exemplo, com índices associados à qualidade de vida, como acesso à água, “felicidade” e população em áreas urbanas.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Correlação entre expectativa de vida e acesso à água</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(owid, <span class="fu">aes</span>(<span class="at">x =</span> life_expectancy, <span class="at">y =</span> no_water, <span class="at">color =</span> continent)) <span class="sc">+</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Entrega-1_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Correlação entre expectativa de vida e felicidade</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(owid, <span class="fu">aes</span>(<span class="at">x =</span> life_expectancy, <span class="at">y =</span> happiness_cantril_ladder, <span class="at">color =</span> continent)) <span class="sc">+</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Entrega-1_files/figure-html/unnamed-chunk-10-2.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Correlação entre expectativa de vida e população urbana</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(owid, <span class="fu">aes</span>(<span class="at">x =</span> life_expectancy, <span class="at">y =</span> urban_population_percent, <span class="at">color =</span> continent)) <span class="sc">+</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Entrega-1_files/figure-html/unnamed-chunk-10-3.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>De fato, nem sempre as correlações que são supostas necessariamente se correlacionam. Por exemplo, a felicidade média da população não apresenta uma correlação tão forte com a expectativa de vida, como pode ser visto no gráfico acima.</p>
+<p>Continuando a análise da expectativa de vida, exploraremos as correlações entre essa variável e as demais colunas do conjunto de dados. É razoável supor que variáveis como “birth_rate”, “child_mortality” e “no_water” estejam correlacionadas com a expectativa de vida, considerando o senso comum. Por outro lado, é plausível que “eletricity_demand” e “deaths_ozone” não apresentem uma correlação significativa com a expectativa de vida.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>  life_expectancy <span class="ot">&lt;-</span> owid<span class="sc">$</span>life_expectancy</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  birth_rate <span class="ot">&lt;-</span> owid<span class="sc">$</span>birth_rate</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  child_mortality <span class="ot">&lt;-</span> owid<span class="sc">$</span>child_mortality</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  no_water <span class="ot">&lt;-</span> owid<span class="sc">$</span>no_water</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  electricity_demand <span class="ot">&lt;-</span> owid<span class="sc">$</span>electricity_demand</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  deaths_ozone <span class="ot">&lt;-</span> owid<span class="sc">$</span>deaths_ozone</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cor</span> (life_expectancy, birth_rate)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -0.8912013</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cor</span> (life_expectancy, child_mortality)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -0.901525</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cor</span> (life_expectancy, no_water)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -0.8154043</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cor</span> (life_expectancy, electricity_demand)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.165849</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cor</span> (life_expectancy, deaths_ozone)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -0.1607515</code></pre>
+</div>
+</div>
+<p>Os resultados apresentados corroboram a intuição inicial fundamentada no senso comum. Efectivamente, observa-se uma correlação significativa entre “birth_rate”, “child_mortality” e “no_water” com a “life_expectancy”. No entanto, os resultados também deixam claro que “eletricity_demand” e “deaths_ozone” não possuem uma correlação significativa com a expectativa de vida. Para fortalecer ainda mais essa observação, a elaboração de gráficos de dispersão entre essas variáveis é imprescindível.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(owid) <span class="sc">+</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x=</span> life_expectancy, <span class="at">y =</span> birth_rate), <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Entrega-1_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(owid) <span class="sc">+</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x=</span> life_expectancy, <span class="at">y =</span> child_mortality), <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Entrega-1_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(owid) <span class="sc">+</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x=</span> life_expectancy, <span class="at">y =</span> no_water), <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Entrega-1_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(owid) <span class="sc">+</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x=</span> life_expectancy, <span class="at">y =</span> electricity_demand), <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Entrega-1_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(owid) <span class="sc">+</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x=</span> life_expectancy, <span class="at">y =</span> deaths_ozone), <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Entrega-1_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>A análise dos gráficos acima reforça o padrão observado na expectativa de vida em relação a ‘deaths_ozone’, ‘electricity_demand’ e ‘birth_rate’. No entanto, no que diz respeito às associações entre a expectativa de vida e ‘child_mortality’ e ‘no_water’, a relação linear não parece ser a mais adequada. Isso é evidenciado pela aparente presença de uma assíntota em ambos os gráficos, indicando uma tendência que não se ajusta linearmente.</p>
 </section>
 </section>
 
