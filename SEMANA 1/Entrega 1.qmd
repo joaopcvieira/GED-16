@@ -75,18 +75,20 @@ which(is.na(owid))
 
 ```
 
-Portanto, percebemos que não há dados faltantes na base, conforme esperado da filtragem prévia realizada pela professora.
+Portanto, percebemos que não há dados faltantes na base, conforme esperado da filtragem prévia realizada pela professora.Com isso, iremos proseguir para a analise exploratória dos dados
 
 ---
 
 
 ```{r}
-
+ggplot(owid, aes(x = life_expectancy)) +
+  geom_histogram(aes(y = after_stat(density))) +
+  # adiciona linha de densidade estimada (suavização)
+  geom_density(lwd = 1, colour = 4,
+               fill = 4, alpha = 0.25) +
+  # adiciona dispersão unidimensional de `mpg`
+  geom_rug(alpha = 0.5)
 ```
-
-# Título
-
-## Subtitulo
 
 texto 
 
