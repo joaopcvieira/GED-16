@@ -1,9 +1,9 @@
 ---
-lang: pt  
+lang: pt
 title: "Semana 1"
 subtitle: "AULA01: Prática"
-author: "João Pedro Vieira, Paulo, Acre"
-date: "2023-08-05"  
+authors: "João Pedro Vieira, Paulo, Acre"
+date: "2023-08-05"
 format:
   html:
     theme: cosmo
@@ -11,21 +11,26 @@ format:
 execute:
   echo: true
   eval: true
-  warning: false    
+  warning: false
 ---
+---
+
 # Introdução
----
+
 ```{r include = FALSE}
 library(tidyverse)
+library(ggplot2)
 ```
 
 Vamos iniciar a análise dos dados referentes à base [Our World in Data](https://ourworldindata.org/), cuja missão é publicar pesquisas e dados relacionados a grandes problemas mundiais como pobreza, doenças, fome, mudanças climáticas, guerras, riscos existenciais e desigualdade.   
 
 Inicialmente, vamos limpar a área de trabalho e iniciar a leitura dos dados.
 
+
+
 ```{r}
 # Limpa area de trabalho
-rm(list=ls())
+rm(list = ls())
 
 # Carrega os dados em uma tabela
 owid <- read_delim("data/owid.csv", delim = ",", col_names = TRUE)
@@ -58,6 +63,7 @@ Conforme a instrução fornecida pelo site da base de dados, a base `owid` apres
 
 De fato, podemos verificar essa estrutura com o comando `str()`.
 
+
 ```{r}
 str(owid)
 ```
@@ -75,24 +81,91 @@ which(is.na(owid))
 
 ```
 
-Portanto, percebemos que não há dados faltantes na base, conforme esperado da filtragem prévia realizada pela professora.Com isso, iremos proseguir para a analise exploratória dos dados
+Portanto, percebemos que não há dados faltantes na base, conforme esperado da filtragem prévia realizada pela professora. Com isso, iremos proseguir para a analise exploratória dos dados
 
 ---
+Uma abordagem inicial para a análise exploratória dos dados pode ser dada a partir da exploração de algumas grandezas que soam naturalmente interligadas, como diferentes causas de morte e expectativa de vida, por exemplo. Ou uso de energia percapta, emissão de co2 e demanda de eletricidade.
+
+Para tanto, algumas formas distintas de representação gráfica serão utilizadas. Vamos iniciar com a representação de dispersão bidimensional.
+
+
+
+## Dispersão bidimensional
+A representação gráfica de dispersão bidimensional é uma das mais simples e intuitivas. Nela, cada ponto representa um par de valores de duas variáveis distintas. Para isso, vamos utilizar a função `ggplot()` do pacote `ggplot2`.
+
+```{r}
+ggplot(owid, aes(x = life_expectancy, y = deaths_air_pollution)) +
+    geom_point()
+```
+
+Um gráfico que podemos plotar é o de correlação entre os diferentes tipos de morte com a expectativa de vida:
+
+```{r}
+plot(owid[, c("life_expectancy", "deaths_solid_fuels_pollution", "deaths_air_pollution", "deaths_ozone", "deaths_sanitation")])
+
+```
+
+
+## Análise de expectativa de vida
+
+Analisando por continente, percebe-se que a expectativa de vida média apresenta uma variação muito grande.
+
+
+```{r}
+ggplot(owid, aes(x = life_expectancy, fill = continent)) +
+    geom_density(alpha = 0.5, position = "identity")
+```
+
+A África, por exemplo, apresenta uma concentração maior de expectativa em torno dos 60 anos, enquanto o pico de densidade da Europa e Oceania é superior aos 80 anos. 
+
+Outra maneira de avaliar isso é por meio dos gráficos de `boxplot`, que apresentam a distribuição dos dados em quartis.
+
+
+```{r}
+ggplot(owid, aes(x = continent, y = life_expectancy, fill = continent)) +
+    geom_boxplot()
+```
+
+Nesse gráfico, pode-se perceber algumas coisas interessantes, dentre elas, associado à origem dos _outliers_ demarcados pelo boxplot. Olhando, por exemplo, para a África, o gráfico se mostra extremamente disperso entre 50 e 75 anos, o que pode ser explicado pela grande diversidade realidade econômica dos mais diversos países que compõem o continente (a base de dados apresenta 21 diferentes países). Outro ponto interessante com esse gráfico é que a Oceania demonstrou uma concentração muito grande de expectativa de vida em torno dos 82 anos, o que pode ser explicado considerando que a base de dados apresenta apenas Nova Zelândia e Austrália como países do continente, durante os anos de 2011 a 2015.
+
+
+---
+## Correlações associadas à expectativa de vida
+
+Uma das correlações possíveis da expectativa de vida pode ser dada, por exemplo, com índices associados à qualidade de vida, como acesso à água, "felicidade" e população em áreas urbanas.
+
+
+```{r}
+# Correlação entre expectativa de vida e acesso à água
+ggplot(owid, aes(x = life_expectancy, y = no_water, color = continent)) +
+    geom_point() +
+    geom_smooth(method = "lm", se = FALSE)
+
+# Correlação entre expectativa de vida e felicidade
+ggplot(owid, aes(x = life_expectancy, y = happiness_cantril_ladder, color = continent)) +
+    geom_point() +
+    geom_smooth(method = "lm", se = FALSE)
+
+# Correlação entre expectativa de vida e população urbana
+ggplot(owid, aes(x = life_expectancy, y = urban_population_percent, color = continent)) +
+    geom_point() +
+    geom_smooth(method = "lm", se = FALSE)
+```
+
+De fato, nem sempre as correlações que são supostas necessariamente se correlacionam. Por exemplo, a felicidade média da população não apresenta uma correlação tão forte com a expectativa de vida, como pode ser visto no gráfico acima.
+
+---
+## Extra
 
 
 ```{r}
 ggplot(owid, aes(x = life_expectancy)) +
-  geom_histogram(aes(y = after_stat(density))) +
-  # adiciona linha de densidade estimada (suavização)
-  geom_density(lwd = 1, colour = 4,
-               fill = 4, alpha = 0.25) +
-  # adiciona dispersão unidimensional de `mpg`
-  geom_rug(alpha = 0.5)
-```
-
-texto 
-
-
-```{r}
-
+    geom_histogram(aes(y = after_stat(density))) +
+    # adiciona linha de densidade estimada (suavização)
+    geom_density(
+        lwd = 1, colour = 4,
+        fill = 4, alpha = 0.25
+    ) +
+    # adiciona dispersão unidimensional de `mpg`
+    geom_rug(alpha = 0.5)
 ```
