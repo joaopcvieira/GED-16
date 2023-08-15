@@ -1,0 +1,382 @@
+---
+lang: pt  
+title: "GED-16: Análise de Regressão"
+subtitle: "AULA02: Prática (2o. semestre/2023)"
+author: "Prof. Denise B. Ferrari"
+date: "2023-08-08"  
+format:
+  html:
+    theme: cosmo
+execute:
+  echo: true
+  eval: true
+  warning: false    
+---
+
+```{r include = FALSE}
+library(tidyverse)
+library(gridExtra)
+```
+
+------------------------------------------------------------------------
+
+### Introdução
+
+Os dados disponíveis no arquivo `data/owid.csv` foram obtidos do portal [Our World in Data](https://ourworldindata.org/), cuja missão é publicar pesquisas e dados relacionados a grandes problemas mundiais como pobreza, doenças, fome, mudanças climáticas, guerras, riscos existenciais e desigualdade.
+
+Os dados originais foram pré-processados no sentido de remover observações faltantes. Há um total de 985 observações coletadas para 21 variáveis:
+
+1.  `continent`: continente em que está o país
+2.  `entity`: nome do país
+3.  `code`: código do país
+4.  `year`: ano
+5.  `birth_rate`: número de nascimentos com vida por 1.000 habitantes na população.
+6.  `child_mortality`: mortes de crianças menores de 5 anos de idade (% nascimentos)
+7.  `co2_emission_pc`: emissões anuais de CO2 per capita (t/pessoa)
+8.  `deaths_solid_fuels_pollution`: mortes resultantes de poluição por queima de combustíveis sólidos em ambientes internos (%)
+9.  `deaths_particulate_pollution`: mortes resultantes de poluição por material particulado em ambientes externos (%)
+10. `deaths_air_pollution`: mortes resultantes de poluição do ar ambiente (%)
+11. `deaths_ozone`: mortes resultantes de poluição por ozônio em ambientes externos (%)
+12. `deaths_sanitation`: mortes resultantes de falta ou precariedade de acesso a saneamento básico (%)
+13. `electricity_demand`: geração total de eletricidade anual, ajustada por importação e exportação de eletricidade (TWh)
+14. `energy_use_pc`: consumo de energia médio anual (eletricidade, transporte, aquecimento, preparo de alimentos) per capita (KWh/pessoa)
+15. `expected_schooling`: expectativa do número de anos de educação que uma criança que entra no sistema escolar deve receber
+16. `happiness_cantril_ladder`: nível de felicidade médio populacional (0-10)
+17. `gdp_pc`: produto interno bruto per capita (\$ internacional, referência 2017)
+18. `life_expectancy`: expectativa de vida no nascimento (anos)
+19. `milk_consumption_pc`: consumo de leite médio anual per capita (kg)
+20. `no_water`: população sem acesso a fontes seguras de água (encanada, poços, fontes, chuva e envasada) (%)
+21. `urban_population_percent`: população habitante de áreas urbanas (% população total)
+
+------------------------------------------------------------------------
+
+### Análise Exploratória de Dados
+
+Conduza a análise exploratória da massa de dados `owid`, a fim de compreender suas características principais.\
+Voltaremos a utilizar essa massa de dados em atividades futuras.
+
+```{r}
+#| warning: false
+#| message: false
+
+# limpa área de trabalho
+rm(list = ls())
+
+# carrega pacote `tidyverse`
+library(tidyverse)
+
+# carrega dados
+owid <- read_delim("data/owid.csv", delim = ",", col_names = TRUE)
+
+# recodifica variável `continent` como fator
+owid$continent <- as.factor(owid$continent)
+```
+
+```         
+---
+>>> REPLICAR AQUI A ANÁLISE REALIZADA NA AULA PASSADA
+---
+```
+
+Foi feita uma análise exploratória dos dados fornecidos procurando por possíveis correlações entre a felicidade média da população e as demais variáveis.
+
+Limpando a área de trabalho e importando os dados:
+
+```{r}
+rm(list = ls())
+owid <- read_delim("data/owid.csv", delim = ",", col_names = TRUE, show_col_types = FALSE)
+str(owid)
+```
+
+```{r}
+
+
+# verifica nomes das variáveis
+
+summary(owid)
+```
+
+Histograma de felicidade média populacional:
+
+```{r}
+ggplot(owid, aes(x = happiness_cantril_ladder)) +
+    geom_histogram(aes(y = after_stat(density))) +
+    # adiciona linha de densidade estimada (suavização)
+    geom_density(
+        lwd = 1, colour = 4,
+        fill = 4, alpha = 0.25
+    ) +
+    # adiciona dispersão unidimensional de `mpg`
+    geom_rug(alpha = 0.5)
+```
+
+Densidade de probabilidade de felicidade separado por cores para cada um dos continentes.
+
+```{r}
+# Densidade por continente
+ggplot(owid, aes(x = happiness_cantril_ladder, fill = continent)) +
+    geom_density(alpha = 0.5, position = "identity")
+```
+
+Ao separar as densidades da variável felicidade por continente é possível verificar que o nível de felicidade das pessoas varia de acordo com o continente em que elas vivem.
+
+### Verificação de possíveis variáveis correlacionadas
+
+Mesmo antes de observar os dados, conjectura-se que algumas variáveis possam ter maior correlação com o nível de felicidade da população. As variáveis escolhidas devido a uma suspeita de possuírem correlação com o nível de felicidade foram: acesso das pessoas a fontes seguras de água, mortalidade infantil, consumo de leite e pessoas vivendo com sistema sanitário precário. Assim, foram gerados os gráficos entre tais grandezas, de forma a verificar se existem correlações ou não.
+
+Gráfico de dispersão para as variáveis felicidade e população sem acesso a fontes seguras de água.
+
+```{r}
+# Visualização
+# Diagrama de dispersão
+ggplot(owid, aes(x = no_water, y = happiness_cantril_ladder)) +
+    # adiciona pontos
+    geom_point() +
+    theme(aspect.ratio = 1)
+```
+
+É possível perceber uma correlação negativa entre as variáveis de falta de água e felicidade da população. Ao dividir os dados em cada um dos continentes é possível construir o seguinte gráfico:
+
+```{r}
+# Visualização
+# Diagrama de dispersão
+ggplot(owid, aes(x = no_water, y = happiness_cantril_ladder, color = continent)) +
+    # adiciona pontos
+    geom_point() +
+    geom_smooth(method = "lm", se = FALSE) +
+    theme(aspect.ratio = 1)
+```
+
+Percebe-se uma tendência de queda de felicidade quanto mais pessoas estão sem acesso a fontes seguras de água. É possível conjecturar também que em continentes como a África e a Asia a felicidade das pessoas é menos sensível a fontes seguras de água que nos demais continentes.
+
+Um outro gráfico analisado é o de felicidade pela mortalidade infantil.
+
+```{r}
+# Visualização
+# Diagrama de dispersão
+ggplot(owid, aes(x = child_mortality, y = happiness_cantril_ladder, color = continent)) +
+    # adiciona pontos
+    geom_point() +
+    geom_smooth(method = "lm", se = FALSE) +
+    theme(aspect.ratio = 1)
+
+```
+
+------------------------------------------------------------------------
+
+Também é possível perceber através das linhas de tendência que no continente africano a felicidade da população é menos sensível a variações da mortalidade infantil que nos outros continentes.
+
+Uma outra análise feita foi da felicidade pelo consumo de leite da população e foi possível construir o seguinte gráfico:
+
+```{r}
+# Visualização
+# Diagrama de dispersão
+ggplot(owid, aes(x = milk_consumption_pc, y = happiness_cantril_ladder, color = continent)) +
+    # adiciona pontos
+    geom_point() +
+    geom_smooth(method = "lm", se = FALSE) +
+    theme(aspect.ratio = 1)
+```
+
+Ao observar os dados, aparentemente em todos os continentes um consumo maior de leite está correlacionado com uma maior felicidade da população com linhas de tendência de inclinações semelhantes. Porém, os dados aparentam estar muito dispersos das linhas de tendência, precisando assim de novas métricas para confirmar ou refutar uma correlação entre os dados.
+
+Também foi gerado o gráfico de felicidade por mortes correlacionadas a um sistema sanitário precário.
+
+```{r}
+# Visualização
+# Diagrama de dispersão
+ggplot(owid, aes(x = deaths_sanitation, y = happiness_cantril_ladder, color = continent)) +
+    # adiciona pontos
+    geom_point() +
+    geom_smooth(method = "lm", se = FALSE) +
+    theme(aspect.ratio = 1)
+```
+
+É possível perceber um efeito semelhante das mortes por motivos sanitários se compararmos com a falta de acesso à fontes seguras de água e de mortalidade infantil. As variáveis aparentam estar correlacionadas e também aparenta que a sensibilidade da felicidade com relação a mortes por falta de saneamento é menor no continente africano se comparado aos demais.
+
+### Análise de Regressão
+
+1.  Assuma que um modelo de regressão linear simples é adequado para modelar a relação da variável de resposta `happiness_cantril_ladder` a cada uma das variáveis explicativas: `birth_rate`, `deaths_air_pollution`,`expected_schooling`, `life_expectancy`.
+
+-   Construa um modelo de regressão para cada um desses pares de variáveis;
+
+-   Construa gráficos de dispersão (separados) com as retas de regressão ajustadas para cada caso;
+
+-   Obtenha o MSE para cada modelo. Que variável explicativa produz menor variabilidade em torno da reta de regressão ajustada?
+
+-   Utilizando R2 como critério, qual das variáveis explicativas contribui para a maior redução na variabilidade da resposta `happiness_cantril_ladder`?
+
+2.  Para cada nível da variável categórica `continent`, construa um modelo de regressão para a variável de resposta `happiness_cantril_ladder` em função da variável escolhida no último item da questão anterior. Assuma que o modelo de 1a. ordem é adequado para modelar essas relações.
+
+-   Obtenha os modelos de regressão ajustados. As funções de regressão estimadas são semelhantes para todos os níveis da variável `continent`? Discuta.
+
+-   Obtenha o MSE para cada nível da variável `continent` A variabilidade em torno da reta de regressão ajustada é semelhante para todos os níveis?
+
+-   Construa intervalos de confiança 95% para o coeficiente angular da reta de regressão para os continentes `North America` e `South America`. As retas de regressão para os diferentes níveis parecem ter mesma inclinação? O que se pode concluir?
+
+-   Construa intervalos de confiança para a resposta esperada correspondendo a `deaths_air_pollution` = 50, para os continentes `North America` e `South America` O que se pode concluir?
+
+-   Construa intervalos de previsão para uma nova observação de cada continente (`North America` e `South America`) que tenha `deaths_air_pollution` = 50. O que se pode concluir?
+
+3.  Construa um modelo de regressão para a variável de resposta `happiness_cantril_ladder` em função de `gdp_pc`. Assuma que o modelo de 1a. ordem é adequado para modelar essas relações. Faz sentido aplicar alguma transformação à variável explicativa? Replique os procedimentos realizados no item (1) para um modelo considerando a variável explicativa em sua forma original ou transformad
+
+```{r}
+# Constrói modelo de regressão linear simples para taxa de natalidade
+owid_rls_birth <- lm(happiness_cantril_ladder ~ birth_rate, data = owid)
+owid_rls_birth
+
+# Constrói modelo de regressão linear simples para mortes por poluição do ar
+owid_rls_Dair <- lm(happiness_cantril_ladder ~ deaths_air_pollution, data = owid)
+owid_rls_Dair
+
+# Constrói modelo de regressão linear simples para expectativa de escolaridade.
+owid_rls_ExpSchool <- lm(happiness_cantril_ladder ~ expected_schooling, data = owid)
+owid_rls_ExpSchool
+
+# Constrói modelo de regressão linear simples para expectativa de vida.
+owid_rls_LifeExpec <- lm(happiness_cantril_ladder ~ life_expectancy, data = owid)
+owid_rls_LifeExpec
+```
+
+### Gráficos de dispersão
+
+```{r}
+# gera gráfico de dispersão para taxa de natalidade
+ggplot(owid, aes(x = birth_rate, y = happiness_cantril_ladder)) +
+    geom_point() +
+    # adiciona reta de regressão estimada
+    geom_smooth(method = lm, se = FALSE)
+
+# gera gráfico de dispersão para taxa de mortes por poluição do ar
+ggplot(owid, aes(x = deaths_air_pollution, y = happiness_cantril_ladder)) +
+    geom_point() +
+    # adiciona reta de regressão estimada
+    geom_smooth(method = lm, se = FALSE)
+
+# gera gráfico de dispersão para taxa de natalidade
+ggplot(owid, aes(x = expected_schooling, y = happiness_cantril_ladder)) +
+    geom_point() +
+    # adiciona reta de regressão estimada
+    geom_smooth(method = lm, se = FALSE)
+
+# gera gráfico de dispersão para expectativa de vida
+ggplot(owid, aes(x = life_expectancy, y = happiness_cantril_ladder)) +
+    geom_point() +
+    # adiciona reta de regressão estimada
+    geom_smooth(method = lm, se = FALSE)
+```
+
+Interpretando os modelos utilizados, temos que as retas de regressão que melhor se aproxima, para descrever a dependência entre as grandezas selecionadas duas a duas são:
+
+-   Felicidade x Taxa de natalidade:\
+    happiness_cantril_ladder = `r round(owid_rls_birth$coefficients[1], digits = 2)` + `r round(owid_rls_birth$coefficients[2], digits = 2)` \*birth_rate
+
+-   Felicidade x Mortes por poluição do ar: happiness_cantril_ladder = `r round(owid_rls_Dair$coefficients[1], digits = 2)` + `r round(owid_rls_Dair$coefficients[2], digits = 2)` \*deaths_air_pollution
+
+-   Felicidade x Expectativa de escolaridade: happiness_cantril_ladder = `r round(owid_rls_ExpSchool$coefficients[1], digits = 2)` + `r round(owid_rls_ExpSchool$coefficients[2], digits = 2)` \*expected_schooling
+
+-   Felicidade x Expectativa de vida: happiness_cantril_ladder = `r round(owid_rls_LifeExpec$coefficients[1], digits = 2)` + `r round(owid_rls_LifeExpec$coefficients[2], digits = 2)` \*life_expectancy
+
+### MSE
+
+```{r}
+# MSE para taxa de natalidade
+mean(owid_rls_birth$residuals^2)
+
+# MSE para mortes por poluição do ar
+mean(owid_rls_Dair$residuals^2)
+
+# MSE para expectativa de escolaridade
+mean(owid_rls_ExpSchool$residuals^2)
+
+# MSE para expectativa de vida
+mean(owid_rls_LifeExpec$residuals^2)
+```
+
+Dessa forma, percebemos que o menor MSE é para a variável `deaths_air_pollution`, ou seja, a variável que melhor se ajusta ao modelo de regressão linear simples é a taxa de mortes por poluição do ar.
+
+Avaliando agora a relação de R² ajustado para cada par de variáveis, temos
+
+```{r}
+# R² ajustado para taxa de natalidade
+summary(owid_rls_birth)$adj.r.squared
+
+# R² ajustado para mortes por poluição do ar
+summary(owid_rls_Dair)$adj.r.squared
+
+# R² ajustado para expectativa de escolaridade
+summary(owid_rls_ExpSchool)$adj.r.squared
+
+# R² ajustado para expectativa de vida
+summary(owid_rls_LifeExpec)$adj.r.squared
+```
+
+Não obstante, a melhor correlação, segundo o critério de R² ajustado, ainda sim é dada para a variável `deaths_air_pollution`, ou seja, a variável que melhor se ajusta ao modelo de regressão linear simples é a relação de mortes por poluição do ar (por 100.000).
+
+------------------------------------------------------------------------
+
+# Análise por continente
+
+Vamos refazer as análises passadas clusterizando as variáveis por continente.
+
+```{r}
+#| layout-ncol: 4
+#|
+continentes <- c("Africa", "Asia", "Europe", "North America", "Oceania", "South America")
+grandezas <- c("birth_rate", "deaths_air_pollution", "expected_schooling", "life_expectancy")
+
+regressoes <- matrix()
+
+# Cria dataframes para cada continente
+for (i in continentes) {
+    print(paste("Continente: ", i))
+    df_per_continent <- owid %>% filter(continent == i)
+    # df_per_continent %>% head(10) %>% print()
+
+    temporary <- c()
+
+    for (metrica in grandezas) {
+        # print(metrica)
+        regressao <- lm(df_per_continent$happiness_cantril_ladder ~ df_per_continent[[metrica]])
+        temporary <- temporary %>% append(regressao)
+        # print(regressao)
+
+        newPlot <- df_per_continent %>%
+            ggplot(aes(x = .data[[metrica]], y = happiness_cantril_ladder)) +
+            geom_point() +
+            # adiciona reta de regressão estimada
+            geom_smooth(method = lm, se = FALSE)
+        print(newPlot)
+    }
+
+    regressoes <- rbind(regressoes, temporary)
+}
+
+```
+
+Temos agora, além dos dados visuais para os gráficos avaliados, uma matriz `regressoes` com os dados de cada regressão linear simples com as colunas representando cada variável e as linhas, cada continente. Vamos avaliar então, para cada continente, se os modelos de regressão assumem erros semelhantes.
+
+```{r}
+#| layout-ncol: 4
+
+for (i in continentes) {
+  
+    print(paste("Continente: ", i))
+    df_per_continent <- owid %>% filter(continent == i)
+    # df_per_continent %>% head(10) %>% print()
+
+    summary(owid_rls_birth)$adj.r.squared
+
+    metrica <- grandezas[1]
+    regressao <- lm(df_per_continent$happiness_cantril_ladder ~ df_per_continent[[metrica]])
+    temporary <- temporary %>% append(regressao)
+    print(regressao)
+
+    newPlot <- df_per_continent %>%
+        ggplot(aes(x = .data[[metrica]], y = happiness_cantril_ladder)) +
+        geom_point() +
+        # adiciona reta de regressão estimada
+        geom_smooth(method = lm, se = FALSE) 
+
+}
+

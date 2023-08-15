@@ -1,0 +1,294 @@
+---
+lang: pt  
+title: "GED-16: Análise de Regressão"
+subtitle: "AULA02: Exemplo (1o. semestre/2023)"
+author: "Prof. Denise B. Ferrari"
+date: "2023-03-15"  
+format:
+  html:
+    theme: cosmo
+execute:
+  echo: true
+  eval: true
+  warning: false    
+---
+```{r include = FALSE}
+library(tidyverse)
+library(gridExtra)
+```
+
+## Introdução
+
+Exemplo "Consumo de Combustível de Automóveis", retirado do [UCI Machine Learning Repository](https://archive.ics.uci.edu/ml/datasets/auto+mpg).
+
+O objetivo inicial desse estudo era prever o consumo de combustível de automóveis em ambiente urbano (expresso em milhas por galão, mpg), a partir de algumas características do veículo.
+
+Há um total de 398 observações registradas para 9 variáveis de interesse,   
+incluindo a resposta `mpg`:
+
+**Variáveis**  
+
+`mpg`: numérica (contínua)  
+`cylinder`: categórica (ordinal)  
+`displacement`: numérica (contínua)    
+`hp`: numérica (contínua)   
+`weight`: numérica (contínua)   
+`acceleration`: numérica (contínua)   
+`modelyear`: numérica (discreta)   
+`origin`: categórica (nominal)  
+`carname`: categórica  (nominal)   
+
+
+### PARTE 1: Preparação da Massa de Dados
+
+A análise completa está disponível no Exemplo da AULA01.
+
+```{r}
+#| warning: false
+#| message: false
+
+# Carrega os dados em uma tabela
+auto <- read.table("data/AutoMPG/auto-mpg.data", header = FALSE)
+
+# Atribui nomes às variáveis (colunas da tabela)
+colnames(auto) <- c("mpg", "cylinder", "displacement", "hp", 
+                    "weight", "acceleration", "modelyear", "origin", "carname")
+
+# Codifica adequadamente variáveis quantitativas (numéricas) e categóricas (fatores)
+# usando funções do pacote `tidyverse`:
+auto <- auto %>% 
+  mutate_at(c("mpg", "displacement", "hp", 
+              "weight", "acceleration", "modelyear"), as.numeric) %>%
+  mutate_at(c("cylinder", "origin"), as.factor) %>%
+  mutate_at("carname", as.character)
+
+# Remove linhas correspondentes às obs. faltantes da variável `hp`
+auto <- auto %>%
+  drop_na()
+
+# verifica estrutura dos dados
+str(auto)
+```
+
+No Exemplo da AULA01, encontramos evidências visuais de uma relação estatística linear positiva entre o rendimento, dado pela variável `mpg` e o inverso da potência do motor `1/hp`:
+
+```{r}
+# Gera gráfico de dispersão de `mpg` vs. `1/hp`
+ggplot(auto) +
+  geom_point(aes(x = 1/hp, y = mpg)) 
+```
+
+Vamos verificar a correlação entre o par de variáveis `mpg` e `1/hp`:
+
+```{r}
+auto |>
+  # Coeficiente de correlação
+  summarize(cor (mpg, 1/hp))
+```
+
+O valor do coeficiente correlação amostral suporta as observações realizadas a partir do gráfico de dispersão. 
+Correlação elevada (~1) indica relação fortemente linear. Embora a correlação seja uma medida útil da direção e força da associação linear entre duas variáveis, não podemos utilizá-la para realizar, por exemplo, previsão.  Além disto, a correlação mede apenas a força da relação *linear* para *um par* de variáveis.
+
+Podemos proceder com o ajuste de um modelo de regressão linear simples para este par de variáveis.
+
+### PARTE 2: Análise de Regressão
+
+**Estimação (Ajuste do Modelo):**
+
+Análise de regressão permite não apenas medir a força da relação entre uma variável dependente e variáveis explicativas, como também descreve matematicamente esta relação.
+
+A fim de simplificar a análise, vamos criar uma nova base de dados, incluindo somente as variáveis que serão utilizadas na construção do modelo de regressão linear simples:
+
+```{r}
+# Constrói nova base de dados para análise
+auto_mpg_invhp <- auto |>
+  # cria nova variável `inv_hp`
+  mutate(inv_hp  = 1/hp) |>
+  # seleciona apenas variáveis de interesse
+  select(mpg, inv_hp)
+
+# gera resumo dos novos dados  
+summary(auto_mpg_invhp)
+```
+
+Note que o escopo do modelo não inclui  `inv_hp` = 0. Portanto, já sabemos que o coeficiente linear da reta a ser estimada não terá significado prático.
+
+```{r}
+# Constrói modelo de regressao linear simples (rls)
+auto_rls <- lm(mpg ~ inv_hp, data = auto_mpg_invhp)
+# variável de resposta: `mpg` 
+# variável explicativa: `inv_hp`
+
+# retorna coeficientes estimados do modelo de rls
+auto_rls
+```
+
+Veja nos resultados a forma da função de regressão (neste caso um modelo de 1a. ordem) e os valores estimados para os coeficientes da regressão. Aqui, a variável de resposta é `mpg` e a variável explicativa é `inv_hp`. Neste modelo não admitimos termos de ordem superior. 
+
+**Interpretação do Modelo Ajustado:**
+
+Modelo Ajustado:   
+
+` mpg = 3.936 + 1812.99 inv_hp` (eq. reta)
+
+O coeficiente linear não tem significado prático, pois o escopo do modelo não inclui `inv-hp = 0`. Portanto, serve apenas de constante de ajuste para o modelo de regressão. O coeficiente angular representa o aumento esperado no rendimento do automóvel para um aumento unitário no inverso da potência do motor.
+
+A função de regressão estimada indica que, para um acréscimo unitário no inverso da potência, o rendimento aumenta cerca de 1813 mpg, em média.
+
+**Inferências:**
+
+A figura abaixo mostra os dados disponíveis e a reta de regressão ajustada:
+
+```{r}
+#| warning: false
+# gera gráfico de dispersão
+ggplot(auto_mpg_invhp, aes(x = inv_hp, y = mpg)) +
+  geom_point() +
+  # adiciona reta de regressão estimada
+  geom_smooth(method = lm, se = FALSE)
+```
+
+Parece existir relação estatística linear entre `mpg` e `inv_hp`? O modelo parece capturar bem a relação entre as variáveis `mpg` e `inv_hp`? É útil utilizar a variável `inv_hp` para explicar a variação em `mpg`?
+
+
+Essas perguntas podem ser respondidas através de inferências. Para isso, precisamos de mais informações a respeito do modelo ajustado.
+
+Por hora, vamos assumir que o modelo é adequado aos dados, isto é, que satisfaz as hipóteses utilizadas para a construção do modelo de regressão. Satisfeitas as hipóteses do modelo, é possível proceder com inferências utilizando o modelo ajustado.
+
+1. Resumo da Regressão
+
+Inicialmente, vamos analisar o resumo do modelo de regressão ajustado:
+
+```{r}
+# Resumo do modelo ajustado
+summary(auto_rls)
+```
+
+Temos:
+
+  - um resumo da distribuição dos resíduos
+  - estimativas para os coeficientes e respectivos desvios-padrão
+  - valor da estatística-t  e valor-p do teste bi-caudal para os coeficientes
+  - estimativa para o desvio-padrão dos erros
+  - resultados do teste-F (ANOVA)
+  - coeficiente de determinação
+  
+Os resíduos parecem ter distribuição simétrica com centro próximo de zero (valores absolutos de mínimo e máximo, 1Q e 3Q, na mesma ordem de grandeza e mediana próxima de zero).  O coeficiente linear é estatisticamente diferente de zero, embora não nos interesse muito, pois o escopo do modelo não inclui `inv_hp` = 0. O coeficiente angular da regressão também é estatisticamente diferente de zero (veja o valor-p próximo de zero). Isto significa que existe uma associação estatisticamente linear entre `mpg` e `inv_hp`. A mesma conclusão pode ser obtida observando o valor-p associado à estatística-F para o modelo de regressão.
+
+O coeficiente de determinação (`Multiple R-squared`) tem valor `r round(summary(auto_rls)$r.squared, digits = 4)`. Isso significa que ao incluir a variável `inv_hp`, a variação total de `mpg` reduz em 66,71%, ou seja, a variável `inv_hp` consegue explicar cerca de 66,71% de toda a variabilidade obsevada em `mpg`. Se quisermos ser capazes de explicar um percentual maior da variabilidade da variável de resposta, talvez seja interessante incluir outras variáveis explicativas no modelo. O coeficiente de determinação ajustado (`Adjusted R2`) será explicado futuramente.
+
+Alternativamente, podemos realizar inferência a respeito da utilidade da reta de regressão, isto é, da significância do coeficiente angular, utilizando a abordagem do teste-F (ANOVA).
+
+2. ANOVA
+
+```{r}
+anova(auto_rls)
+```
+
+A tabela ANOVA dá os valores de SSR, SSE, MSR, MSE, os números de graus de liberdade associados a cada soma de quadrados, além do valor observado para a estatística F = MSR/MSE, e o valor-p correspondente. Note que, como não poderia ser diferente, o valor da estatística-F da tabela ANOVA é o mesmo apresentado no resumo da regressão, bem como os números de graus de liberdade e o valor-p.
+
+3. Inferências sobre os parâmetros da regressão: IC's para $\beta_0$ e $\beta_1$.
+
+Para nível de confiança 95%, temos:
+
+```{r}
+# IC para os coeficientes
+confint.lm(auto_rls, level = 0.95)
+```
+
+Concluímos com confiança de 95% que $\beta_1$ encontra-se no intervalo (`r ic <- confint.lm(auto_rls, level = 0.95);  round(ic[2, ], digits = 1)`), ou seja, com 95% de confiança, acreditamos que o rendimento do motor (em mpg) aumenta entre `r round(ic[2,1], digits =1)`  e `r round(ic[2,2], digits =1)` para cada acréscimo unitário no inverso da potência. O coeficiente angular é positivo, o que confirma a expectativa de que o rendimento do motor deve aumentar com o aumento do inverso da potência, já que automóveis com maior potência costumam apresentar maior consumo de combustível.  
+
+Neste caso, não estamos interessados em inferências a respeito de $\beta_0$; de toda forma, o coeficiente linear é estatisticamente significativo. 
+
+
+Note que o escopo do modelo de regressão está restrito à faixa de valores da variável explicativa utilizada na calibração do modelo. Neste exemplo, o modelo de regressão é significativo para valores de `inv_hp` na faixa aproximada de `r format(min(auto_mpg_invhp$inv_hp), scientific = TRUE, digits = 2 )` a `r format(max(auto_mpg_invhp$inv_hp), scientific = TRUE, digits = 2 )`. Assim, pode não ser adequado utilizar o mesmo modelo para valores de `inv_hp` fora da faixa especificada, pois não temos garantia de que a relação linear encontrada se mantenha fora da região observada. Esta é uma consideração importante ao utilizar estimativas para coeficiente angular para realizar inferências a respeito da relação entre um par de variáveis, X e Y. 
+
+4. Inferências sobre a resposta esperada (média) $\hat{Y}$
+
+Se não tivéssemos o modelo de regressão, poderíamos realizar inferência a respeito da resposta esperada `mpg` construindo um intervalo de confiança para a média:
+
+$$IC^{\mu_Y}_{(1-\alpha)100\%}: \quad \bar{y_n} \pm t_{\alpha/2, n-1} \times \frac{s_n}{\sqrt{n}},$$
+
+onde:
+
+$\bar{y}_n$: média da amostra de tamanho $n$  
+$s_n^2$: variação da amostra de tamanho $n$   
+$t_{\alpha/2, n-1}$: quantil a distribuição t-Student com $n-1$ graus de liberdade 
+
+Para realizar inferência com base na distribuição-t, a população deve ser normalmente distribuída:
+
+```{r}
+#| layout-ncol: 2
+# a distribuição de `mpg` é normal?
+# inspeção visual (gráfico de quantis)
+qqnorm(auto$mpg)
+qqline(auto$mpg)
+
+# histograma
+ ggplot(auto, aes(x = mpg)) + 
+  geom_histogram(aes(y = after_stat(density)), binwidth = 5) +
+  geom_density()
+
+
+# teste de normalidade de Shapiro-Wilk
+# Ho: a distribuição é normal
+# Ha: a distribuição não é normal
+shapiro.test(auto$mpg)
+```
+
+O gráfico de probabilidades (quantis) e o resultado do [teste de normalidade Shapiro-Wilk](https://en.wikipedia.org/wiki/Shapiro%E2%80%93Wilk_test), indicam que a distribuição de `mpg` não é normal. No entanto, geralmente testes de normalidade costumam ser bastante sensíveis para amostras grandes, de forma que mesmo pequenos desvios (sem significância prática) da normalidade podem levar à rejeição da hipótese nula. Mesmo no caso de distribuição não-normal, o TLC garante que, para amostras grandes, a média amostral tem distribuição aproximadamente normal. Portanto, podemos construir um intervalo de confiança para o rendimento médio da seguinte forma:
+
+$$IC^{\mu_Y}_{(1-\alpha)100\%}: \quad \bar{y_n} \pm z_{\alpha/2} \times \frac{s_n}{\sqrt{n}},$$
+```{r}
+# dados amostrais
+n_aa <- length(auto$mpg) 
+sn   <- sd(auto$mpg)
+
+# nível de confiança
+nc <- 0.95; alfa <- 1-nc
+
+# estimativa pontual para rendimento médio
+ybar <- mean(auto$mpg)
+
+# margem de erro
+margem_erro <- qnorm(alfa)  * sn/sqrt(n_aa)
+
+# limites do intervalo de confiança
+lim_inf <- ybar - margem_erro
+lim_sup <- ybar + margem_erro
+```
+
+Assim, sem nenhuma informação adicional (além dos valores observados para a variável `mpg`) temos 95% de certeza de que o rendimento médio dos automóveis encontra-se no intervalo [`r round(c(lim_inf, lim_sup), digits = 2)`].
+
+Considerando o modelo de regressão ajustado, podemos realizar inferência a respeito da resposta esperada correspondente a um determinado valor da variável explicativa. Assim, suponha que se deseje estimar o rendimento médio de motores de automóveis com potência de 100 cavalos. Podemos construir um intervalo de confiança para o rendimento esperado de automóveis com essa potência:
+
+```{r}
+# novo valor da variável explicativa
+Xh <- data.frame(inv_hp = 0.01)
+
+# intervalo de confiança para resposta esperada
+ic <- predict.lm(auto_rls, newdata = Xh, 
+           interval="confidence", level = 0.95)
+```
+
+O valor ajustado corresponde a `r round(ic[1], digits = 2)`; esta é a estimativa pontual e corresponde à resposta do modelo para `inv_hp = 0.01`. O intervalo de confiança 95% para a resposta média é (`r round(ic[2], digits=1)`, `r round(ic[3], digits=1)`).  O intervalo de confiança fornece uma faixa de valores plausíveis para o rendimento médio de automóveis com 100 hp de potência para o nível de confiança de 95%. Assim, é possível concluir com 95% de confiança que o rendimento esperado para automóveis com 100 hp de potência deve estar entre 22.1 e 22.5 mpg. Perceba que o intervalo de confiança para a resposta esperada obtido utilizando o modelo de regressão é muito mais preciso (tem menor largura) que aquele construído sem o modelo de regressão (com base apenas nos valores observados de `mpg`). Isso mostra que a inclusão da variável `inv_hp` ajuda a reduzir a incerteza a respeito da variável de interesse (`mpg`).
+
+3. Previsão da resposta para uma nova observação
+
+Suponha que desejamos prever o rendimento de um novo automóvel cujo motor tem 100 hp de potência. Esta não é uma inferência a respeito da resposta esperada, ou seja, do rendimento médio de todos os automóveis com potência 100 hp. Queremos fazer a previsão de uma única realização da variável aleatória `mpg`, correspondente a um dado valor da variável explicativa `inv_hp`.
+
+```{r}
+# novo valor da variável explicativa
+Xo <- data.frame(inv_hp = 0.01)
+
+# intervalo de confiança
+ip <- predict.lm(auto_rls, newdata = Xo, 
+           interval="prediction", level = 0.95)
+```
+
+Note que o valor da estimativa pontual permanece o mesmo. Ele corresponde ao valor de resposta previsto pelo modelo de regressão. O intervalo de previsão para a nova observação correspondente a uma potência de 100 hp é dado por [`r round(ip[2], digits=1)`, `r round(ip[3], digits=1)`]. O intervalo de previsão nos permite concluir com 95% de certeza que uma faixa plausível de valores de rendimento para o próximo automóvel que tiver potência de 100 hp está entre `r round(ip[2], digits=1)` e `r round(ip[3], digits=1)` mpg.
+
+Note que o intervalo de previsão para o rendimento de um novo automóvel é mais largo que o intervalo de confiança para o rendimento médio dos automóveis que apresentam a potência especificada de 100hp.
+
+No próximo capítulo, veremos como proceder para verificar a adequação do modelo aos dados disponíveis, isto é, como realizar o diagnóstico e como aplicar algumas medidas corretivas em caso de problemas.
+
