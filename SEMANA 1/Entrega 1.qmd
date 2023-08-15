@@ -19,7 +19,7 @@ execute:
 library(tidyverse)
 library(ggplot2)
 ```
-
+AAA
 Vamos iniciar a análise dos dados referentes à base [Our World in Data](https://ourworldindata.org/), cuja missão é publicar pesquisas e dados relacionados a grandes problemas mundiais como pobreza, doenças, fome, mudanças climáticas, guerras, riscos existenciais e desigualdade.   
 
 Inicialmente, vamos limpar a área de trabalho e iniciar a leitura dos dados.
