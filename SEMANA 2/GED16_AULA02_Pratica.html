@@ -109,10 +109,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 <hr>
-<section id="introdução" class="level3">
-<h3 class="anchored" data-anchor-id="introdução">Introdução</h3>
+<section id="introdução" class="level1">
+<h1>Introdução</h1>
 <p>Os dados disponíveis no arquivo <code>data/owid.csv</code> foram obtidos do portal <a href="https://ourworldindata.org/">Our World in Data</a>, cuja missão é publicar pesquisas e dados relacionados a grandes problemas mundiais como pobreza, doenças, fome, mudanças climáticas, guerras, riscos existenciais e desigualdade.</p>
 <p>Os dados originais foram pré-processados no sentido de remover observações faltantes. Há um total de 985 observações coletadas para 21 variáveis:</p>
+<p><strong>Variáveis</strong></p>
 <ol type="1">
 <li><code>continent</code>: continente em que está o país</li>
 <li><code>entity</code>: nome do país</li>
@@ -138,10 +139,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ol>
 <hr>
 </section>
-<section id="análise-exploratória-de-dados" class="level3">
-<h3 class="anchored" data-anchor-id="análise-exploratória-de-dados">Análise Exploratória de Dados</h3>
-<p>Conduza a análise exploratória da massa de dados <code>owid</code>, a fim de compreender suas características principais.<br>
-Voltaremos a utilizar essa massa de dados em atividades futuras.</p>
+<section id="análise-exploratória-de-dados" class="level1">
+<h1>Análise Exploratória de Dados</h1>
+<section id="análise-preliminar-e-preparação-da-massa-de-dados" class="level2">
+<h2 class="anchored" data-anchor-id="análise-preliminar-e-preparação-da-massa-de-dados">Análise Preliminar e Preparação da Massa de Dados</h2>
+<p>Nesta seção, é conduzida a análise exploratória da massa de dados <code>owid</code>, a fim de compreender suas características principais. De modo geral, a ideia inicial é procurar por possíveis correlações entre a felicidade média da população e as demais variáveis.</p>
+<p>Inicialmente, vamos limpar a área de trabalho e iniciar a leitura dos dados.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># limpa área de trabalho</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list =</span> <span class="fu">ls</span>())</span>
@@ -152,21 +155,13 @@ Voltaremos a utilizar essa massa de dados em atividades futuras.</p>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># carrega dados</span></span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>owid <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="st">"data/owid.csv"</span>, <span class="at">delim =</span> <span class="st">","</span>, <span class="at">col_names =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># recodifica variável `continent` como fator</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>owid<span class="sc">$</span>continent <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(owid<span class="sc">$</span>continent)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<pre><code>---
-&gt;&gt;&gt; REPLICAR AQUI A ANÁLISE REALIZADA NA AULA PASSADA
----</code></pre>
-<p>Foi feita uma análise exploratória dos dados fornecidos procurando por possíveis correlações entre a felicidade média da população e as demais variáveis.</p>
-<p>Limpando a área de trabalho e importando os dados:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list =</span> <span class="fu">ls</span>())</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>owid <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="st">"data/owid.csv"</span>, <span class="at">delim =</span> <span class="st">","</span>, <span class="at">col_names =</span> <span class="cn">TRUE</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(owid)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># codifica variável `continent` como fator</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>owid<span class="sc">$</span>continent <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(owid<span class="sc">$</span>continent)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(owid)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>spc_tbl_ [985 × 21] (S3: spec_tbl_df/tbl_df/tbl/data.frame)
- $ continent                   : chr [1:985] "Asia" "Asia" "Asia" "Asia" ...
+ $ continent                   : Factor w/ 6 levels "Africa","Asia",..: 2 2 2 2 2 2 2 3 3 3 ...
  $ country_code                : chr [1:985] "AFG" "AFG" "AFG" "AFG" ...
  $ entity                      : chr [1:985] "Afghanistan" "Afghanistan" "Afghanistan" "Afghanistan" ...
  $ year                        : num [1:985] 2011 2014 2015 2016 2017 ...
@@ -214,18 +209,21 @@ Voltaremos a utilizar essa massa de dados em atividades futuras.</p>
  - attr(*, "problems")=&lt;externalptr&gt; </code></pre>
 </div>
 </div>
+<p>Observamos, portanto, um total de 985 dados, sendo três colunas apresentadas como strings (<code>continent</code>, <code>entity</code> e <code>country_code</code>) e as demais como numéricas. Não obstante, os nomes das variáveis são intuitivos e não necessitam de alterações.</p>
+<section id="dados-faltantes" class="level3">
+<h3 class="anchored" data-anchor-id="dados-faltantes">Dados faltantes</h3>
+<p>Agora, vamos verificar a presença de dados faltantes na base. Para isso, vamos utilizar o comando <code>summary()</code>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># verifica nomes das variáveis</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(owid)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># verifica nomes das variáveis</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(owid)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>  continent         country_code          entity               year     
- Length:985         Length:985         Length:985         Min.   :2011  
- Class :character   Class :character   Class :character   1st Qu.:2014  
- Mode  :character   Mode  :character   Mode  :character   Median :2016  
-                                                          Mean   :2016  
-                                                          3rd Qu.:2018  
-                                                          Max.   :2019  
+<pre><code>         continent   country_code          entity               year     
+ Africa       :293   Length:985         Length:985         Min.   :2011  
+ Asia         :240   Class :character   Class :character   1st Qu.:2014  
+ Europe       :280   Mode  :character   Mode  :character   Median :2016  
+ North America: 95                                         Mean   :2016  
+ Oceania      : 14                                         3rd Qu.:2018  
+ South America: 63                                         Max.   :2019  
    birth_rate    child_mortality  co2_emission_pc   
  Min.   : 5.92   Min.   : 0.200   Min.   : 0.02473  
  1st Qu.:11.20   1st Qu.: 0.580   1st Qu.: 0.76427  
@@ -262,7 +260,16 @@ Voltaremos a utilizar essa massa de dados em atividades futuras.</p>
  3rd Qu.:153.9104    3rd Qu.:15.360   3rd Qu.: 77.38          
  Max.   :364.5135    Max.   :52.050   Max.   :100.00          </code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># print("Posição dos dados faltantes:")</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">which</span>(<span class="fu">is.na</span>(owid))</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>integer(0)</code></pre>
 </div>
+</div>
+<p>Portanto, percebemos que não há dados faltantes na base, conforme esperado da filtragem prévia realizada pela professora. Com isso, iremos prosseguir para a analise exploratória dos dados.</p>
+</section>
+<section id="resumos-gráficos" class="level3">
+<h3 class="anchored" data-anchor-id="resumos-gráficos">Resumos gráficos</h3>
 <p>Histograma de felicidade média populacional:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(owid, <span class="fu">aes</span>(<span class="at">x =</span> happiness_cantril_ladder)) <span class="sc">+</span></span>
@@ -275,7 +282,7 @@ Voltaremos a utilizar essa massa de dados em atividades futuras.</p>
 <span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># adiciona dispersão unidimensional de `mpg`</span></span>
 <span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_rug</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
+<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>Densidade de probabilidade de felicidade separado por cores para cada um dos continentes.</p>
@@ -284,13 +291,14 @@ Voltaremos a utilizar essa massa de dados em atividades futuras.</p>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(owid, <span class="fu">aes</span>(<span class="at">x =</span> happiness_cantril_ladder, <span class="at">fill =</span> continent)) <span class="sc">+</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_density</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">position =</span> <span class="st">"identity"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
+<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>Ao separar as densidades da variável felicidade por continente é possível verificar que o nível de felicidade das pessoas varia de acordo com o continente em que elas vivem.</p>
 </section>
-<section id="verificação-de-possíveis-variáveis-correlacionadas" class="level3">
-<h3 class="anchored" data-anchor-id="verificação-de-possíveis-variáveis-correlacionadas">Verificação de possíveis variáveis correlacionadas</h3>
+</section>
+<section id="verificação-de-possíveis-variáveis-correlacionadas" class="level2">
+<h2 class="anchored" data-anchor-id="verificação-de-possíveis-variáveis-correlacionadas">Verificação de possíveis variáveis correlacionadas</h2>
 <p>Mesmo antes de observar os dados, conjectura-se que algumas variáveis possam ter maior correlação com o nível de felicidade da população. As variáveis escolhidas devido a uma suspeita de possuírem correlação com o nível de felicidade foram: acesso das pessoas a fontes seguras de água, mortalidade infantil, consumo de leite e pessoas vivendo com sistema sanitário precário. Assim, foram gerados os gráficos entre tais grandezas, de forma a verificar se existem correlações ou não.</p>
 <p>Gráfico de dispersão para as variáveis felicidade e população sem acesso a fontes seguras de água.</p>
 <div class="cell">
@@ -301,7 +309,7 @@ Voltaremos a utilizar essa massa de dados em atividades futuras.</p>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>() <span class="sc">+</span></span>
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">aspect.ratio =</span> <span class="dv">1</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
+<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>É possível perceber uma correlação negativa entre as variáveis de falta de água e felicidade da população. Ao dividir os dados em cada um dos continentes é possível construir o seguinte gráfico:</p>
@@ -314,7 +322,7 @@ Voltaremos a utilizar essa massa de dados em atividades futuras.</p>
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">aspect.ratio =</span> <span class="dv">1</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
+<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>Percebe-se uma tendência de queda de felicidade quanto mais pessoas estão sem acesso a fontes seguras de água. É possível conjecturar também que em continentes como a África e a Asia a felicidade das pessoas é menos sensível a fontes seguras de água que nos demais continentes.</p>
@@ -328,7 +336,7 @@ Voltaremos a utilizar essa massa de dados em atividades futuras.</p>
 <span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
 <span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">aspect.ratio =</span> <span class="dv">1</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
+<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <hr>
@@ -343,7 +351,7 @@ Voltaremos a utilizar essa massa de dados em atividades futuras.</p>
 <span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
 <span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">aspect.ratio =</span> <span class="dv">1</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
+<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>Ao observar os dados, aparentemente em todos os continentes um consumo maior de leite está correlacionado com uma maior felicidade da população com linhas de tendência de inclinações semelhantes. Porém, os dados aparentam estar muito dispersos das linhas de tendência, precisando assim de novas métricas para confirmar ou refutar uma correlação entre os dados.</p>
@@ -357,35 +365,19 @@ Voltaremos a utilizar essa massa de dados em atividades futuras.</p>
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
 <span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">aspect.ratio =</span> <span class="dv">1</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="672"></p>
+<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>É possível perceber um efeito semelhante das mortes por motivos sanitários se compararmos com a falta de acesso à fontes seguras de água e de mortalidade infantil. As variáveis aparentam estar correlacionadas e também aparenta que a sensibilidade da felicidade com relação a mortes por falta de saneamento é menor no continente africano se comparado aos demais.</p>
 </section>
-<section id="análise-de-regressão" class="level3">
-<h3 class="anchored" data-anchor-id="análise-de-regressão">Análise de Regressão</h3>
-<ol type="1">
-<li>Assuma que um modelo de regressão linear simples é adequado para modelar a relação da variável de resposta <code>happiness_cantril_ladder</code> a cada uma das variáveis explicativas: <code>birth_rate</code>, <code>deaths_air_pollution</code>,<code>expected_schooling</code>, <code>life_expectancy</code>.</li>
-</ol>
-<ul>
-<li><p>Construa um modelo de regressão para cada um desses pares de variáveis;</p></li>
-<li><p>Construa gráficos de dispersão (separados) com as retas de regressão ajustadas para cada caso;</p></li>
-<li><p>Obtenha o MSE para cada modelo. Que variável explicativa produz menor variabilidade em torno da reta de regressão ajustada?</p></li>
-<li><p>Utilizando R2 como critério, qual das variáveis explicativas contribui para a maior redução na variabilidade da resposta <code>happiness_cantril_ladder</code>?</p></li>
-</ul>
-<ol start="2" type="1">
-<li>Para cada nível da variável categórica <code>continent</code>, construa um modelo de regressão para a variável de resposta <code>happiness_cantril_ladder</code> em função da variável escolhida no último item da questão anterior. Assuma que o modelo de 1a. ordem é adequado para modelar essas relações.</li>
-</ol>
-<ul>
-<li><p>Obtenha os modelos de regressão ajustados. As funções de regressão estimadas são semelhantes para todos os níveis da variável <code>continent</code>? Discuta.</p></li>
-<li><p>Obtenha o MSE para cada nível da variável <code>continent</code> A variabilidade em torno da reta de regressão ajustada é semelhante para todos os níveis?</p></li>
-<li><p>Construa intervalos de confiança 95% para o coeficiente angular da reta de regressão para os continentes <code>North America</code> e <code>South America</code>. As retas de regressão para os diferentes níveis parecem ter mesma inclinação? O que se pode concluir?</p></li>
-<li><p>Construa intervalos de confiança para a resposta esperada correspondendo a <code>deaths_air_pollution</code> = 50, para os continentes <code>North America</code> e <code>South America</code> O que se pode concluir?</p></li>
-<li><p>Construa intervalos de previsão para uma nova observação de cada continente (<code>North America</code> e <code>South America</code>) que tenha <code>deaths_air_pollution</code> = 50. O que se pode concluir?</p></li>
-</ul>
-<ol start="3" type="1">
-<li>Construa um modelo de regressão para a variável de resposta <code>happiness_cantril_ladder</code> em função de <code>gdp_pc</code>. Assuma que o modelo de 1a. ordem é adequado para modelar essas relações. Faz sentido aplicar alguma transformação à variável explicativa? Replique os procedimentos realizados no item (1) para um modelo considerando a variável explicativa em sua forma original ou transformad</li>
-</ol>
+</section>
+<section id="análise-de-regressão" class="level1">
+<h1>Análise de Regressão</h1>
+<section id="parte-1" class="level2">
+<h2 class="anchored" data-anchor-id="parte-1">Parte 1:</h2>
+<p>Assuma que um modelo de regressão linear simples é adequado para modelar a relação da variável de resposta <code>happiness_cantril_ladder</code> a cada uma das variáveis explicativas: <code>birth_rate</code>, <code>deaths_air_pollution</code>,<code>expected_schooling</code>, <code>life_expectancy</code>.</p>
+<section id="construa-um-modelo-de-regressão-para-cada-um-desses-pares-de-variáveis" class="level3">
+<h3 class="anchored" data-anchor-id="construa-um-modelo-de-regressão-para-cada-um-desses-pares-de-variáveis">Construa um modelo de regressão para cada um desses pares de variáveis;</h3>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Constrói modelo de regressão linear simples para taxa de natalidade</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>owid_rls_birth <span class="ot">&lt;-</span> <span class="fu">lm</span>(happiness_cantril_ladder <span class="sc">~</span> birth_rate, <span class="at">data =</span> owid)</span>
@@ -437,6 +429,24 @@ Coefficients:
         -2.4828           0.1096  </code></pre>
 </div>
 </div>
+<ul>
+<li><p>Construa gráficos de dispersão (separados) com as retas de regressão ajustadas para cada caso;</p></li>
+<li><p>Obtenha o MSE para cada modelo. Que variável explicativa produz menor variabilidade em torno da reta de regressão ajustada?</p></li>
+<li><p>Utilizando R2 como critério, qual das variáveis explicativas contribui para a maior redução na variabilidade da resposta <code>happiness_cantril_ladder</code>?</p></li>
+</ul>
+<ol start="2" type="1">
+<li>Para cada nível da variável categórica <code>continent</code>, construa um modelo de regressão para a variável de resposta <code>happiness_cantril_ladder</code> em função da variável escolhida no último item da questão anterior. Assuma que o modelo de 1a. ordem é adequado para modelar essas relações.</li>
+</ol>
+<ul>
+<li><p>Obtenha os modelos de regressão ajustados. As funções de regressão estimadas são semelhantes para todos os níveis da variável <code>continent</code>? Discuta.</p></li>
+<li><p>Obtenha o MSE para cada nível da variável <code>continent</code> A variabilidade em torno da reta de regressão ajustada é semelhante para todos os níveis?</p></li>
+<li><p>Construa intervalos de confiança 95% para o coeficiente angular da reta de regressão para os continentes <code>North America</code> e <code>South America</code>. As retas de regressão para os diferentes níveis parecem ter mesma inclinação? O que se pode concluir?</p></li>
+<li><p>Construa intervalos de confiança para a resposta esperada correspondendo a <code>deaths_air_pollution</code> = 50, para os continentes <code>North America</code> e <code>South America</code> O que se pode concluir?</p></li>
+<li><p>Construa intervalos de previsão para uma nova observação de cada continente (<code>North America</code> e <code>South America</code>) que tenha <code>deaths_air_pollution</code> = 50. O que se pode concluir?</p></li>
+</ul>
+<ol start="3" type="1">
+<li>Construa um modelo de regressão para a variável de resposta <code>happiness_cantril_ladder</code> em função de <code>gdp_pc</code>. Assuma que o modelo de 1a. ordem é adequado para modelar essas relações. Faz sentido aplicar alguma transformação à variável explicativa? Replique os procedimentos realizados no item (1) para um modelo considerando a variável explicativa em sua forma original ou transformad</li>
+</ol>
 </section>
 <section id="gráficos-de-dispersão" class="level3">
 <h3 class="anchored" data-anchor-id="gráficos-de-dispersão">Gráficos de dispersão</h3>
@@ -447,7 +457,7 @@ Coefficients:
 <span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># adiciona reta de regressão estimada</span></span>
 <span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_smooth</span>(<span class="at">method =</span> lm, <span class="at">se =</span> <span class="cn">FALSE</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="672"></p>
+<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
 </div>
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># gera gráfico de dispersão para taxa de mortes por poluição do ar</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(owid, <span class="fu">aes</span>(<span class="at">x =</span> deaths_air_pollution, <span class="at">y =</span> happiness_cantril_ladder)) <span class="sc">+</span></span>
@@ -455,7 +465,7 @@ Coefficients:
 <span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># adiciona reta de regressão estimada</span></span>
 <span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_smooth</span>(<span class="at">method =</span> lm, <span class="at">se =</span> <span class="cn">FALSE</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-13-2.png" class="img-fluid" width="672"></p>
+<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-12-2.png" class="img-fluid" width="672"></p>
 </div>
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># gera gráfico de dispersão para taxa de natalidade</span></span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(owid, <span class="fu">aes</span>(<span class="at">x =</span> expected_schooling, <span class="at">y =</span> happiness_cantril_ladder)) <span class="sc">+</span></span>
@@ -463,7 +473,7 @@ Coefficients:
 <span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># adiciona reta de regressão estimada</span></span>
 <span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_smooth</span>(<span class="at">method =</span> lm, <span class="at">se =</span> <span class="cn">FALSE</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-13-3.png" class="img-fluid" width="672"></p>
+<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-12-3.png" class="img-fluid" width="672"></p>
 </div>
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># gera gráfico de dispersão para expectativa de vida</span></span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(owid, <span class="fu">aes</span>(<span class="at">x =</span> life_expectancy, <span class="at">y =</span> happiness_cantril_ladder)) <span class="sc">+</span></span>
@@ -471,7 +481,7 @@ Coefficients:
 <span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># adiciona reta de regressão estimada</span></span>
 <span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_smooth</span>(<span class="at">method =</span> lm, <span class="at">se =</span> <span class="cn">FALSE</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-13-4.png" class="img-fluid" width="672"></p>
+<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-12-4.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>Interpretando os modelos utilizados, temos que as retas de regressão que melhor se aproxima, para descrever a dependência entre as grandezas selecionadas duas a duas são:</p>
@@ -534,21 +544,15 @@ happiness_cantril_ladder = 6.93 + -0.07 *birth_rate</p></li>
 <p>Não obstante, a melhor correlação, segundo o critério de R² ajustado, ainda sim é dada para a variável <code>deaths_air_pollution</code>, ou seja, a variável que melhor se ajusta ao modelo de regressão linear simples é a relação de mortes por poluição do ar (por 100.000).</p>
 <hr>
 </section>
+</section>
+</section>
 <section id="análise-por-continente" class="level1">
 <h1>Análise por continente</h1>
-<<<<<<< HEAD
-<p>Vamos refazer as análises passadas clusterizando as variáveis por continente.</p>
-<div>
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co">#|</span></span>
-<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>continentes <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Africa"</span>, <span class="st">"Asia"</span>, <span class="st">"Europe"</span>, <span class="st">"North America"</span>, <span class="st">"Oceania"</span>, <span class="st">"South America"</span>)</span>
-<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>grandezas <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"birth_rate"</span>, <span class="st">"deaths_air_pollution"</span>, <span class="st">"expected_schooling"</span>, <span class="st">"life_expectancy"</span>)</span>
-=======
 <p>Vamos refazer as análises passadas clusterizando as variáveis por continente somente para a variável “detahs_air_pollution”.</p>
 <div>
 <div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co">#|</span></span>
 <span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>continentes <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Africa"</span>, <span class="st">"Asia"</span>, <span class="st">"Europe"</span>, <span class="st">"North America"</span>, <span class="st">"Oceania"</span>, <span class="st">"South America"</span>)</span>
 <span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>grandezas <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"deaths_air_pollution"</span>)</span>
->>>>>>> ad952d4dc16a5c994a84ad6d278f3aca921c0713
 <span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>regressoes <span class="ot">&lt;-</span> <span class="fu">matrix</span>()</span>
 <span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a></span>
@@ -556,28 +560,6 @@ happiness_cantril_ladder = 6.93 + -0.07 *birth_rate</p></li>
 <span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> continentes) {</span>
 <span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Continente: "</span>, i))</span>
 <span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>    df_per_continent <span class="ot">&lt;-</span> owid <span class="sc">%&gt;%</span> <span class="fu">filter</span>(continent <span class="sc">==</span> i)</span>
-<<<<<<< HEAD
-<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># df_per_continent %&gt;% head(10) %&gt;% print()</span></span>
-<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a>    temporary <span class="ot">&lt;-</span> <span class="fu">c</span>()</span>
-<span id="cb42-14"><a href="#cb42-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb42-15"><a href="#cb42-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (metrica <span class="cf">in</span> grandezas) {</span>
-<span id="cb42-16"><a href="#cb42-16" aria-hidden="true" tabindex="-1"></a>        <span class="co"># print(metrica)</span></span>
-<span id="cb42-17"><a href="#cb42-17" aria-hidden="true" tabindex="-1"></a>        regressao <span class="ot">&lt;-</span> <span class="fu">lm</span>(df_per_continent<span class="sc">$</span>happiness_cantril_ladder <span class="sc">~</span> df_per_continent[[metrica]])</span>
-<span id="cb42-18"><a href="#cb42-18" aria-hidden="true" tabindex="-1"></a>        temporary <span class="ot">&lt;-</span> temporary <span class="sc">%&gt;%</span> <span class="fu">append</span>(regressao)</span>
-<span id="cb42-19"><a href="#cb42-19" aria-hidden="true" tabindex="-1"></a>        <span class="co"># print(regressao)</span></span>
-<span id="cb42-20"><a href="#cb42-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb42-21"><a href="#cb42-21" aria-hidden="true" tabindex="-1"></a>        newPlot <span class="ot">&lt;-</span> df_per_continent <span class="sc">%&gt;%</span></span>
-<span id="cb42-22"><a href="#cb42-22" aria-hidden="true" tabindex="-1"></a>            <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> .data[[metrica]], <span class="at">y =</span> happiness_cantril_ladder)) <span class="sc">+</span></span>
-<span id="cb42-23"><a href="#cb42-23" aria-hidden="true" tabindex="-1"></a>            <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb42-24"><a href="#cb42-24" aria-hidden="true" tabindex="-1"></a>            <span class="co"># adiciona reta de regressão estimada</span></span>
-<span id="cb42-25"><a href="#cb42-25" aria-hidden="true" tabindex="-1"></a>            <span class="fu">geom_smooth</span>(<span class="at">method =</span> lm, <span class="at">se =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb42-26"><a href="#cb42-26" aria-hidden="true" tabindex="-1"></a>        <span class="fu">print</span>(newPlot)</span>
-<span id="cb42-27"><a href="#cb42-27" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb42-28"><a href="#cb42-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb42-29"><a href="#cb42-29" aria-hidden="true" tabindex="-1"></a>    regressoes <span class="ot">&lt;-</span> <span class="fu">rbind</span>(regressoes, temporary)</span>
-<span id="cb42-30"><a href="#cb42-30" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
-=======
 <span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a>    temporary <span class="ot">&lt;-</span> <span class="fu">c</span>()</span>
 <span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a></span>
@@ -596,95 +578,33 @@ happiness_cantril_ladder = 6.93 + -0.07 *birth_rate</p></li>
 <span id="cb42-26"><a href="#cb42-26" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb42-27"><a href="#cb42-27" aria-hidden="true" tabindex="-1"></a>    regressoes <span class="ot">&lt;-</span> <span class="fu">rbind</span>(regressoes, temporary)</span>
 <span id="cb42-28"><a href="#cb42-28" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
->>>>>>> ad952d4dc16a5c994a84ad6d278f3aca921c0713
 <div class="cell quarto-layout-panel">
 <div class="quarto-layout-row quarto-layout-valign-top">
 <div class="cell-output cell-output-stdout quarto-layout-cell" style="flex-basis: 25.0%;justify-content: center;">
 <pre><code>[1] "Continente:  Africa"</code></pre>
 </div>
 <div class="cell-output-display quarto-layout-cell" style="flex-basis: 25.0%;justify-content: center;">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid" width="672"></p>
+<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid" width="672"></p>
 </div>
-<<<<<<< HEAD
-<div class="cell-output-display quarto-layout-cell" style="flex-basis: 25.0%;justify-content: center;">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-16-2.png" class="img-fluid" width="672"></p>
-</div>
-<div class="cell-output-display quarto-layout-cell" style="flex-basis: 25.0%;justify-content: center;">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-16-3.png" class="img-fluid" width="672"></p>
-</div>
-</div>
-<div class="quarto-layout-row quarto-layout-valign-top">
-<div class="cell-output-display quarto-layout-cell" style="flex-basis: 25.0%;justify-content: center;">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-16-4.png" class="img-fluid" width="672"></p>
-</div>
-=======
->>>>>>> ad952d4dc16a5c994a84ad6d278f3aca921c0713
 <div class="cell-output cell-output-stdout quarto-layout-cell" style="flex-basis: 25.0%;justify-content: center;">
 <pre><code>[1] "Continente:  Asia"</code></pre>
 </div>
 <div class="cell-output-display quarto-layout-cell" style="flex-basis: 25.0%;justify-content: center;">
-<<<<<<< HEAD
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-16-5.png" class="img-fluid" width="672"></p>
-</div>
-<div class="cell-output-display quarto-layout-cell" style="flex-basis: 25.0%;justify-content: center;">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-16-6.png" class="img-fluid" width="672"></p>
+<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-15-2.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <div class="quarto-layout-row quarto-layout-valign-top">
-<div class="cell-output-display quarto-layout-cell" style="flex-basis: 25.0%;justify-content: center;">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-16-7.png" class="img-fluid" width="672"></p>
-</div>
-<div class="cell-output-display quarto-layout-cell" style="flex-basis: 25.0%;justify-content: center;">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-16-8.png" class="img-fluid" width="672"></p>
-</div>
-=======
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-16-2.png" class="img-fluid" width="672"></p>
-</div>
-</div>
-<div class="quarto-layout-row quarto-layout-valign-top">
->>>>>>> ad952d4dc16a5c994a84ad6d278f3aca921c0713
 <div class="cell-output cell-output-stdout quarto-layout-cell" style="flex-basis: 25.0%;justify-content: center;">
 <pre><code>[1] "Continente:  Europe"</code></pre>
 </div>
 <div class="cell-output-display quarto-layout-cell" style="flex-basis: 25.0%;justify-content: center;">
-<<<<<<< HEAD
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-16-9.png" class="img-fluid" width="672"></p>
-</div>
-</div>
-<div class="quarto-layout-row quarto-layout-valign-top">
-<div class="cell-output-display quarto-layout-cell" style="flex-basis: 25.0%;justify-content: center;">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-16-10.png" class="img-fluid" width="672"></p>
-</div>
-<div class="cell-output-display quarto-layout-cell" style="flex-basis: 25.0%;justify-content: center;">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-16-11.png" class="img-fluid" width="672"></p>
-</div>
-<div class="cell-output-display quarto-layout-cell" style="flex-basis: 25.0%;justify-content: center;">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-16-12.png" class="img-fluid" width="672"></p>
-=======
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-16-3.png" class="img-fluid" width="672"></p>
->>>>>>> ad952d4dc16a5c994a84ad6d278f3aca921c0713
+<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-15-3.png" class="img-fluid" width="672"></p>
 </div>
 <div class="cell-output cell-output-stdout quarto-layout-cell" style="flex-basis: 25.0%;justify-content: center;">
 <pre><code>[1] "Continente:  North America"</code></pre>
 </div>
-<<<<<<< HEAD
-</div>
-<div class="quarto-layout-row quarto-layout-valign-top">
 <div class="cell-output-display quarto-layout-cell" style="flex-basis: 25.0%;justify-content: center;">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-16-13.png" class="img-fluid" width="672"></p>
-</div>
-<div class="cell-output-display quarto-layout-cell" style="flex-basis: 25.0%;justify-content: center;">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-16-14.png" class="img-fluid" width="672"></p>
-</div>
-<div class="cell-output-display quarto-layout-cell" style="flex-basis: 25.0%;justify-content: center;">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-16-15.png" class="img-fluid" width="672"></p>
-</div>
-<div class="cell-output-display quarto-layout-cell" style="flex-basis: 25.0%;justify-content: center;">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-16-16.png" class="img-fluid" width="672"></p>
-=======
-<div class="cell-output-display quarto-layout-cell" style="flex-basis: 25.0%;justify-content: center;">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-16-4.png" class="img-fluid" width="672"></p>
->>>>>>> ad952d4dc16a5c994a84ad6d278f3aca921c0713
+<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-15-4.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <div class="quarto-layout-row quarto-layout-valign-top">
@@ -692,49 +612,18 @@ happiness_cantril_ladder = 6.93 + -0.07 *birth_rate</p></li>
 <pre><code>[1] "Continente:  Oceania"</code></pre>
 </div>
 <div class="cell-output-display quarto-layout-cell" style="flex-basis: 25.0%;justify-content: center;">
-<<<<<<< HEAD
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-16-17.png" class="img-fluid" width="672"></p>
-</div>
-<div class="cell-output-display quarto-layout-cell" style="flex-basis: 25.0%;justify-content: center;">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-16-18.png" class="img-fluid" width="672"></p>
-</div>
-<div class="cell-output-display quarto-layout-cell" style="flex-basis: 25.0%;justify-content: center;">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-16-19.png" class="img-fluid" width="672"></p>
-</div>
-</div>
-<div class="quarto-layout-row quarto-layout-valign-top">
-<div class="cell-output-display quarto-layout-cell" style="flex-basis: 25.0%;justify-content: center;">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-16-20.png" class="img-fluid" width="672"></p>
-=======
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-16-5.png" class="img-fluid" width="672"></p>
->>>>>>> ad952d4dc16a5c994a84ad6d278f3aca921c0713
+<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-15-5.png" class="img-fluid" width="672"></p>
 </div>
 <div class="cell-output cell-output-stdout quarto-layout-cell" style="flex-basis: 25.0%;justify-content: center;">
 <pre><code>[1] "Continente:  South America"</code></pre>
 </div>
 <div class="cell-output-display quarto-layout-cell" style="flex-basis: 25.0%;justify-content: center;">
-<<<<<<< HEAD
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-16-21.png" class="img-fluid" width="672"></p>
-</div>
-<div class="cell-output-display quarto-layout-cell" style="flex-basis: 25.0%;justify-content: center;">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-16-22.png" class="img-fluid" width="672"></p>
-</div>
-</div>
-<div class="quarto-layout-row quarto-layout-valign-top">
-<div class="cell-output-display quarto-layout-cell" style="flex-basis: 25.0%;justify-content: center;">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-16-23.png" class="img-fluid" width="672"></p>
-</div>
-<div class="cell-output-display quarto-layout-cell" style="flex-basis: 25.0%;justify-content: center;">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-16-24.png" class="img-fluid" width="672"></p>
-=======
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-16-6.png" class="img-fluid" width="672"></p>
->>>>>>> ad952d4dc16a5c994a84ad6d278f3aca921c0713
+<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-15-6.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </div>
 </div>
 <p>Temos agora, além dos dados visuais para os gráficos avaliados, uma matriz <code>regressoes</code> com os dados de cada regressão linear simples com as colunas representando cada variável e as linhas, cada continente. Vamos avaliar então, para cada continente, se os modelos de regressão assumem erros semelhantes.</p>
-<<<<<<< HEAD
 <p>```{r} #| layout-ncol: 4</p>
 <p>for (i in continentes) {</p>
 <pre><code>print(paste("Continente: ", i))
@@ -753,144 +642,79 @@ newPlot &lt;- df_per_continent %&gt;%
     geom_point() +
     # adiciona reta de regressão estimada
     geom_smooth(method = lm, se = FALSE) </code></pre>
-<p>}</p>
-=======
-<div>
-<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> continentes) {</span>
-<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Continente: "</span>, i))</span>
-<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>    df_per_continent <span class="ot">&lt;-</span> owid <span class="sc">%&gt;%</span> <span class="fu">filter</span>(continent <span class="sc">==</span> i)</span>
-<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># df_per_continent %&gt;% head(10) %&gt;% print()</span></span>
-<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summary</span>(owid_rls_birth)<span class="sc">$</span>adj.r.squared</span>
-<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a>    metrica <span class="ot">&lt;-</span> grandezas[<span class="dv">1</span>]</span>
-<span id="cb49-10"><a href="#cb49-10" aria-hidden="true" tabindex="-1"></a>    regressao <span class="ot">&lt;-</span> <span class="fu">lm</span>(df_per_continent<span class="sc">$</span>happiness_cantril_ladder <span class="sc">~</span> df_per_continent[[metrica]])</span>
-<span id="cb49-11"><a href="#cb49-11" aria-hidden="true" tabindex="-1"></a>    temporary <span class="ot">&lt;-</span> temporary <span class="sc">%&gt;%</span> <span class="fu">append</span>(regressao)</span>
-<span id="cb49-12"><a href="#cb49-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>(regressao)</span>
-<span id="cb49-13"><a href="#cb49-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb49-14"><a href="#cb49-14" aria-hidden="true" tabindex="-1"></a>    newPlot <span class="ot">&lt;-</span> df_per_continent <span class="sc">%&gt;%</span></span>
-<span id="cb49-15"><a href="#cb49-15" aria-hidden="true" tabindex="-1"></a>        <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> .data[[metrica]], <span class="at">y =</span> happiness_cantril_ladder)) <span class="sc">+</span></span>
-<span id="cb49-16"><a href="#cb49-16" aria-hidden="true" tabindex="-1"></a>        <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb49-17"><a href="#cb49-17" aria-hidden="true" tabindex="-1"></a>        <span class="co"># adiciona reta de regressão estimada</span></span>
-<span id="cb49-18"><a href="#cb49-18" aria-hidden="true" tabindex="-1"></a>        <span class="fu">geom_smooth</span>(<span class="at">method =</span> lm, <span class="at">se =</span> <span class="cn">FALSE</span>) </span>
-<span id="cb49-19"><a href="#cb49-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb49-20"><a href="#cb49-20" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell quarto-layout-panel">
-<div class="quarto-layout-row quarto-layout-valign-top">
-<div class="cell-output cell-output-stdout quarto-layout-cell" style="flex-basis: 25.0%;justify-content: center;">
-<pre><code>[1] "Continente:  Africa"
+<p>} &lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD =======</p>
+<pre><code>
+Construindo intervalos de confiança para os coeficientes angulares com os dados dos continentes "North America" e "South America", temos:
 
-Call:
-lm(formula = df_per_continent$happiness_cantril_ladder ~ df_per_continent[[metrica]])
+::: {.cell}
 
-Coefficients:
-                (Intercept)  df_per_continent[[metrica]]  
-                   5.486803                    -0.007128  
+```{.r .cell-code}
+# Separando os dados para os continentes "North America" e "South America"
 
-[1] "Continente:  Asia"
+df_north_america &lt;- owid %&gt;% filter(continent == "North America")
+df_south_america &lt;- owid %&gt;% filter(continent == "South America")
 
-Call:
-lm(formula = df_per_continent$happiness_cantril_ladder ~ df_per_continent[[metrica]])
+# Criando os modelos de regressão entre as variáveis deaths_air_pollution e happiness_cantril_ladder
 
-Coefficients:
-                (Intercept)  df_per_continent[[metrica]]  
-                   6.019702                    -0.006096  
 
-[1] "Continente:  Europe"
+deaths_air_pollution_north &lt;- df_north_america$deaths_air_pollution
 
-Call:
-lm(formula = df_per_continent$happiness_cantril_ladder ~ df_per_continent[[metrica]])
+lm_north &lt;- lm(df_north_america$happiness_cantril_ladder ~ deaths_air_pollution_north)
 
-Coefficients:
-                (Intercept)  df_per_continent[[metrica]]  
-                    6.98089                     -0.02375  
+deaths_air_pollution_south &lt;- df_south_america$deaths_air_pollution
 
-[1] "Continente:  North America"
+lm_south &lt;- lm(df_south_america$happiness_cantril_ladder ~ deaths_air_pollution_south)
 
-Call:
-lm(formula = df_per_continent$happiness_cantril_ladder ~ df_per_continent[[metrica]])
 
-Coefficients:
-                (Intercept)  df_per_continent[[metrica]]  
-                    7.02874                     -0.01491  
+# Intervalos de confiança para os coeficientes angulares
 
-[1] "Continente:  Oceania"
-
-Call:
-lm(formula = df_per_continent$happiness_cantril_ladder ~ df_per_continent[[metrica]])
-
-Coefficients:
-                (Intercept)  df_per_continent[[metrica]]  
-                    7.16711                      0.03093  
-
-[1] "Continente:  South America"
-
-Call:
-lm(formula = df_per_continent$happiness_cantril_ladder ~ df_per_continent[[metrica]])
-
-Coefficients:
-                (Intercept)  df_per_continent[[metrica]]  
-                    6.53651                     -0.01039  </code></pre>
-</div>
-</div>
-</div>
-</div>
-<p>Construindo intervalos de confiança para os coeficientes angulares com os dados dos continentes “North America” e “South America”, temos:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Separando os dados para os continentes "North America" e "South America"</span></span>
-<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>df_north_america <span class="ot">&lt;-</span> owid <span class="sc">%&gt;%</span> <span class="fu">filter</span>(continent <span class="sc">==</span> <span class="st">"North America"</span>)</span>
-<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>df_south_america <span class="ot">&lt;-</span> owid <span class="sc">%&gt;%</span> <span class="fu">filter</span>(continent <span class="sc">==</span> <span class="st">"South America"</span>)</span>
-<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Criando os modelos de regressão entre as variáveis deaths_air_pollution e happiness_cantril_ladder</span></span>
-<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a>deaths_air_pollution_north <span class="ot">&lt;-</span> df_north_america<span class="sc">$</span>deaths_air_pollution</span>
-<span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-11"><a href="#cb51-11" aria-hidden="true" tabindex="-1"></a>lm_north <span class="ot">&lt;-</span> <span class="fu">lm</span>(df_north_america<span class="sc">$</span>happiness_cantril_ladder <span class="sc">~</span> deaths_air_pollution_north)</span>
-<span id="cb51-12"><a href="#cb51-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-13"><a href="#cb51-13" aria-hidden="true" tabindex="-1"></a>deaths_air_pollution_south <span class="ot">&lt;-</span> df_south_america<span class="sc">$</span>deaths_air_pollution</span>
-<span id="cb51-14"><a href="#cb51-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-15"><a href="#cb51-15" aria-hidden="true" tabindex="-1"></a>lm_south <span class="ot">&lt;-</span> <span class="fu">lm</span>(df_south_america<span class="sc">$</span>happiness_cantril_ladder <span class="sc">~</span> deaths_air_pollution_south)</span>
-<span id="cb51-16"><a href="#cb51-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-17"><a href="#cb51-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-18"><a href="#cb51-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Intervalos de confiança para os coeficientes angulares</span></span>
-<span id="cb51-19"><a href="#cb51-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-20"><a href="#cb51-20" aria-hidden="true" tabindex="-1"></a><span class="fu">confint.lm</span>(lm_north,<span class="at">level=</span><span class="fl">0.95</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+confint.lm(lm_north,level=0.95)</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>                                 2.5 %      97.5 %
 (Intercept)                 6.87501763  7.18246829
 deaths_air_pollution_north -0.01682869 -0.01299155</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">confint.lm</span>(lm_south,<span class="at">level=</span><span class="fl">0.95</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">confint.lm</span>(lm_south,<span class="at">level=</span><span class="fl">0.95</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                                 2.5 %       97.5 %
 (Intercept)                 6.34088377  6.732142139
 deaths_air_pollution_south -0.01477535 -0.006005369</code></pre>
 </div>
-</div>
-<p>Assim, é possível perceber que o coeficiente angular para a América do Norte possui grande probabilidade de ser maior que o da América do Sul. Isso é percebido pois os intervalos de confiança 95% não possuem intersseção.</p>
+<p>::: Assim, é possível perceber que o coeficiente angular para a América do Norte possui grande probabilidade de ser maior que o da América do Sul. Isso é percebido pois os intervalos de confiança 95% não possuem intersseção.</p>
 <p>Construindo intevalos de confiança para a resposta esperada da variável “happiness_cantril_ladder” e intervalos de previsão para uma realização da variável “happiness_cantril_ladder” para o valor da variável “deaths_air_pollution” = 50.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="co"># valor de 50 para a variável deaths_air_pollution</span></span>
-<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>Xn <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">deaths_air_pollution_north =</span> <span class="dv">50</span>)</span>
-<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>Xs <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">deaths_air_pollution_south =</span> <span class="dv">50</span>)</span>
-<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Construção dos intervalos de confiança 95%</span></span>
-<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a>ic_north <span class="ot">&lt;-</span> <span class="fu">predict.lm</span>(lm_north, <span class="at">newdata =</span> Xn, <span class="at">interval=</span><span class="st">"confidence"</span>, <span class="at">level =</span> <span class="fl">0.95</span>)</span>
-<span id="cb55-8"><a href="#cb55-8" aria-hidden="true" tabindex="-1"></a>ic_south <span class="ot">&lt;-</span> <span class="fu">predict.lm</span>(lm_south, <span class="at">newdata =</span> Xs, <span class="at">interval=</span><span class="st">"confidence"</span>, <span class="at">level =</span> <span class="fl">0.95</span>)</span>
-<span id="cb55-9"><a href="#cb55-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb55-10"><a href="#cb55-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Construção de intervalos de previsão</span></span>
-<span id="cb55-11"><a href="#cb55-11" aria-hidden="true" tabindex="-1"></a>ip_north <span class="ot">&lt;-</span> <span class="fu">predict.lm</span>(lm_north, <span class="at">newdata =</span> Xn, <span class="at">interval=</span><span class="st">"prediction"</span>, <span class="at">level =</span> <span class="fl">0.95</span>)</span>
-<span id="cb55-12"><a href="#cb55-12" aria-hidden="true" tabindex="-1"></a>ip_south <span class="ot">&lt;-</span> <span class="fu">predict.lm</span>(lm_south, <span class="at">newdata =</span> Xs, <span class="at">interval=</span><span class="st">"prediction"</span>, <span class="at">level =</span> <span class="fl">0.95</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="co"># valor de 50 para a variável deaths_air_pollution</span></span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>Xn <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">deaths_air_pollution_north =</span> <span class="dv">50</span>)</span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>Xs <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">deaths_air_pollution_south =</span> <span class="dv">50</span>)</span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Construção dos intervalos de confiança 95%</span></span>
+<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a>ic_north <span class="ot">&lt;-</span> <span class="fu">predict.lm</span>(lm_north, <span class="at">newdata =</span> Xn, <span class="at">interval=</span><span class="st">"confidence"</span>, <span class="at">level =</span> <span class="fl">0.95</span>)</span>
+<span id="cb54-8"><a href="#cb54-8" aria-hidden="true" tabindex="-1"></a>ic_south <span class="ot">&lt;-</span> <span class="fu">predict.lm</span>(lm_south, <span class="at">newdata =</span> Xs, <span class="at">interval=</span><span class="st">"confidence"</span>, <span class="at">level =</span> <span class="fl">0.95</span>)</span>
+<span id="cb54-9"><a href="#cb54-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-10"><a href="#cb54-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Construção de intervalos de previsão</span></span>
+<span id="cb54-11"><a href="#cb54-11" aria-hidden="true" tabindex="-1"></a>ip_north <span class="ot">&lt;-</span> <span class="fu">predict.lm</span>(lm_north, <span class="at">newdata =</span> Xn, <span class="at">interval=</span><span class="st">"prediction"</span>, <span class="at">level =</span> <span class="fl">0.95</span>)</span>
+<span id="cb54-12"><a href="#cb54-12" aria-hidden="true" tabindex="-1"></a>ip_south <span class="ot">&lt;-</span> <span class="fu">predict.lm</span>(lm_south, <span class="at">newdata =</span> Xs, <span class="at">interval=</span><span class="st">"prediction"</span>, <span class="at">level =</span> <span class="fl">0.95</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Assim, os valores ajustados para os intervalos de confiança foram de 6.28 e 6.02 para a América do Norte e América do Sul, respectivamente. Já os intervalos de confiança para a América do Norte e América do Sul foram (6.18 ,6.39) e (5.92 ,6.12), respectivamente.</p>
 <p>É possível concluir com bastante confiança que as pessoas que vivem na América do Norte se sentem na média mais felizes que as da América do Sul dado um mesmo valor de mortes por poluição do ar.</p>
 <p>Os valores para a estimativa pontual foram de 6.28 e 6.02 para a América do Norte e América do Sul, respectivamente. Já os intervalos de previsão para a América do Norte e América do Sul foram (5.3 ,7.26) e (5.31 ,6.72), respectivamente.</p>
 <p>Dado que os intervalos de previsão estão bastante sobrepostos não é possível afirmar que uma realização de uma medida feita na América do Norte será maior ou menor que na América do Sul.</p>
->>>>>>> ad952d4dc16a5c994a84ad6d278f3aca921c0713
+<blockquote class="blockquote">
+<blockquote class="blockquote">
+<blockquote class="blockquote">
+<blockquote class="blockquote">
+<blockquote class="blockquote">
+<blockquote class="blockquote">
+<blockquote class="blockquote">
+<p>ad952d4dc16a5c994a84ad6d278f3aca921c0713</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
 </section>
 
 </main>

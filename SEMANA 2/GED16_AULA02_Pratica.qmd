@@ -20,11 +20,13 @@ library(gridExtra)
 
 ------------------------------------------------------------------------
 
-### Introdução
+# Introdução
 
 Os dados disponíveis no arquivo `data/owid.csv` foram obtidos do portal [Our World in Data](https://ourworldindata.org/), cuja missão é publicar pesquisas e dados relacionados a grandes problemas mundiais como pobreza, doenças, fome, mudanças climáticas, guerras, riscos existenciais e desigualdade.
 
 Os dados originais foram pré-processados no sentido de remover observações faltantes. Há um total de 985 observações coletadas para 21 variáveis:
+
+**Variáveis**
 
 1.  `continent`: continente em que está o país
 2.  `entity`: nome do país
@@ -50,10 +52,12 @@ Os dados originais foram pré-processados no sentido de remover observações fa
 
 ------------------------------------------------------------------------
 
-### Análise Exploratória de Dados
+# Análise Exploratória de Dados
+## Análise Preliminar e Preparação da Massa de Dados
 
-Conduza a análise exploratória da massa de dados `owid`, a fim de compreender suas características principais.\
-Voltaremos a utilizar essa massa de dados em atividades futuras.
+Nesta seção, é conduzida a análise exploratória da massa de dados `owid`, a fim de compreender suas características principais. De modo geral, a ideia inicial é procurar por possíveis correlações entre a felicidade média da população e as demais variáveis.
+
+Inicialmente, vamos limpar a área de trabalho e iniciar a leitura dos dados.
 
 ```{r}
 #| warning: false
@@ -68,33 +72,30 @@ library(tidyverse)
 # carrega dados
 owid <- read_delim("data/owid.csv", delim = ",", col_names = TRUE)
 
-# recodifica variável `continent` como fator
+# codifica variável `continent` como fator
 owid$continent <- as.factor(owid$continent)
-```
 
-```         
----
->>> REPLICAR AQUI A ANÁLISE REALIZADA NA AULA PASSADA
----
-```
-
-Foi feita uma análise exploratória dos dados fornecidos procurando por possíveis correlações entre a felicidade média da população e as demais variáveis.
-
-Limpando a área de trabalho e importando os dados:
-
-```{r}
-rm(list = ls())
-owid <- read_delim("data/owid.csv", delim = ",", col_names = TRUE, show_col_types = FALSE)
 str(owid)
 ```
 
+
+Observamos, portanto, um total de 985 dados, sendo três colunas apresentadas como strings (`continent`, `entity` e `country_code`) e as demais como numéricas. Não obstante, os nomes das variáveis são intuitivos e não necessitam de alterações.
+
+### Dados faltantes
+Agora, vamos verificar a presença de dados faltantes na base. Para isso, vamos utilizar o comando `summary()`.
+
+
 ```{r}
-
-
 # verifica nomes das variáveis
-
 summary(owid)
+
+# print("Posição dos dados faltantes:")
+which(is.na(owid))
 ```
+
+Portanto, percebemos que não há dados faltantes na base, conforme esperado da filtragem prévia realizada pela professora. Com isso, iremos prosseguir para a analise exploratória dos dados.
+
+### Resumos gráficos
 
 Histograma de felicidade média populacional:
 
@@ -120,7 +121,7 @@ ggplot(owid, aes(x = happiness_cantril_ladder, fill = continent)) +
 
 Ao separar as densidades da variável felicidade por continente é possível verificar que o nível de felicidade das pessoas varia de acordo com o continente em que elas vivem.
 
-### Verificação de possíveis variáveis correlacionadas
+## Verificação de possíveis variáveis correlacionadas
 
 Mesmo antes de observar os dados, conjectura-se que algumas variáveis possam ter maior correlação com o nível de felicidade da população. As variáveis escolhidas devido a uma suspeita de possuírem correlação com o nível de felicidade foram: acesso das pessoas a fontes seguras de água, mortalidade infantil, consumo de leite e pessoas vivendo com sistema sanitário precário. Assim, foram gerados os gráficos entre tais grandezas, de forma a verificar se existem correlações ou não.
 
@@ -194,31 +195,14 @@ ggplot(owid, aes(x = deaths_sanitation, y = happiness_cantril_ladder, color = co
 
 É possível perceber um efeito semelhante das mortes por motivos sanitários se compararmos com a falta de acesso à fontes seguras de água e de mortalidade infantil. As variáveis aparentam estar correlacionadas e também aparenta que a sensibilidade da felicidade com relação a mortes por falta de saneamento é menor no continente africano se comparado aos demais.
 
-### Análise de Regressão
+------------------------------------------------------------------------
 
-1.  Assuma que um modelo de regressão linear simples é adequado para modelar a relação da variável de resposta `happiness_cantril_ladder` a cada uma das variáveis explicativas: `birth_rate`, `deaths_air_pollution`,`expected_schooling`, `life_expectancy`.
+# Análise de Regressão
 
--   Construa um modelo de regressão para cada um desses pares de variáveis;
+## Parte 1  
+Assuma que um modelo de regressão linear simples é adequado para modelar a relação da variável de resposta `happiness_cantril_ladder` a cada uma das variáveis explicativas: `birth_rate`, `deaths_air_pollution`,`expected_schooling`, `life_expectancy`.
 
--   Construa gráficos de dispersão (separados) com as retas de regressão ajustadas para cada caso;
-
--   Obtenha o MSE para cada modelo. Que variável explicativa produz menor variabilidade em torno da reta de regressão ajustada?
-
--   Utilizando R2 como critério, qual das variáveis explicativas contribui para a maior redução na variabilidade da resposta `happiness_cantril_ladder`?
-
-2.  Para cada nível da variável categórica `continent`, construa um modelo de regressão para a variável de resposta `happiness_cantril_ladder` em função da variável escolhida no último item da questão anterior. Assuma que o modelo de 1a. ordem é adequado para modelar essas relações.
-
--   Obtenha os modelos de regressão ajustados. As funções de regressão estimadas são semelhantes para todos os níveis da variável `continent`? Discuta.
-
--   Obtenha o MSE para cada nível da variável `continent` A variabilidade em torno da reta de regressão ajustada é semelhante para todos os níveis?
-
--   Construa intervalos de confiança 95% para o coeficiente angular da reta de regressão para os continentes `North America` e `South America`. As retas de regressão para os diferentes níveis parecem ter mesma inclinação? O que se pode concluir?
-
--   Construa intervalos de confiança para a resposta esperada correspondendo a `deaths_air_pollution` = 50, para os continentes `North America` e `South America` O que se pode concluir?
-
--   Construa intervalos de previsão para uma nova observação de cada continente (`North America` e `South America`) que tenha `deaths_air_pollution` = 50. O que se pode concluir?
-
-3.  Construa um modelo de regressão para a variável de resposta `happiness_cantril_ladder` em função de `gdp_pc`. Assuma que o modelo de 1a. ordem é adequado para modelar essas relações. Faz sentido aplicar alguma transformação à variável explicativa? Replique os procedimentos realizados no item (1) para um modelo considerando a variável explicativa em sua forma original ou transformad
+### Construa um modelo de regressão para cada um desses pares de variáveis
 
 ```{r}
 # Constrói modelo de regressão linear simples para taxa de natalidade
@@ -238,7 +222,7 @@ owid_rls_LifeExpec <- lm(happiness_cantril_ladder ~ life_expectancy, data = owid
 owid_rls_LifeExpec
 ```
 
-### Gráficos de dispersão
+### Construa gráficos de dispersão (separados) com as retas de regressão ajustadas para cada caso
 
 ```{r}
 # gera gráfico de dispersão para taxa de natalidade
@@ -277,7 +261,7 @@ Interpretando os modelos utilizados, temos que as retas de regressão que melhor
 
 -   Felicidade x Expectativa de vida: happiness_cantril_ladder = `r round(owid_rls_LifeExpec$coefficients[1], digits = 2)` + `r round(owid_rls_LifeExpec$coefficients[2], digits = 2)` \*life_expectancy
 
-### MSE
+### Obtenha o MSE para cada modelo. Que variável explicativa produz menor variabilidade em torno da reta de regressão ajustada?
 
 ```{r}
 # MSE para taxa de natalidade
@@ -294,6 +278,8 @@ mean(owid_rls_LifeExpec$residuals^2)
 ```
 
 Dessa forma, percebemos que o menor MSE é para a variável `deaths_air_pollution`, ou seja, a variável que melhor se ajusta ao modelo de regressão linear simples é a taxa de mortes por poluição do ar.
+
+### Utilizando R2 como critério, qual das variáveis explicativas contribui para a maior redução na variabilidade da resposta `happiness_cantril_ladder`?
 
 Avaliando agora a relação de R² ajustado para cada par de variáveis, temos
 
@@ -314,6 +300,29 @@ summary(owid_rls_LifeExpec)$adj.r.squared
 Não obstante, a melhor correlação, segundo o critério de R² ajustado, ainda sim é dada para a variável `deaths_air_pollution`, ou seja, a variável que melhor se ajusta ao modelo de regressão linear simples é a relação de mortes por poluição do ar (por 100.000).
 
 ------------------------------------------------------------------------
+
+## Parte 2 
+Para cada nível da variável categórica `continent`, construa um modelo de regressão para a variável de resposta `happiness_cantril_ladder` em função da variável escolhida no último item da questão anterior. Assuma que o modelo de 1a. ordem é adequado para modelar essas relações.
+
+### Obtenha os modelos de regressão ajustados. As funções de regressão estimadas são semelhantes para todos os níveis da variável `continent`? Discuta.
+
+### Obtenha o MSE para cada nível da variável `continent` A variabilidade em torno da reta de regressão ajustada é semelhante para todos os níveis?
+
+### Construa intervalos de confiança 95% para o coeficiente angular da reta de regressão para os continentes `North America` e `South America`. As retas de regressão para os diferentes níveis parecem ter mesma inclinação? O que se pode concluir?
+
+### Construa intervalos de confiança para a resposta esperada correspondendo a `deaths_air_pollution` = 50, para os continentes `North America` e `South America` O que se pode concluir?
+
+### Construa intervalos de previsão para uma nova observação de cada continente (`North America` e `South America`) que tenha `deaths_air_pollution` = 50. O que se pode concluir?
+
+## Parte 3
+Construa um modelo de regressão para a variável de resposta `happiness_cantril_ladder` em função de `gdp_pc`. Assuma que o modelo de 1a. ordem é adequado para modelar essas relações. Faz sentido aplicar alguma transformação à variável explicativa? Replique os procedimentos realizados no item (1) para um modelo considerando a variável explicativa em sua forma original ou transformada.
+
+
+
+
+
+
+
 
 # Análise por continente
 
