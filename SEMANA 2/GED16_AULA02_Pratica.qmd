@@ -356,27 +356,27 @@ for (i in continentes) {
 
 Temos agora, além dos dados visuais para os gráficos avaliados, uma matriz `regressoes` com os dados de cada regressão linear simples com as colunas representando cada variável e as linhas, cada continente. Vamos avaliar então, para cada continente, se os modelos de regressão assumem erros semelhantes.
 
-```{r}
-#| layout-ncol: 4
+\`\`\`{r} #\| layout-ncol: 4
 
 for (i in continentes) {
-  
-    print(paste("Continente: ", i))
-    df_per_continent <- owid %>% filter(continent == i)
-    # df_per_continent %>% head(10) %>% print()
 
-    summary(owid_rls_birth)$adj.r.squared
+```         
+print(paste("Continente: ", i))
+df_per_continent <- owid %>% filter(continent == i)
+# df_per_continent %>% head(10) %>% print()
 
-    metrica <- grandezas[1]
-    regressao <- lm(df_per_continent$happiness_cantril_ladder ~ df_per_continent[[metrica]])
-    temporary <- temporary %>% append(regressao)
-    print(regressao)
+summary(owid_rls_birth)$adj.r.squared
 
-    newPlot <- df_per_continent %>%
-        ggplot(aes(x = .data[[metrica]], y = happiness_cantril_ladder)) +
-        geom_point() +
-        # adiciona reta de regressão estimada
-        geom_smooth(method = lm, se = FALSE) 
+metrica <- grandezas[1]
+regressao <- lm(df_per_continent$happiness_cantril_ladder ~ df_per_continent[[metrica]])
+temporary <- temporary %>% append(regressao)
+print(regressao)
+
+newPlot <- df_per_continent %>%
+    ggplot(aes(x = .data[[metrica]], y = happiness_cantril_ladder)) +
+    geom_point() +
+    # adiciona reta de regressão estimada
+    geom_smooth(method = lm, se = FALSE) 
+```
 
 }
-
