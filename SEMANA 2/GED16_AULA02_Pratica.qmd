@@ -306,27 +306,7 @@ Para cada nível da variável categórica `continent`, construa um modelo de reg
 
 ### Obtenha os modelos de regressão ajustados. As funções de regressão estimadas são semelhantes para todos os níveis da variável `continent`? Discuta.
 
-### Obtenha o MSE para cada nível da variável `continent` A variabilidade em torno da reta de regressão ajustada é semelhante para todos os níveis?
-
-### Construa intervalos de confiança 95% para o coeficiente angular da reta de regressão para os continentes `North America` e `South America`. As retas de regressão para os diferentes níveis parecem ter mesma inclinação? O que se pode concluir?
-
-### Construa intervalos de confiança para a resposta esperada correspondendo a `deaths_air_pollution` = 50, para os continentes `North America` e `South America` O que se pode concluir?
-
-### Construa intervalos de previsão para uma nova observação de cada continente (`North America` e `South America`) que tenha `deaths_air_pollution` = 50. O que se pode concluir?
-
-## Parte 3
-Construa um modelo de regressão para a variável de resposta `happiness_cantril_ladder` em função de `gdp_pc`. Assuma que o modelo de 1a. ordem é adequado para modelar essas relações. Faz sentido aplicar alguma transformação à variável explicativa? Replique os procedimentos realizados no item (1) para um modelo considerando a variável explicativa em sua forma original ou transformada.
-
-
-
-
-
-
-
-
-# Análise por continente
-
-Vamos refazer as análises passadas clusterizando as variáveis por continente somente para a variável "detahs_air_pollution".
+Vamos refazer as análises passadas \textit{clusterizando} as variáveis por continente somente para a variável "deaths_air_pollution".
 
 ```{r}
 #| layout-ncol: 4
@@ -365,11 +345,14 @@ for (i in continentes) {
 
 Temos agora, além dos dados visuais para os gráficos avaliados, uma matriz `regressoes` com os dados de cada regressão linear simples com as colunas representando cada variável e as linhas, cada continente. Vamos avaliar então, para cada continente, se os modelos de regressão assumem erros semelhantes.
 
-\`\`\`{r} #\| layout-ncol: 4
+### Obtenha o MSE para cada nível da variável `continent` A variabilidade em torno da reta de regressão ajustada é semelhante para todos os níveis?
+
+```{r} 
+#\| layout-ncol: 4
 
 for (i in continentes) {
 
-```         
+        
 print(paste("Continente: ", i))
 df_per_continent <- owid %>% filter(continent == i)
 # df_per_continent %>% head(10) %>% print()
@@ -386,12 +369,10 @@ newPlot <- df_per_continent %>%
     geom_point() +
     # adiciona reta de regressão estimada
     geom_smooth(method = lm, se = FALSE) 
+}
 ```
 
-}
-<<<<<<< HEAD
-=======
-```
+### Construa intervalos de confiança 95% para o coeficiente angular da reta de regressão para os continentes `North America` e `South America`. As retas de regressão para os diferentes níveis parecem ter mesma inclinação? O que se pode concluir?
 
 Construindo intervalos de confiança para os coeficientes angulares com os dados dos continentes "North America" e "South America", temos:
 
@@ -419,10 +400,11 @@ confint.lm(lm_north,level=0.95)
 confint.lm(lm_south,level=0.95)
 
 ```
-Assim, é possível perceber que o coeficiente angular para a América do Norte possui grande probabilidade de ser maior que o da América do Sul. Isso é percebido pois os intervalos de confiança 95% não possuem intersseção.
+Assim, é possível perceber que o coeficiente angular para a América do Norte possui grande probabilidade de ser maior que o da América do Sul. Isso é percebido pois os intervalos de confiança 95% não possuem intersecção.
 
+### Construa intervalos de confiança para a resposta esperada correspondendo a `deaths_air_pollution` = 50, para os continentes `North America` e `South America` O que se pode concluir?
 
-Construindo intevalos de confiança para a resposta esperada da variável "happiness_cantril_ladder" e intervalos de previsão para uma realização da variável "happiness_cantril_ladder" para o valor da variável "deaths_air_pollution" = 50.
+Construindo intervalos de confiança para a resposta esperada da variável "happiness_cantril_ladder" para o valor da variável "deaths_air_pollution" = 50.
 
 ```{r}
 # valor de 50 para a variável deaths_air_pollution
@@ -434,18 +416,39 @@ Xs <- data.frame(deaths_air_pollution_south = 50)
 ic_north <- predict.lm(lm_north, newdata = Xn, interval="confidence", level = 0.95)
 ic_south <- predict.lm(lm_south, newdata = Xs, interval="confidence", level = 0.95)
 
-# Construção de intervalos de previsão
-ip_north <- predict.lm(lm_north, newdata = Xn, interval="prediction", level = 0.95)
-ip_south <- predict.lm(lm_south, newdata = Xs, interval="prediction", level = 0.95)
-```
 
 Assim, os valores ajustados para os intervalos de confiança foram de `r round(ic_north[1], digits = 2)` e `r round(ic_south[1],digits = 2)` para a América do Norte e América do Sul, respectivamente. Já os intervalos de confiança para a América do Norte e América do Sul foram (`r round(ic_north[2],digits = 2)` ,`r round(ic_north[3],digits = 2)`) e (`r round(ic_south[2],digits = 2)` ,`r round(ic_south[3],digits = 2)`), respectivamente.
 
 É possível concluir com bastante confiança que as pessoas que vivem na América do Norte se sentem na média mais felizes que as da América do Sul dado um mesmo valor de mortes por poluição do ar.
 
+```
+
+### Construa intervalos de previsão para uma nova observação de cada continente (`North America` e `South America`) que tenha `deaths_air_pollution` = 50. O que se pode concluir?
+
+Construindo intervalos de previsão para uma realização da variável "happiness_cantril_ladder" para o valor da variável "deaths_air_pollution" = 50.
+
+```{r}
+
+# Construção de intervalos de previsão
+ip_north <- predict.lm(lm_north, newdata = Xn, interval="prediction", level = 0.95)
+ip_south <- predict.lm(lm_south, newdata = Xs, interval="prediction", level = 0.95)
+
+```
+
 Os valores para a estimativa pontual foram de `r round(ip_north[1], digits = 2)` e `r round(ip_south[1],digits = 2)` para a América do Norte e América do Sul, respectivamente. Já os intervalos de previsão para a América do Norte e América do Sul foram (`r round(ip_north[2],digits = 2)` ,`r round(ip_north[3],digits = 2)`) e (`r round(ip_south[2],digits = 2)` ,`r round(ip_south[3],digits = 2)`), respectivamente.
 
 Dado que os intervalos de previsão estão bastante sobrepostos não é possível afirmar que uma realização de uma medida feita na América do Norte será maior ou menor que na América do Sul.
+
+## Parte 3
+Construa um modelo de regressão para a variável de resposta `happiness_cantril_ladder` em função de `gdp_pc`. Assuma que o modelo de 1a. ordem é adequado para modelar essas relações. Faz sentido aplicar alguma transformação à variável explicativa? Replique os procedimentos realizados no item (1) para um modelo considerando a variável explicativa em sua forma original ou transformada.
+
+
+
+
+
+
+
+
 
 
 
