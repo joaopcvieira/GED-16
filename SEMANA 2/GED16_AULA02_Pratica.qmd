@@ -262,6 +262,17 @@ ggplot(owid, aes(x = life_expectancy, y = happiness_cantril_ladder)) +
 
 Interpretando os modelos utilizados, temos que as retas de regressão que melhor se aproxima, para descrever a dependência entre as grandezas selecionadas duas a duas são:
 
+-   Felicidade x Taxa de natalidade:\
+    happiness_cantril_ladder = `r round(owid_rls_birth$coefficients[1], digits = 2)` + `r round(owid_rls_birth$coefficients[2], digits = 2)` \*birth_rate
+
+-   Felicidade x Mortes por poluição do ar: happiness_cantril_ladder = `r round(owid_rls_Dair$coefficients[1], digits = 2)` + `r round(owid_rls_Dair$coefficients[2], digits = 2)` \*deaths_air_pollution
+
+-   Felicidade x Expectativa de escolaridade: happiness_cantril_ladder = `r round(owid_rls_ExpSchool$coefficients[1], digits = 2)` + `r round(owid_rls_ExpSchool$coefficients[2], digits = 2)` \*expected_schooling
+
+-   Felicidade x Expectativa de vida: happiness_cantril_ladder = `r round(owid_rls_LifeExpec$coefficients[1], digits = 2)` + `r round(owid_rls_LifeExpec$coefficients[2], digits = 2)` \*life_expectancy
+
+Colocando em um ambiente com os números escritos expressamente:
+
 -   Taxa de Natalidade
 
 Modelo: $happiness\_cantril\_ladder = -0.07347 \cdot birth\_rate + 6.93486$
@@ -453,7 +464,7 @@ print(result_line_south)
 
 ```
 
-Assim, os valores ajustados para os intervalos de confiança foram de 6.28 e 6.02 para a América do Norte e América do Sul, respectivamente. Já os intervalos de confiança para a América do Norte e América do Sul foram (6.18, 6.39) e (5.92, 6.12), respectivamente.
+Assim, os valores ajustados para os intervalos de confiança foram de `r round(ic_north[1], digits = 2)` e `r round(ic_south[1],digits = 2)` para a América do Norte e América do Sul, respectivamente. Já os intervalos de confiança para a América do Norte e América do Sul foram (`r round(ic_north[2],digits = 2)` ,`r round(ic_north[3],digits = 2)`) e (`r round(ic_south[2],digits = 2)` ,`r round(ic_south[3],digits = 2)`), respectivamente.
 
 Comparando esses intervalos, podemos dizer que o intervalo de confiança para North America é um pouco mais amplo, indicando uma maior incerteza na estimativa da felicidade em comparação com South America. Isso pode sugerir que a relação entre `deaths_air_pollution` e `happiness_cantril_ladder` pode ser mais estável ou menos variável em South America em comparação com North America, para esse valor específico de `deaths_air_pollution`.
 
@@ -469,11 +480,17 @@ Construindo intervalos de previsão para uma realização da variável `happines
 ip_north <- predict.lm(lm_north, newdata = Xn, interval="prediction", level = 0.95)
 ip_south <- predict.lm(lm_south, newdata = Xs, interval="prediction", level = 0.95)
 
+result_line_northp <- paste("North America: fit =", ip_north[1], "lower bound =", ip_north[2], "upper bound =", ip_north[3])
+result_line_southp <- paste("South America: fit =", ip_south[1], "lower bound =", ip_south[2], "upper bound =", ip_south[3])
+
+print(result_line_northp)
+print(result_line_southp)
+
 ```
 
 Os valores para a estimativa pontual foram de `r round(ip_north[1], digits = 2)` e `r round(ip_south[1],digits = 2)` para a América do Norte e América do Sul, respectivamente. Já os intervalos de previsão para a América do Norte e América do Sul foram (`r round(ip_north[2],digits = 2)` ,`r round(ip_north[3],digits = 2)`) e (`r round(ip_south[2],digits = 2)` ,`r round(ip_south[3],digits = 2)`), respectivamente.
 
-Dado que os intervalos de previsão estão bastante sobrepostos não é possível afirmar que uma realização de uma medida feita na América do Norte será maior ou menor que na América do Sul.
+Ao comparar os intervalos de previsão para os cenários de `North America` e `South America`, observa-se uma sobreposição nos intervalos, indicando incerteza compartilhada nas estimativas de felicidade média entre os continentes. O intervalo para `North America` é ligeiramente mais amplo, sugerindo maior incerteza nessa estimativa em comparação com `South America`. Embora haja uma diferença nas estimativas pontuais de felicidade, a sobreposição dos intervalos ressalta a necessidade de cautela na interpretação, indicando que as variações podem não ser estatisticamente significativas.
 
 ## Parte 3
 
@@ -516,10 +533,10 @@ owid |>
   summarize(cor(happiness_cantril_ladder, 1/gdp_pc))
 
 owid |>
-  summarize(cor(happiness_cantril_ladder, sqrt(gdp_pc)))
+  summarize(cor(happiness_cantril_ladder, log(gdp_pc)))
 
 owid |>
-  summarize(cor(happiness_cantril_ladder, log(gdp_pc)))
+  summarize(cor(happiness_cantril_ladder, sqrt(gdp_pc)))
 
 owid |>
   summarize(cor(happiness_cantril_ladder, sqrt(sqrt(gdp_pc))))
