@@ -2,7 +2,7 @@
 lang: pt  
 title: "GED-16: Análise de Regressão"
 subtitle: "AULA02: Prática (2o. semestre/2023)"
-author: "Prof. Denise B. Ferrari"
+author: "Denys Derlian, João Vieira e Rafael Rocha"
 date: "2023-08-08"  
 format:
   html:

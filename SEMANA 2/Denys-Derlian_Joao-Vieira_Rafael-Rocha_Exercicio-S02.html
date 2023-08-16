@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Prof.&nbsp;Denise B. Ferrari">
+<meta name="author" content="Denys Derlian, João Vieira e Rafael Rocha">
 
 <title>GED-16: Análise de Regressão</title>
 <style>
@@ -58,16 +58,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="GED16_AULA02_Pratica_files/libs/clipboard/clipboard.min.js"></script>
-<script src="GED16_AULA02_Pratica_files/libs/quarto-html/quarto.js"></script>
-<script src="GED16_AULA02_Pratica_files/libs/quarto-html/popper.min.js"></script>
-<script src="GED16_AULA02_Pratica_files/libs/quarto-html/tippy.umd.min.js"></script>
-<script src="GED16_AULA02_Pratica_files/libs/quarto-html/anchor.min.js"></script>
-<link href="GED16_AULA02_Pratica_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="GED16_AULA02_Pratica_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="GED16_AULA02_Pratica_files/libs/bootstrap/bootstrap.min.js"></script>
-<link href="GED16_AULA02_Pratica_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="GED16_AULA02_Pratica_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="Denys-Derlian_Joao-Vieira_Rafael-Rocha_Exercicio-S02_files/libs/clipboard/clipboard.min.js"></script>
+<script src="Denys-Derlian_Joao-Vieira_Rafael-Rocha_Exercicio-S02_files/libs/quarto-html/quarto.js"></script>
+<script src="Denys-Derlian_Joao-Vieira_Rafael-Rocha_Exercicio-S02_files/libs/quarto-html/popper.min.js"></script>
+<script src="Denys-Derlian_Joao-Vieira_Rafael-Rocha_Exercicio-S02_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="Denys-Derlian_Joao-Vieira_Rafael-Rocha_Exercicio-S02_files/libs/quarto-html/anchor.min.js"></script>
+<link href="Denys-Derlian_Joao-Vieira_Rafael-Rocha_Exercicio-S02_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="Denys-Derlian_Joao-Vieira_Rafael-Rocha_Exercicio-S02_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="Denys-Derlian_Joao-Vieira_Rafael-Rocha_Exercicio-S02_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="Denys-Derlian_Joao-Vieira_Rafael-Rocha_Exercicio-S02_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="Denys-Derlian_Joao-Vieira_Rafael-Rocha_Exercicio-S02_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
@@ -93,7 +93,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Autor</div>
     <div class="quarto-title-meta-contents">
-             <p>Prof.&nbsp;Denise B. Ferrari </p>
+             <p>Denys Derlian, João Vieira e Rafael Rocha </p>
           </div>
   </div>
     
@@ -288,7 +288,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># adiciona dispersão unidimensional de `mpg`</span></span>
 <span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_rug</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
+<p><img src="Denys-Derlian_Joao-Vieira_Rafael-Rocha_Exercicio-S02_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>Densidade de probabilidade de felicidade separado por cores para cada um dos continentes.</p>
@@ -297,7 +297,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(owid, <span class="fu">aes</span>(<span class="at">x =</span> happiness_cantril_ladder, <span class="at">fill =</span> continent)) <span class="sc">+</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_density</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">position =</span> <span class="st">"identity"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
+<p><img src="Denys-Derlian_Joao-Vieira_Rafael-Rocha_Exercicio-S02_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>Ao separar as densidades da variável felicidade por continente é possível verificar que o nível de felicidade das pessoas varia de acordo com o continente em que elas vivem.</p>
@@ -315,7 +315,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>() <span class="sc">+</span></span>
 <span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">aspect.ratio =</span> <span class="dv">1</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
+<p><img src="Denys-Derlian_Joao-Vieira_Rafael-Rocha_Exercicio-S02_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>É possível perceber uma correlação negativa entre as variáveis de falta de água e felicidade da população. Ao dividir os dados em cada um dos continentes é possível construir o seguinte gráfico:</p>
@@ -328,7 +328,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
 <span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">aspect.ratio =</span> <span class="dv">1</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
+<p><img src="Denys-Derlian_Joao-Vieira_Rafael-Rocha_Exercicio-S02_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>Percebe-se uma tendência de queda de felicidade quanto mais pessoas estão sem acesso a fontes seguras de água. É possível conjecturar também que em continentes como a África e a Asia a felicidade das pessoas é menos sensível a fontes seguras de água que nos demais continentes.</p>
@@ -342,7 +342,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
 <span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">aspect.ratio =</span> <span class="dv">1</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
+<p><img src="Denys-Derlian_Joao-Vieira_Rafael-Rocha_Exercicio-S02_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <hr>
@@ -357,7 +357,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
 <span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">aspect.ratio =</span> <span class="dv">1</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
+<p><img src="Denys-Derlian_Joao-Vieira_Rafael-Rocha_Exercicio-S02_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>Ao observar os dados, aparentemente em todos os continentes um consumo maior de leite está correlacionado com uma maior felicidade da população com linhas de tendência de inclinações semelhantes. Porém, os dados aparentam estar muito dispersos das linhas de tendência, precisando assim de novas métricas para confirmar ou refutar uma correlação entre os dados.</p>
@@ -371,7 +371,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
 <span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">aspect.ratio =</span> <span class="dv">1</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
+<p><img src="Denys-Derlian_Joao-Vieira_Rafael-Rocha_Exercicio-S02_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>É possível perceber um efeito semelhante das mortes por motivos sanitários se compararmos com a falta de acesso à fontes seguras de água e de mortalidade infantil. As variáveis aparentam estar correlacionadas e também aparenta que a sensibilidade da felicidade com relação a mortes por falta de saneamento é menor no continente africano se comparado aos demais.</p>
@@ -454,7 +454,7 @@ Coefficients:
 <span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># adiciona reta de regressão estimada</span></span>
 <span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_smooth</span>(<span class="at">method =</span> lm, <span class="at">se =</span> <span class="cn">FALSE</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
+<p><img src="Denys-Derlian_Joao-Vieira_Rafael-Rocha_Exercicio-S02_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
 </div>
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># gera gráfico de dispersão para taxa de mortes por poluição do ar</span></span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(owid, <span class="fu">aes</span>(<span class="at">x =</span> deaths_air_pollution, <span class="at">y =</span> happiness_cantril_ladder)) <span class="sc">+</span></span>
@@ -462,7 +462,7 @@ Coefficients:
 <span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># adiciona reta de regressão estimada</span></span>
 <span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_smooth</span>(<span class="at">method =</span> lm, <span class="at">se =</span> <span class="cn">FALSE</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-12-2.png" class="img-fluid" width="672"></p>
+<p><img src="Denys-Derlian_Joao-Vieira_Rafael-Rocha_Exercicio-S02_files/figure-html/unnamed-chunk-12-2.png" class="img-fluid" width="672"></p>
 </div>
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># gera gráfico de dispersão para taxa de natalidade</span></span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(owid, <span class="fu">aes</span>(<span class="at">x =</span> expected_schooling, <span class="at">y =</span> happiness_cantril_ladder)) <span class="sc">+</span></span>
@@ -470,7 +470,7 @@ Coefficients:
 <span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># adiciona reta de regressão estimada</span></span>
 <span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_smooth</span>(<span class="at">method =</span> lm, <span class="at">se =</span> <span class="cn">FALSE</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-12-3.png" class="img-fluid" width="672"></p>
+<p><img src="Denys-Derlian_Joao-Vieira_Rafael-Rocha_Exercicio-S02_files/figure-html/unnamed-chunk-12-3.png" class="img-fluid" width="672"></p>
 </div>
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># gera gráfico de dispersão para expectativa de vida</span></span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(owid, <span class="fu">aes</span>(<span class="at">x =</span> life_expectancy, <span class="at">y =</span> happiness_cantril_ladder)) <span class="sc">+</span></span>
@@ -478,7 +478,7 @@ Coefficients:
 <span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># adiciona reta de regressão estimada</span></span>
 <span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_smooth</span>(<span class="at">method =</span> lm, <span class="at">se =</span> <span class="cn">FALSE</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-12-4.png" class="img-fluid" width="672"></p>
+<p><img src="Denys-Derlian_Joao-Vieira_Rafael-Rocha_Exercicio-S02_files/figure-html/unnamed-chunk-12-4.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>Interpretando os modelos utilizados, temos que as retas de regressão que melhor se aproxima, para descrever a dependência entre as grandezas selecionadas duas a duas são:</p>
@@ -609,42 +609,42 @@ Coefficients:
 <pre><code>[1] "Continente:  Africa"</code></pre>
 </div>
 <div class="cell-output-display">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid" width="288"></p>
+<p><img src="Denys-Derlian_Joao-Vieira_Rafael-Rocha_Exercicio-S02_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid" width="288"></p>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "----------------------------------------------------------------"
 [1] "Continente:  Asia"</code></pre>
 </div>
 <div class="cell-output-display">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-15-2.png" class="img-fluid" width="288"></p>
+<p><img src="Denys-Derlian_Joao-Vieira_Rafael-Rocha_Exercicio-S02_files/figure-html/unnamed-chunk-15-2.png" class="img-fluid" width="288"></p>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "----------------------------------------------------------------"
 [1] "Continente:  Europe"</code></pre>
 </div>
 <div class="cell-output-display">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-15-3.png" class="img-fluid" width="288"></p>
+<p><img src="Denys-Derlian_Joao-Vieira_Rafael-Rocha_Exercicio-S02_files/figure-html/unnamed-chunk-15-3.png" class="img-fluid" width="288"></p>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "----------------------------------------------------------------"
 [1] "Continente:  North America"</code></pre>
 </div>
 <div class="cell-output-display">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-15-4.png" class="img-fluid" width="288"></p>
+<p><img src="Denys-Derlian_Joao-Vieira_Rafael-Rocha_Exercicio-S02_files/figure-html/unnamed-chunk-15-4.png" class="img-fluid" width="288"></p>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "----------------------------------------------------------------"
 [1] "Continente:  Oceania"</code></pre>
 </div>
 <div class="cell-output-display">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-15-5.png" class="img-fluid" width="288"></p>
+<p><img src="Denys-Derlian_Joao-Vieira_Rafael-Rocha_Exercicio-S02_files/figure-html/unnamed-chunk-15-5.png" class="img-fluid" width="288"></p>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "----------------------------------------------------------------"
 [1] "Continente:  South America"</code></pre>
 </div>
 <div class="cell-output-display">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-15-6.png" class="img-fluid" width="288"></p>
+<p><img src="Denys-Derlian_Joao-Vieira_Rafael-Rocha_Exercicio-S02_files/figure-html/unnamed-chunk-15-6.png" class="img-fluid" width="288"></p>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "----------------------------------------------------------------"</code></pre>
@@ -690,7 +690,7 @@ Coefficients:
                    5.486803                    -0.007128  </code></pre>
 </div>
 <div class="cell-output-display">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid" width="288"></p>
+<p><img src="Denys-Derlian_Joao-Vieira_Rafael-Rocha_Exercicio-S02_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid" width="288"></p>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Continente:  Asia"
@@ -704,7 +704,7 @@ Coefficients:
                    6.019702                    -0.006096  </code></pre>
 </div>
 <div class="cell-output-display">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-16-2.png" class="img-fluid" width="288"></p>
+<p><img src="Denys-Derlian_Joao-Vieira_Rafael-Rocha_Exercicio-S02_files/figure-html/unnamed-chunk-16-2.png" class="img-fluid" width="288"></p>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Continente:  Europe"
@@ -718,7 +718,7 @@ Coefficients:
                     6.98089                     -0.02375  </code></pre>
 </div>
 <div class="cell-output-display">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-16-3.png" class="img-fluid" width="288"></p>
+<p><img src="Denys-Derlian_Joao-Vieira_Rafael-Rocha_Exercicio-S02_files/figure-html/unnamed-chunk-16-3.png" class="img-fluid" width="288"></p>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Continente:  North America"
@@ -732,7 +732,7 @@ Coefficients:
                     7.02874                     -0.01491  </code></pre>
 </div>
 <div class="cell-output-display">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-16-4.png" class="img-fluid" width="288"></p>
+<p><img src="Denys-Derlian_Joao-Vieira_Rafael-Rocha_Exercicio-S02_files/figure-html/unnamed-chunk-16-4.png" class="img-fluid" width="288"></p>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Continente:  Oceania"
@@ -746,7 +746,7 @@ Coefficients:
                     7.16711                      0.03093  </code></pre>
 </div>
 <div class="cell-output-display">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-16-5.png" class="img-fluid" width="288"></p>
+<p><img src="Denys-Derlian_Joao-Vieira_Rafael-Rocha_Exercicio-S02_files/figure-html/unnamed-chunk-16-5.png" class="img-fluid" width="288"></p>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Continente:  South America"
@@ -760,7 +760,7 @@ Coefficients:
                     6.53651                     -0.01039  </code></pre>
 </div>
 <div class="cell-output-display">
-<p><img src="GED16_AULA02_Pratica_files/figure-html/unnamed-chunk-16-6.png" class="img-fluid" width="288"></p>
+<p><img src="Denys-Derlian_Joao-Vieira_Rafael-Rocha_Exercicio-S02_files/figure-html/unnamed-chunk-16-6.png" class="img-fluid" width="288"></p>
 </div>
 </div>
 </section>
@@ -832,7 +832,7 @@ deaths_air_pollution_south -0.01477535 -0.006005369</code></pre>
 </section>
 <section id="construa-intervalos-de-previsão-para-uma-nova-observação-de-cada-continente-north-america-e-south-america-que-tenha-deaths_air_pollution-50.-o-que-se-pode-concluir" class="level3">
 <h3 class="anchored" data-anchor-id="construa-intervalos-de-previsão-para-uma-nova-observação-de-cada-continente-north-america-e-south-america-que-tenha-deaths_air_pollution-50.-o-que-se-pode-concluir">Construa intervalos de previsão para uma nova observação de cada continente (<code>North America</code> e <code>South America</code>) que tenha <code>deaths_air_pollution</code> = 50. O que se pode concluir?</h3>
-<p>Construindo intervalos de previsão para uma realização da variável “happiness_cantril_ladder” para o valor da variável “deaths_air_pollution” = 50.</p>
+<p>Construindo intervalos de previsão para uma realização da variável <code>happiness_cantril_ladder</code> para o valor da variável <code>deaths_air_pollution</code> = 50.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Construção de intervalos de previsão</span></span>
 <span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>ip_north <span class="ot">&lt;-</span> <span class="fu">predict.lm</span>(lm_north, <span class="at">newdata =</span> Xn, <span class="at">interval=</span><span class="st">"prediction"</span>, <span class="at">level =</span> <span class="fl">0.95</span>)</span>
@@ -845,6 +845,140 @@ deaths_air_pollution_south -0.01477535 -0.006005369</code></pre>
 <section id="parte-3" class="level2">
 <h2 class="anchored" data-anchor-id="parte-3">Parte 3</h2>
 <p>Construa um modelo de regressão para a variável de resposta <code>happiness_cantril_ladder</code> em função de <code>gdp_pc</code>. Assuma que o modelo de 1a. ordem é adequado para modelar essas relações. Faz sentido aplicar alguma transformação à variável explicativa? Replique os procedimentos realizados no item (1) para um modelo considerando a variável explicativa em sua forma original ou transformada.</p>
+<p>Inicia-se construindo o modelo de regressão para a variavel especificada normalmente repetindo os passos do item (1), sendo gerado o modelo linear, o gráfico, MSE e o valor de <span class="math inline">\(R^2\)</span>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Constrói modelo de regressão linear simples para gdp_pc</span></span>
+<span id="cb77-2"><a href="#cb77-2" aria-hidden="true" tabindex="-1"></a>owid_rls_gdp <span class="ot">&lt;-</span> <span class="fu">lm</span>(happiness_cantril_ladder <span class="sc">~</span> gdp_pc, <span class="at">data =</span> owid)</span>
+<span id="cb77-3"><a href="#cb77-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Variável de resposta: happiness_cantril_ladder</span></span>
+<span id="cb77-4"><a href="#cb77-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Variável explicativa: gdp_pc</span></span>
+<span id="cb77-5"><a href="#cb77-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb77-6"><a href="#cb77-6" aria-hidden="true" tabindex="-1"></a>owid_rls_gdp</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = happiness_cantril_ladder ~ gdp_pc, data = owid)
+
+Coefficients:
+(Intercept)       gdp_pc  
+  4.504e+00    4.506e-05  </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a><span class="co"># gera gráfico de dispersão para gdp_pc</span></span>
+<span id="cb79-2"><a href="#cb79-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(owid, <span class="fu">aes</span>(<span class="at">x =</span> gdp_pc, <span class="at">y =</span> happiness_cantril_ladder)) <span class="sc">+</span></span>
+<span id="cb79-3"><a href="#cb79-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb79-4"><a href="#cb79-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># adiciona reta de regressão estimada</span></span>
+<span id="cb79-5"><a href="#cb79-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_smooth</span>(<span class="at">method =</span> lm, <span class="at">se =</span> <span class="cn">FALSE</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Denys-Derlian_Joao-Vieira_Rafael-Rocha_Exercicio-S02_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"MSE para gdp_pc </span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>MSE para gdp_pc </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb82"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(owid_rls_gdp<span class="sc">$</span>residuals<span class="sc">^</span><span class="dv">2</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.5015186</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb84"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Imprimir o coeficiente de determinação ajustado (R²)</span></span>
+<span id="cb84-2"><a href="#cb84-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Coeficiente de Determinação Ajustado (R²): </span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Coeficiente de Determinação Ajustado (R²): </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb86"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(owid_rls_gdp)<span class="sc">$</span>adj.r.squared</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.6055963</code></pre>
+</div>
+</div>
+<p>Com base na inspeção visual do gráfico gerado e do coeficiente de determinação ajustado (R²) baixo, o modelo linear atual utilizando a variável explicativa <code>gdp_pc</code> não é capaz de explicar adequadamente a variabilidade na variável de resposta <code>happiness_cantril_ladder</code>. Isso indica que a relação entre essas variáveis não pode ser bem representada por um modelo linear simples. Podemos tentar algumas transformações a partir de uma aproximação inicial usando a função <code>cor</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a>owid <span class="sc">|&gt;</span></span>
+<span id="cb88-2"><a href="#cb88-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="fu">cor</span>(happiness_cantril_ladder, <span class="dv">1</span><span class="sc">/</span>gdp_pc))</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 1
+  `cor(happiness_cantril_ladder, 1/gdp_pc)`
+                                      &lt;dbl&gt;
+1                                    -0.648</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb90"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb90-1"><a href="#cb90-1" aria-hidden="true" tabindex="-1"></a>owid <span class="sc">|&gt;</span></span>
+<span id="cb90-2"><a href="#cb90-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="fu">cor</span>(happiness_cantril_ladder, <span class="fu">sqrt</span>(gdp_pc)))</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 1
+  `cor(happiness_cantril_ladder, sqrt(gdp_pc))`
+                                          &lt;dbl&gt;
+1                                         0.829</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb92"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb92-1"><a href="#cb92-1" aria-hidden="true" tabindex="-1"></a>owid <span class="sc">|&gt;</span></span>
+<span id="cb92-2"><a href="#cb92-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="fu">cor</span>(happiness_cantril_ladder, <span class="fu">log</span>(gdp_pc)))</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 1
+  `cor(happiness_cantril_ladder, log(gdp_pc))`
+                                         &lt;dbl&gt;
+1                                        0.822</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb94"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb94-1"><a href="#cb94-1" aria-hidden="true" tabindex="-1"></a>owid <span class="sc">|&gt;</span></span>
+<span id="cb94-2"><a href="#cb94-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="fu">cor</span>(happiness_cantril_ladder, <span class="fu">sqrt</span>(<span class="fu">sqrt</span>(gdp_pc))))</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 1
+  `cor(happiness_cantril_ladder, sqrt(sqrt(gdp_pc)))`
+                                                &lt;dbl&gt;
+1                                               0.833</code></pre>
+</div>
+</div>
+<p>Nota-se a melhor correlação para a transformação <code>sqrt(sqrt(gdp_pc))</code>. Agora, repetem-se os passos do item (1):</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb96"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb96-1"><a href="#cb96-1" aria-hidden="true" tabindex="-1"></a>owid_gdp4 <span class="ot">&lt;-</span> owid <span class="sc">|&gt;</span></span>
+<span id="cb96-2"><a href="#cb96-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">gdp4  =</span> <span class="fu">sqrt</span>(<span class="fu">sqrt</span>(gdp_pc))) </span>
+<span id="cb96-3"><a href="#cb96-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb96-4"><a href="#cb96-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb96-5"><a href="#cb96-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Constrói modelo de regressão linear simples para sqrt(sqrt(gdp_pc))</span></span>
+<span id="cb96-6"><a href="#cb96-6" aria-hidden="true" tabindex="-1"></a>owid_rls_gdp4 <span class="ot">&lt;-</span> <span class="fu">lm</span>(happiness_cantril_ladder <span class="sc">~</span> gdp4, <span class="at">data =</span> owid_gdp4)</span>
+<span id="cb96-7"><a href="#cb96-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Variável de resposta: happiness_cantril_ladder</span></span>
+<span id="cb96-8"><a href="#cb96-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Variável explicativa: sqrt(sqrt(gdp_pc))</span></span>
+<span id="cb96-9"><a href="#cb96-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb96-10"><a href="#cb96-10" aria-hidden="true" tabindex="-1"></a>owid_rls_gdp4</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = happiness_cantril_ladder ~ gdp4, data = owid_gdp4)
+
+Coefficients:
+(Intercept)         gdp4  
+     1.9922       0.3164  </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb98"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a><span class="co"># gera gráfico de dispersão para gdp_pc</span></span>
+<span id="cb98-2"><a href="#cb98-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(owid_gdp4, <span class="fu">aes</span>(<span class="at">x =</span> gdp4, <span class="at">y =</span> happiness_cantril_ladder)) <span class="sc">+</span></span>
+<span id="cb98-3"><a href="#cb98-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb98-4"><a href="#cb98-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># adiciona reta de regressão estimada</span></span>
+<span id="cb98-5"><a href="#cb98-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_smooth</span>(<span class="at">method =</span> lm, <span class="at">se =</span> <span class="cn">FALSE</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Denys-Derlian_Joao-Vieira_Rafael-Rocha_Exercicio-S02_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb99"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb99-1"><a href="#cb99-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"MSE para gdp_pc </span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>MSE para gdp_pc </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb101"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb101-1"><a href="#cb101-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(owid_rls_gdp4<span class="sc">$</span>residuals<span class="sc">^</span><span class="dv">2</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.3886452</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb103"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb103-1"><a href="#cb103-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Imprimir o coeficiente de determinação ajustado (R²)</span></span>
+<span id="cb103-2"><a href="#cb103-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Coeficiente de Determinação Ajustado (R²): </span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Coeficiente de Determinação Ajustado (R²): </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb105"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb105-1"><a href="#cb105-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(owid_rls_gdp4)<span class="sc">$</span>adj.r.squared</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.6943621</code></pre>
+</div>
+</div>
+<p>Os resultados indicam uma melhoria no desempenho do modelo após a transformação da variável explicativa <strong><code>gdp_pc</code></strong>. A redução no MSE de 0.5015186 para 0.3886452 e o aumento de R² de 0.6055963 para 0.6943621 são indicativos de um modelo mais apropriado e com melhor ajuste aos dados após a transformação. Isso sugere que a relação entre <strong><code>gdp_pc</code></strong> e <strong><code>happiness_cantril_ladder</code></strong> pode ser mais bem capturada através da transformação <strong><code>x = sqrt(sqrt(gdp_pc))</code></strong>, o que resulta em uma relação mais linear entre as variáveis. Portanto, a transformação parece ter melhorado a capacidade do modelo de explicar a variabilidade na felicidade com base no PIB per capita.</p>
 </section>
 </section>
 
