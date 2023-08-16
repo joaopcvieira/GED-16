@@ -282,20 +282,16 @@ Modelo: $happiness\_cantril\_ladder = 0.1096 \cdot life\_expectancy - 2.4828$
 
 ```{r}
 # MSE para taxa de natalidade
-print("MSE para taxa de natalidade")
-mean(owid_rls_birth$residuals^2)
+print(paste("O MSE para taxa de natalidade é:", mean(owid_rls_birth$residuals^2)))
 
 # MSE para mortes por poluição do ar
-print("MSE para mortes por poluição do ar")
-mean(owid_rls_Dair$residuals^2)
+print(paste("O MSE para mortes por poluição do ar é:", mean(owid_rls_Dair$residuals^2)))
 
 # MSE para expectativa de escolaridade
-print("MSE para expectativa de escolaridade")
-mean(owid_rls_ExpSchool$residuals^2)
+print(paste("O MSE para expectativa de escolaridade é:", mean(owid_rls_ExpSchool$residuals^2)))
 
 # MSE para expectativa de vida"
-print("MSE para expectativa de vida")
-mean(owid_rls_LifeExpec$residuals^2)
+print(paste("O MSE para expectativa de vida é:", mean(owid_rls_LifeExpec$residuals^2)))
 ```
 
 Dessa forma, percebemos que o menor MSE é para a variável `deaths_air_pollution`, ou seja, a variável que melhor se ajusta ao modelo de regressão linear simples é a taxa de mortes por poluição do ar. Isso indica que o modelo de regressão linear utilizando "mortes por poluição do ar" como variável explicativa tem um menor erro médio quadrático em relação aos dados reais, o que sugere que a variabilidade em torno da reta de regressão ajustada é menor para essa variável em comparação com as outras variáveis explicativas.
@@ -335,8 +331,10 @@ Para cada nível da variável categórica `continent`, construa um modelo de reg
 Vamos refazer as análises passadas \textit{clusterizando} as variáveis por continente somente para a variável "deaths_air_pollution".
 
 ```{r}
-#| layout-ncol: 4
-#|
+#| fig-width: 3
+#| fig-height: 3
+
+
 continentes <- c("Africa", "Asia", "Europe", "North America", "Oceania", "South America")
 grandezas <- c("deaths_air_pollution")
 
@@ -347,14 +345,12 @@ for (i in continentes) {
     print(paste("Continente: ", i))
     df_per_continent <- owid %>% filter(continent == i)
 
-
     temporary <- c()
 
     for (metrica in grandezas) {
 
         regressao <- lm(df_per_continent$happiness_cantril_ladder ~ df_per_continent[[metrica]])
         temporary <- temporary %>% append(regressao)
-
 
         newPlot <- df_per_continent %>%
             ggplot(aes(x = .data[[metrica]], y = happiness_cantril_ladder)) +
@@ -365,6 +361,7 @@ for (i in continentes) {
     }
     
     regressoes <- rbind(regressoes, temporary)
+    print("----------------------------------------------------------------")
 }
 
 ```
@@ -376,7 +373,8 @@ Vamos avaliar então, para cada continente, se os modelos de regressão assumem 
 ### Obtenha o MSE para cada nível da variável `continent`. A variabilidade em torno da reta de regressão ajustada é semelhante para todos os níveis?
 
 ```{r}
-#\| layout-ncol: 4
+#| fig-width: 3
+#| fig-height: 3
 
 for (i in continentes) {
         
@@ -388,6 +386,8 @@ df_per_continent <- owid %>% filter(continent == i)
 
 metrica <- grandezas[1]
 regressao <- lm(df_per_continent$happiness_cantril_ladder ~ df_per_continent[[metrica]])
+print(paste("O MSE associado a variável", metrica, "é de", round(mean(regressao$residuals^2), 4), ", conforme o modelo:"))
+
 temporary <- temporary %>% append(regressao)
 print(regressao)
 
@@ -396,6 +396,7 @@ newPlot <- df_per_continent %>%
     geom_point() +
     # adiciona reta de regressão estimada
     geom_smooth(method = lm, se = FALSE) 
+print(newPlot)
 }
 ```
 
