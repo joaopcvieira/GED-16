@@ -12,27 +12,27 @@ execute:
   eval: true
   warning: false    
 ---
+
 ```{r include = FALSE}
 ```
 
-----
+------------------------------------------------------------------------
 
 ### Introdução
 
-Os dados disponíveis no arquivo `data/owid.csv` foram
-obtidos do portal [Our World in Data](https://ourworldindata.org/), cuja missão é publicar pesquisas e dados relacionados a grandes problemas mundiais como pobreza, doenças, fome, mudanças climáticas, guerras, riscos existenciais e desigualdade.   
+Os dados disponíveis no arquivo `data/owid.csv` foram obtidos do portal [Our World in Data](https://ourworldindata.org/), cuja missão é publicar pesquisas e dados relacionados a grandes problemas mundiais como pobreza, doenças, fome, mudanças climáticas, guerras, riscos existenciais e desigualdade.
 
 Os dados originais foram pré-processados no sentido de remover observações faltantes. Há um total de 985 observações coletadas para 21 variáveis:
 
-1. `continent`: continente em que está o país
-2. `entity`: nome do país
-3. `code`: código do país
-4. `year`: ano
-5. `birth_rate`: número de nascimentos com vida por 1.000 habitantes na população.
-6. `child_mortality`: mortes de crianças menores de 5 anos de idade (% nascimentos)
-7. `co2_emission_pc`: emissões anuais de CO2  per capita (t/pessoa)
-8. `deaths_solid_fuels_pollution`: mortes resultantes de poluição por queima de combustíveis sólidos em ambientes internos (por 100.00 habitantes)
-9. `deaths_particulate_pollution`: mortes resultantes de poluição por material particulado em ambientes externos (por 100.00 habitantes)
+1.  `continent`: continente em que está o país
+2.  `entity`: nome do país
+3.  `code`: código do país
+4.  `year`: ano
+5.  `birth_rate`: número de nascimentos com vida por 1.000 habitantes na população.
+6.  `child_mortality`: mortes de crianças menores de 5 anos de idade (% nascimentos)
+7.  `co2_emission_pc`: emissões anuais de CO2 per capita (t/pessoa)
+8.  `deaths_solid_fuels_pollution`: mortes resultantes de poluição por queima de combustíveis sólidos em ambientes internos (por 100.00 habitantes)
+9.  `deaths_particulate_pollution`: mortes resultantes de poluição por material particulado em ambientes externos (por 100.00 habitantes)
 10. `deaths_air_pollution`: mortes resultantes de poluição do ar ambiente (por 100.00 habitantes)
 11. `deaths_ozone`: mortes resultantes de poluição por ozônio em ambientes externos (por 100.00 habitantes)
 12. `deaths_sanitation`: mortes resultantes de falta ou precariedade de acesso a saneamento básico (por 100.00 habitantes)
@@ -40,17 +40,17 @@ Os dados originais foram pré-processados no sentido de remover observações fa
 14. `energy_use_pc`: consumo de energia médio anual (eletricidade, transporte, aquecimento, preparo de alimentos) per capita (KWh/pessoa)
 15. `expected_schooling`: expectativa do número de anos de educação que uma criança que entra no sistema escolar deve receber
 16. `happiness_cantril_ladder`: nível de felicidade médio populacional (0-10)
-17. `gdp_pc`: produto interno bruto per capita ($ internacional, referência 2017)
+17. `gdp_pc`: produto interno bruto per capita (\$ internacional, referência 2017)
 18. `life_expectancy`: expectativa de vida no nascimento (anos)
 19. `milk_consumption_pc`: consumo de leite médio anual per capita (kg)
 20. `no_water`: população sem acesso a fontes seguras de água (encanada, poços, fontes, chuva e envasada) (%)
 21. `urban_population_percent`: população habitante de áreas urbanas (% população total)
 
-----
+------------------------------------------------------------------------
 
 ### Análise Exploratória de Dados
 
-Conduza a análise exploratória da massa de dados `owid`, a fim de compreender suas características principais.   
+Conduza a análise exploratória da massa de dados `owid`, a fim de compreender suas características principais.\
 Voltaremos a utilizar essa massa de dados em atividades futuras.
 
 ```{r}
@@ -70,41 +70,39 @@ owid <- read_delim("data/owid.csv", delim = ",", col_names = TRUE)
 owid$continent <- as.factor(owid$continent)
 ```
 
-```
+```         
 ---
 >>> REPLICAR AQUI A ANÁLISE REALIZADA NA AULA PASSADA
 ---
 ```
 
-
-
 ### Análise de Regressão
 
-1. Assuma que um modelo de regressão linear simples é adequado para modelar a relação da variável de resposta `happiness_cantril_ladder` a cada uma das variáveis explicativas: `birth_rate`, `deaths_air_pollution`,`expected_schooling`, `life_expectancy`.
+1.  Assuma que um modelo de regressão linear simples é adequado para modelar a relação da variável de resposta `happiness_cantril_ladder` a cada uma das variáveis explicativas: `birth_rate`, `deaths_air_pollution`,`expected_schooling`, `life_expectancy`.
 
-+ Construa um modelo de regressão para cada um desses pares de variáveis;
+-   Construa um modelo de regressão para cada um desses pares de variáveis;
 
-+ Construa gráficos de dispersão (separados) com as retas de regressão ajustadas para cada caso;
+-   Construa gráficos de dispersão (separados) com as retas de regressão ajustadas para cada caso;
 
-+ Obtenha o MSE para cada modelo. Que variável explicativa produz menor variabilidade em torno da reta de regressão ajustada?
+-   Obtenha o MSE para cada modelo. Que variável explicativa produz menor variabilidade em torno da reta de regressão ajustada?
 
-+ Utilizando R2 como critério, qual das variáveis explicativas contribui para a maior redução na variabilidade da resposta `happiness_cantril_ladder`?
+-   Utilizando R2 como critério, qual das variáveis explicativas contribui para a maior redução na variabilidade da resposta `happiness_cantril_ladder`?
 
-2. Para cada nível da variável categórica `continent`, construa um modelo de regressão para a variável de resposta `happiness_cantril_ladder` em função da variável escolhida no último item da questão anterior.  Assuma que o modelo de 1a. ordem é adequado para modelar essas relações.
+2.  Para cada nível da variável categórica `continent`, construa um modelo de regressão para a variável de resposta `happiness_cantril_ladder` em função da variável escolhida no último item da questão anterior. Assuma que o modelo de 1a. ordem é adequado para modelar essas relações.
 
-+ Obtenha os modelos de regressão ajustados. As funções de regressão estimadas são semelhantes para todos os níveis da variável `continent`? Discuta.
+-   Obtenha os modelos de regressão ajustados. As funções de regressão estimadas são semelhantes para todos os níveis da variável `continent`? Discuta.
 
-+ Obtenha o MSE para cada nível da variável `continent` A variabilidade em torno da reta de regressão ajustada é semelhante para todos os níveis?
+-   Obtenha o MSE para cada nível da variável `continent` A variabilidade em torno da reta de regressão ajustada é semelhante para todos os níveis?
 
-+ Construa intervalos de confiança 95% para o coeficiente angular da reta de regressão para os continentes `North America` e `South America`. As retas de regressão para os diferentes níveis parecem ter mesma inclinação? O que se pode concluir?
+-   Construa intervalos de confiança 95% para o coeficiente angular da reta de regressão para os continentes `North America` e `South America`. As retas de regressão para os diferentes níveis parecem ter mesma inclinação? O que se pode concluir?
 
-+ Construa intervalos de confiança para a resposta esperada correspondendo a `deaths_air_pollution` = 50, para os continentes `North America` e `South America` O que se pode concluir?
+-   Construa intervalos de confiança para a resposta esperada correspondendo a `deaths_air_pollution` = 50, para os continentes `North America` e `South America` O que se pode concluir?
 
-+ Construa intervalos de previsão para uma nova observação de cada continente (`North America` e `South America`) que tenha `deaths_air_pollution` = 50. O que se pode concluir?
+-   Construa intervalos de previsão para uma nova observação de cada continente (`North America` e `South America`) que tenha `deaths_air_pollution` = 50. O que se pode concluir?
 
-3. Construa um modelo de regressão para a variável de resposta `happiness_cantril_ladder` em função de `gdp_pc`. Assuma que o modelo de 1a. ordem é adequado para modelar essas relações. Faz sentido aplicar alguma transformação à variável explicativa? Replique os procedimentos realizados no  item (1) para um modelo considerando a variável explicativa em sua forma original ou transformada.
+3.  Construa um modelo de regressão para a variável de resposta `happiness_cantril_ladder` em função de `gdp_pc`. Assuma que o modelo de 1a. ordem é adequado para modelar essas relações. Faz sentido aplicar alguma transformação à variável explicativa? Replique os procedimentos realizados no item (1) para um modelo considerando a variável explicativa em sua forma original ou transformada.
 
-```
+```         
 ---
 >>> REPLICAR AQUI A ANÁLISE REALIZADA NA AULA PASSADA
 ---
@@ -112,11 +110,10 @@ owid$continent <- as.factor(owid$continent)
 
 ### Diagnóstico
 
-1. Para cada um dos modelos de regressão ajustados no item (1) da seção anterior, realize o diagnóstico através da análise dos resíduos e apresente um resumo de suas conclusões. O modelo de regressão linear simples clássico de 1a. ordem é adequado a alguma das situações investigadas?
+1.  Para cada um dos modelos de regressão ajustados no item (1) da seção anterior, realize o diagnóstico através da análise dos resíduos e apresente um resumo de suas conclusões. O modelo de regressão linear simples clássico de 1a. ordem é adequado a alguma das situações investigadas?
 
-2. Ajuste um modelo de regressão linear simples para a variável `happiness_cantril_ladder` como função de `deaths_air_pollution` após excluir as observações 973 (X = 237 e Y = 6.00), 974 (X = 234 e Y = 5.99) e 975 (X = 225 e Y = 5.97). Obtenha intervalos de previsão de 95% de confiança para novas observações que apresentam valores da variável explicativa iguais a 237, 234 e 225. As observações eliminadas encontram-se nos limites dos intervalos de previsão obtidos? Discuta o significado dos resultados obtidos.
+2.  Ajuste um modelo de regressão linear simples para a variável `happiness_cantril_ladder` como função de `deaths_air_pollution` após excluir as observações 973 (X = 237 e Y = 6.00), 974 (X = 234 e Y = 5.99) e 975 (X = 225 e Y = 5.97). Obtenha intervalos de previsão de 95% de confiança para novas observações que apresentam valores da variável explicativa iguais a 237, 234 e 225. As observações eliminadas encontram-se nos limites dos intervalos de previsão obtidos? Discuta o significado dos resultados obtidos.
 
-3. Para os modelos considerando cada nível da variável `continent` no item (2) da seção anterior, realize o diagnóstico através da análise dos resíduos. Todos aparentam ter mesma variância dos erros? É necessário realizar alguma transformação de variáveis? Tente solucionar os possíveis problemas encontrados com o modelo. Que conclusões é possível obter a partir da análise?
+3.  Para os modelos considerando cada nível da variável `continent` no item (2) da seção anterior, realize o diagnóstico através da análise dos resíduos. Todos aparentam ter mesma variância dos erros? É necessário realizar alguma transformação de variáveis? Tente solucionar os possíveis problemas encontrados com o modelo. Que conclusões é possível obter a partir da análise?
 
-
-----
+------------------------------------------------------------------------
