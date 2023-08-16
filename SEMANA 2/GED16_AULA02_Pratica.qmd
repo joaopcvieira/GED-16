@@ -441,7 +441,7 @@ confint.lm(lm_south,level=0.95, parm = 2)
 
 Assim, é possível perceber que o intervalo de confiança do coeficiente angular para a América do Norte se sobrepõe com o da América do Sul. Isso é percebido pois os intervalos de confiança 95% possuem intersecção. Portanto, pode-se concluir que os intervalos de confiança indicam que as inclinações das retas de regressão para a relação entre a variável `deaths_air_pollution` e a variável de resposta `happiness_cantril_ladder` não parecem ser significativamente diferentes entre `North America` e `South America`. Isso sugere que a relação entre essas variáveis pode ser semelhante nos dois continentes.
 
-### Construa intervalos de confiança para a resposta esperada correspondendo a `deaths_air_pollution` = 50, para os continentes `North America` e `South America` O que se pode concluir?
+### Construa intervalos de confiança para a resposta esperada correspondendo a `deaths_air_pollution` = 50, para os continentes `North America` e `South America`. O que se pode concluir?
 
 Construindo intervalos de confiança para a resposta esperada da variável `happiness_cantril_ladder` para o valor da variável `deaths_air_pollution` = 50.
 
@@ -454,6 +454,13 @@ Xs <- data.frame(deaths_air_pollution_south = 50)
 # Construção dos intervalos de confiança 95%
 ic_north <- predict.lm(lm_north, newdata = Xn, interval="confidence", level = 0.95)
 ic_south <- predict.lm(lm_south, newdata = Xs, interval="confidence", level = 0.95)
+
+
+result_line_north <- paste("North America: fit =", ic_north[1], "lower bound =", ic_north[2], "upper bound =", ic_north[3])
+result_line_south <- paste("South America: fit =", ic_south[1], "lower bound =", ic_south[2], "upper bound =", ic_south[3])
+
+print(result_line_north)
+print(result_line_south)
 
 ```
 
