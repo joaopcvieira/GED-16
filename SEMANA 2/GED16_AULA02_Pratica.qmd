@@ -374,27 +374,28 @@ for (i in continentes) {
             geom_smooth(method = lm, se = FALSE)
         print(newPlot)
     }
-
+    
     regressoes <- rbind(regressoes, temporary)
 }
 
 ```
 
-Temos agora, além dos dados visuais para os gráficos avaliados, uma matriz `regressoes` com os dados de cada regressão linear simples com as colunas representando cada variável e as linhas, cada continente. Vamos avaliar então, para cada continente, se os modelos de regressão assumem erros semelhantes.
+Temos agora, além dos dados visuais para os gráficos avaliados, uma matriz `regressoes` com os dados de cada regressão linear simples com as colunas representando cada variável e as linhas, cada continente. Verifica-se que as funções de regressão estimadas não são semelhantes para todos os níveis da variável `continent`. Tome, por exemplo, que para `Europe` e `North America`, a inclinação descendente é mais acentuada que para outros países, enquanto para a `Oceania`, a inclinação é positiva.
 
-### Obtenha o MSE para cada nível da variável `continent` A variabilidade em torno da reta de regressão ajustada é semelhante para todos os níveis?
+Vamos avaliar então, para cada continente, se os modelos de regressão assumem erros semelhantes.
+
+### Obtenha o MSE para cada nível da variável `continent`. A variabilidade em torno da reta de regressão ajustada é semelhante para todos os níveis?
 
 ```{r}
 #\| layout-ncol: 4
 
 for (i in continentes) {
-
         
 print(paste("Continente: ", i))
 df_per_continent <- owid %>% filter(continent == i)
 # df_per_continent %>% head(10) %>% print()
 
-summary(owid_rls_birth)$adj.r.squared
+# summary(owid_rls_birth)$adj.r.squared
 
 metrica <- grandezas[1]
 regressao <- lm(df_per_continent$happiness_cantril_ladder ~ df_per_continent[[metrica]])
@@ -433,16 +434,16 @@ lm_south <- lm(df_south_america$happiness_cantril_ladder ~ deaths_air_pollution_
 
 # Intervalos de confiança para os coeficientes angulares
 
-confint.lm(lm_north,level=0.95)
-confint.lm(lm_south,level=0.95)
+confint.lm(lm_north,level=0.95, parm = 2)
+confint.lm(lm_south,level=0.95, parm = 2)
 
 ```
 
-Assim, é possível perceber que o coeficiente angular para a América do Norte possui grande probabilidade de ser maior que o da América do Sul. Isso é percebido pois os intervalos de confiança 95% não possuem intersecção.
+Assim, é possível perceber que o intervalo de confiança do coeficiente angular para a América do Norte se sobrepõe com o da América do Sul. Isso é percebido pois os intervalos de confiança 95% possuem intersecção. Portanto, pode-se concluir que os intervalos de confiança indicam que as inclinações das retas de regressão para a relação entre a variável `deaths_air_pollution` e a variável de resposta `happiness_cantril_ladder` não parecem ser significativamente diferentes entre `North America` e `South America`. Isso sugere que a relação entre essas variáveis pode ser semelhante nos dois continentes.
 
 ### Construa intervalos de confiança para a resposta esperada correspondendo a `deaths_air_pollution` = 50, para os continentes `North America` e `South America` O que se pode concluir?
 
-Construindo intervalos de confiança para a resposta esperada da variável "happiness_cantril_ladder" para o valor da variável "deaths_air_pollution" = 50.
+Construindo intervalos de confiança para a resposta esperada da variável `happiness_cantril_ladder` para o valor da variável `deaths_air_pollution` = 50.
 
 ```{r}
 # valor de 50 para a variável deaths_air_pollution
