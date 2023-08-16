@@ -461,7 +461,7 @@ A falta de sobreposição nos intervalos de confiança sugere que existe uma dif
 
 ### Construa intervalos de previsão para uma nova observação de cada continente (`North America` e `South America`) que tenha `deaths_air_pollution` = 50. O que se pode concluir?
 
-Construindo intervalos de previsão para uma realização da variável "happiness_cantril_ladder" para o valor da variável "deaths_air_pollution" = 50.
+Construindo intervalos de previsão para uma realização da variável `happiness_cantril_ladder` para o valor da variável `deaths_air_pollution` = 50.
 
 ```{r}
 
@@ -478,3 +478,85 @@ Dado que os intervalos de previsão estão bastante sobrepostos não é possíve
 ## Parte 3
 
 Construa um modelo de regressão para a variável de resposta `happiness_cantril_ladder` em função de `gdp_pc`. Assuma que o modelo de 1a. ordem é adequado para modelar essas relações. Faz sentido aplicar alguma transformação à variável explicativa? Replique os procedimentos realizados no item (1) para um modelo considerando a variável explicativa em sua forma original ou transformada.
+
+Inicia-se construindo o modelo de regressão para a variavel especificada normalmente repetindo os passos do item (1), sendo gerado o modelo linear, o gráfico, MSE e o valor de $R^2$.
+
+```{r}
+# Constrói modelo de regressão linear simples para gdp_pc
+owid_rls_gdp <- lm(happiness_cantril_ladder ~ gdp_pc, data = owid)
+# Variável de resposta: happiness_cantril_ladder
+# Variável explicativa: gdp_pc
+
+owid_rls_gdp
+```
+
+```{r}
+# gera gráfico de dispersão para gdp_pc
+ggplot(owid, aes(x = gdp_pc, y = happiness_cantril_ladder)) +
+    geom_point() +
+    # adiciona reta de regressão estimada
+    geom_smooth(method = lm, se = FALSE)
+```
+
+```{r}
+cat("MSE para gdp_pc \n")
+mean(owid_rls_gdp$residuals^2)
+
+# Imprimir o coeficiente de determinação ajustado (R²)
+cat("Coeficiente de Determinação Ajustado (R²): \n")
+
+summary(owid_rls_gdp)$adj.r.squared
+
+```
+
+Com base na inspeção visual do gráfico gerado e do coeficiente de determinação ajustado (R²) baixo, o modelo linear atual utilizando a variável explicativa `gdp_pc` não é capaz de explicar adequadamente a variabilidade na variável de resposta `happiness_cantril_ladder`. Isso indica que a relação entre essas variáveis não pode ser bem representada por um modelo linear simples. Podemos tentar algumas transformações a partir de uma aproximação inicial usando a função `cor`.
+
+```{r}
+owid |>
+  summarize(cor(happiness_cantril_ladder, 1/gdp_pc))
+
+owid |>
+  summarize(cor(happiness_cantril_ladder, sqrt(gdp_pc)))
+
+owid |>
+  summarize(cor(happiness_cantril_ladder, log(gdp_pc)))
+
+owid |>
+  summarize(cor(happiness_cantril_ladder, sqrt(sqrt(gdp_pc))))
+
+```
+
+Nota-se a melhor correlação para a transformação `sqrt(sqrt(gdp_pc))`. Agora, repetem-se os passos do item (1):
+
+```{r}
+owid_gdp4 <- owid |>
+  mutate(gdp4  = sqrt(sqrt(gdp_pc))) 
+  
+
+# Constrói modelo de regressão linear simples para sqrt(sqrt(gdp_pc))
+owid_rls_gdp4 <- lm(happiness_cantril_ladder ~ gdp4, data = owid_gdp4)
+# Variável de resposta: happiness_cantril_ladder
+# Variável explicativa: sqrt(sqrt(gdp_pc))
+
+owid_rls_gdp4
+```
+
+```{r}
+# gera gráfico de dispersão para gdp_pc
+ggplot(owid_gdp4, aes(x = gdp4, y = happiness_cantril_ladder)) +
+    geom_point() +
+    # adiciona reta de regressão estimada
+    geom_smooth(method = lm, se = FALSE)
+```
+
+```{r}
+cat("MSE para gdp_pc \n")
+mean(owid_rls_gdp4$residuals^2)
+
+# Imprimir o coeficiente de determinação ajustado (R²)
+cat("Coeficiente de Determinação Ajustado (R²): \n")
+
+summary(owid_rls_gdp4)$adj.r.squared
+```
+
+Os resultados indicam uma melhoria no desempenho do modelo após a transformação da variável explicativa **`gdp_pc`**. A redução no MSE de 0.5015186 para 0.3886452 e o aumento de R² de 0.6055963 para 0.6943621 são indicativos de um modelo mais apropriado e com melhor ajuste aos dados após a transformação. Isso sugere que a relação entre **`gdp_pc`** e **`happiness_cantril_ladder`** pode ser mais bem capturada através da transformação **`x = sqrt(sqrt(gdp_pc))`**, o que resulta em uma relação mais linear entre as variáveis. Portanto, a transformação parece ter melhorado a capacidade do modelo de explicar a variabilidade na felicidade com base no PIB per capita.
