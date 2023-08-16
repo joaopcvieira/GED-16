@@ -262,17 +262,6 @@ ggplot(owid, aes(x = life_expectancy, y = happiness_cantril_ladder)) +
 
 Interpretando os modelos utilizados, temos que as retas de regressão que melhor se aproxima, para descrever a dependência entre as grandezas selecionadas duas a duas são:
 
--   Felicidade x Taxa de natalidade:\
-    happiness_cantril_ladder = `r round(owid_rls_birth$coefficients[1], digits = 2)` + `r round(owid_rls_birth$coefficients[2], digits = 2)` \*birth_rate
-
--   Felicidade x Mortes por poluição do ar: happiness_cantril_ladder = `r round(owid_rls_Dair$coefficients[1], digits = 2)` + `r round(owid_rls_Dair$coefficients[2], digits = 2)` \*deaths_air_pollution
-
--   Felicidade x Expectativa de escolaridade: happiness_cantril_ladder = `r round(owid_rls_ExpSchool$coefficients[1], digits = 2)` + `r round(owid_rls_ExpSchool$coefficients[2], digits = 2)` \*expected_schooling
-
--   Felicidade x Expectativa de vida: happiness_cantril_ladder = `r round(owid_rls_LifeExpec$coefficients[1], digits = 2)` + `r round(owid_rls_LifeExpec$coefficients[2], digits = 2)` \*life_expectancy
-
-Escrevendo explicitamente os números, têm-se:
-
 -   Taxa de Natalidade
 
 Modelo: $happiness\_cantril\_ladder = -0.07347 \cdot birth\_rate + 6.93486$
@@ -464,9 +453,11 @@ print(result_line_south)
 
 ```
 
-Assim, os valores ajustados para os intervalos de confiança foram de `r round(ic_north[1], digits = 2)` e `r round(ic_south[1],digits = 2)` para a América do Norte e América do Sul, respectivamente. Já os intervalos de confiança para a América do Norte e América do Sul foram (`r round(ic_north[2],digits = 2)` ,`r round(ic_north[3],digits = 2)`) e (`r round(ic_south[2],digits = 2)` ,`r round(ic_south[3],digits = 2)`), respectivamente.
+Assim, os valores ajustados para os intervalos de confiança foram de 6.28 e 6.02 para a América do Norte e América do Sul, respectivamente. Já os intervalos de confiança para a América do Norte e América do Sul foram (6.18, 6.39) e (5.92, 6.12), respectivamente.
 
-É possível concluir com bastante confiança que as pessoas que vivem na América do Norte se sentem na média mais felizes que as da América do Sul dado um mesmo valor de mortes por poluição do ar.
+Comparando esses intervalos, podemos dizer que o intervalo de confiança para North America é um pouco mais amplo, indicando uma maior incerteza na estimativa da felicidade em comparação com South America. Isso pode sugerir que a relação entre `deaths_air_pollution` e `happiness_cantril_ladder` pode ser mais estável ou menos variável em South America em comparação com North America, para esse valor específico de `deaths_air_pollution`.
+
+A falta de sobreposição nos intervalos de confiança sugere que existe uma diferença estatisticamente significativa nas estimativas da felicidade média para diferentes níveis de poluição do ar nos continentes North America e South America. Isso indica que a relação entre a variável `deaths_air_pollution` e a variável de resposta `happiness_cantril_ladder` varia entre esses continentes, implicando uma possível influência diferenciada da poluição do ar na felicidade entre as regiões geográficas, conforme analisado no contexto do modelo de regressão.
 
 ### Construa intervalos de previsão para uma nova observação de cada continente (`North America` e `South America`) que tenha `deaths_air_pollution` = 50. O que se pode concluir?
 
@@ -487,5 +478,3 @@ Dado que os intervalos de previsão estão bastante sobrepostos não é possíve
 ## Parte 3
 
 Construa um modelo de regressão para a variável de resposta `happiness_cantril_ladder` em função de `gdp_pc`. Assuma que o modelo de 1a. ordem é adequado para modelar essas relações. Faz sentido aplicar alguma transformação à variável explicativa? Replique os procedimentos realizados no item (1) para um modelo considerando a variável explicativa em sua forma original ou transformada.
-
-> > > > > > > ad952d4dc16a5c994a84ad6d278f3aca921c0713
