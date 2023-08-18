@@ -583,7 +583,7 @@ Os resultados indicam uma melhoria no desempenho do modelo após a transformaç�
 
 # Diagnóstico
 
-## Parte 1 
+## Parte 1
 
 Para cada um dos modelos de regressão ajustados no item (1) da seção anterior, realize o diagnóstico através da análise dos resíduos e apresente um resumo de suas conclusões. O modelo de regressão linear simples clássico de 1a. ordem é adequado a alguma das situações investigadas?
 
@@ -624,6 +624,6 @@ Já os intervalos de previsão para os valores de 237, 234 e 225 foram (`r round
 
 
 
-## Parte 3 
+## Parte 3
 
 Para os modelos considerando cada nível da variável `continent` no item (2) da seção anterior, realize o diagnóstico através da análise dos resíduos. Todos aparentam ter mesma variância dos erros? É necessário realizar alguma transformação de variáveis? Tente solucionar os possíveis problemas encontrados com o modelo. Que conclusões é possível obter a partir da análise?
