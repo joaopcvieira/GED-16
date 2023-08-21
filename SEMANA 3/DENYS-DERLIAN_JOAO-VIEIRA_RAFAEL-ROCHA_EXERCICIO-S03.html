@@ -1055,7 +1055,241 @@ Coefficients:
 <section id="parte-3-1" class="level2">
 <h2 class="anchored" data-anchor-id="parte-3-1">Parte 3</h2>
 <p>Para os modelos considerando cada nível da variável <code>continent</code> no item (2) da seção anterior, realize o diagnóstico através da análise dos resíduos. Todos aparentam ter mesma variância dos erros? É necessário realizar alguma transformação de variáveis? Tente solucionar os possíveis problemas encontrados com o modelo. Que conclusões é possível obter a partir da análise?</p>
+<p>Será feita uma análise dos modelos de regressão linear simples para a variável “happinness_cantril_ladder” com a variável explicativa “deaths_air_pollution”. São mostrados os resumos das duas regressões:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb114"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb114-1"><a href="#cb114-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm_south)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = df_south_america$happiness_cantril_ladder ~ deaths_air_pollution_south)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-0.7705 -0.2292  0.0408  0.2337  0.7705 
+
+Coefficients:
+                            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)                 6.536513   0.097833  66.813  &lt; 2e-16 ***
+deaths_air_pollution_south -0.010390   0.002193  -4.738 1.33e-05 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.3483 on 61 degrees of freedom
+Multiple R-squared:  0.269, Adjusted R-squared:  0.257 
+F-statistic: 22.45 on 1 and 61 DF,  p-value: 1.332e-05</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb116"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb116-1"><a href="#cb116-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm_north)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = df_north_america$happiness_cantril_ladder ~ deaths_air_pollution_north)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-1.28060 -0.32054  0.06816  0.38167  0.88274 
+
+Coefficients:
+                             Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)                 7.0287430  0.0774122   90.80   &lt;2e-16 ***
+deaths_air_pollution_north -0.0149101  0.0009661  -15.43   &lt;2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.4901 on 93 degrees of freedom
+Multiple R-squared:  0.7192,    Adjusted R-squared:  0.7162 
+F-statistic: 238.2 on 1 and 93 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<p>É possível perceber diferenças nos modelos de regressão para os continentes América do Norte e do Sul. Aparentemente os resíduos de ambos os modelos são simétricos e a estatística F aponta para uma possível correlação entre as variáveis. Já os coeficientes R² dos dois modelos diferem bastante, sendo de 0,269 para a América do Sul e 0,719 para a América do Norte.</p>
+<p>Após essa análise preliminar, analisa-se como os resíduos de ambos os modelos estão distribuídos.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb118"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb118-1"><a href="#cb118-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Tabela com os dados da América do Sul</span></span>
+<span id="cb118-2"><a href="#cb118-2" aria-hidden="true" tabindex="-1"></a>lm_south_data <span class="ot">&lt;-</span> owid <span class="sc">%&gt;%</span> <span class="fu">filter</span>(continent <span class="sc">==</span> <span class="st">"South America"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb118-3"><a href="#cb118-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># incluindo as colunas com os valores ajustados</span></span>
+<span id="cb118-4"><a href="#cb118-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">fitted =</span> lm_south<span class="sc">$</span>fit) <span class="sc">%&gt;%</span></span>
+<span id="cb118-5"><a href="#cb118-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">resid =</span> lm_south<span class="sc">$</span>res)</span>
+<span id="cb118-6"><a href="#cb118-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb118-7"><a href="#cb118-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Gráfico de resíduos para a América do Sul</span></span>
+<span id="cb118-8"><a href="#cb118-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(lm_south_data, <span class="fu">aes</span>(<span class="at">x =</span> fitted, <span class="at">y =</span> resid)) <span class="sc">+</span></span>
+<span id="cb118-9"><a href="#cb118-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb118-10"><a href="#cb118-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb118-11"><a href="#cb118-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Resíduos América do Sul"</span>) <span class="sc">+</span></span>
+<span id="cb118-12"><a href="#cb118-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"resíduos"</span>, <span class="at">x =</span> <span class="st">"resposta ajustada"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="DENYS-DERLIAN_JOAO-VIEIRA_RAFAEL-ROCHA_EXERCICIO-S03_files/figure-html/unnamed-chunk-30-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb119"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb119-1"><a href="#cb119-1" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Tabela com os dados da América do Norte</span></span>
+<span id="cb119-2"><a href="#cb119-2" aria-hidden="true" tabindex="-1"></a>lm_north_data <span class="ot">&lt;-</span> owid <span class="sc">%&gt;%</span> <span class="fu">filter</span>(continent <span class="sc">==</span> <span class="st">"North America"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb119-3"><a href="#cb119-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># incluindo as colunas com os valores ajustados</span></span>
+<span id="cb119-4"><a href="#cb119-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">fitted =</span> lm_north<span class="sc">$</span>fit) <span class="sc">%&gt;%</span></span>
+<span id="cb119-5"><a href="#cb119-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">resid =</span> lm_north<span class="sc">$</span>res)</span>
+<span id="cb119-6"><a href="#cb119-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb119-7"><a href="#cb119-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Gráfico de resíduos para a América do Norte</span></span>
+<span id="cb119-8"><a href="#cb119-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(lm_north_data, <span class="fu">aes</span>(<span class="at">x =</span> fitted, <span class="at">y =</span> resid)) <span class="sc">+</span></span>
+<span id="cb119-9"><a href="#cb119-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb119-10"><a href="#cb119-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb119-11"><a href="#cb119-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Resíduos América do Norte"</span>) <span class="sc">+</span></span>
+<span id="cb119-12"><a href="#cb119-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"resíduos"</span>, <span class="at">x =</span> <span class="st">"resposta ajustada"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="DENYS-DERLIAN_JOAO-VIEIRA_RAFAEL-ROCHA_EXERCICIO-S03_files/figure-html/unnamed-chunk-31-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
 </section>
+</section>
+<section id="homoscedasticidade" class="level1">
+<h1>Homoscedasticidade</h1>
+<p>Ao observar os resíduos para ambos os continentes, é possível perceber uma leve diferença na variância para diferentes valores da variável de interesse. Para verificar quantitativamente a homoscedasticidade utiliza-se o teste de Breusch-Pagan.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb120"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb120-1"><a href="#cb120-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lmtest)</span>
+<span id="cb120-2"><a href="#cb120-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb120-3"><a href="#cb120-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Teste de Breusch-Pagan para a América do Sul</span></span>
+<span id="cb120-4"><a href="#cb120-4" aria-hidden="true" tabindex="-1"></a><span class="fu">bptest</span>(lm_south)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    studentized Breusch-Pagan test
+
+data:  lm_south
+BP = 0.022034, df = 1, p-value = 0.882</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb122"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb122-1"><a href="#cb122-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Teste de Breusch-Pagan para a América do Norte</span></span>
+<span id="cb122-2"><a href="#cb122-2" aria-hidden="true" tabindex="-1"></a><span class="fu">bptest</span>(lm_north)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    studentized Breusch-Pagan test
+
+data:  lm_north
+BP = 0.081497, df = 1, p-value = 0.7753</code></pre>
+</div>
+</div>
+</section>
+<section id="outliers" class="level1">
+<h1>Outliers</h1>
+<p>Para observar a presença ou não de outliers nos modelos de regressão, são utilizados os resíduos padronizados:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb124"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb124-1"><a href="#cb124-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Cria nova coluna na tabela para os dados da América do Sul</span></span>
+<span id="cb124-2"><a href="#cb124-2" aria-hidden="true" tabindex="-1"></a>lm_south_data <span class="ot">&lt;-</span> lm_south_data <span class="sc">%&gt;%</span></span>
+<span id="cb124-3"><a href="#cb124-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># resíduos padronizados</span></span>
+<span id="cb124-4"><a href="#cb124-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">resid_pad =</span> <span class="fu">rstandard</span>(lm_south))</span>
+<span id="cb124-5"><a href="#cb124-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb124-6"><a href="#cb124-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Cria nova coluna na tabela para os dados da América do Norte</span></span>
+<span id="cb124-7"><a href="#cb124-7" aria-hidden="true" tabindex="-1"></a>lm_north_data <span class="ot">&lt;-</span> lm_north_data <span class="sc">%&gt;%</span></span>
+<span id="cb124-8"><a href="#cb124-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># resíduos padronizados</span></span>
+<span id="cb124-9"><a href="#cb124-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">resid_pad =</span> <span class="fu">rstandard</span>(lm_north))</span>
+<span id="cb124-10"><a href="#cb124-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb124-11"><a href="#cb124-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Gera gráficos dos resíduos padronizados América do Sul:</span></span>
+<span id="cb124-12"><a href="#cb124-12" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(lm_south_data, <span class="fu">aes</span>(<span class="at">x =</span> fitted, <span class="at">y =</span> resid_pad)) <span class="sc">+</span></span>
+<span id="cb124-13"><a href="#cb124-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb124-14"><a href="#cb124-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">4</span>, <span class="sc">-</span><span class="dv">3</span>, <span class="dv">0</span>, <span class="dv">3</span>, <span class="dv">4</span>),</span>
+<span id="cb124-15"><a href="#cb124-15" aria-hidden="true" tabindex="-1"></a>             <span class="at">linetype =</span> <span class="st">"dashed"</span>,</span>
+<span id="cb124-16"><a href="#cb124-16" aria-hidden="true" tabindex="-1"></a>             <span class="at">color =</span> <span class="fu">c</span>(<span class="st">"red"</span>, <span class="st">"orange"</span>, <span class="st">"black"</span>, <span class="st">"orange"</span>, <span class="st">"red"</span>) ) <span class="sc">+</span></span>
+<span id="cb124-17"><a href="#cb124-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="sc">-</span><span class="dv">6</span>, <span class="dv">6</span>) <span class="sc">+</span></span>
+<span id="cb124-18"><a href="#cb124-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"América do Sul"</span>) <span class="sc">+</span></span>
+<span id="cb124-19"><a href="#cb124-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"resíduos padronizados"</span>, <span class="at">x =</span> <span class="st">"resposta ajustada ('happiness_cantril_ladder')"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="DENYS-DERLIAN_JOAO-VIEIRA_RAFAEL-ROCHA_EXERCICIO-S03_files/figure-html/unnamed-chunk-33-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb125"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb125-1"><a href="#cb125-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Gera gráficos dos resíduos padronizados América do Norte:</span></span>
+<span id="cb125-2"><a href="#cb125-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(lm_north_data, <span class="fu">aes</span>(<span class="at">x =</span> fitted, <span class="at">y =</span> resid_pad)) <span class="sc">+</span></span>
+<span id="cb125-3"><a href="#cb125-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb125-4"><a href="#cb125-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">4</span>, <span class="sc">-</span><span class="dv">3</span>, <span class="dv">0</span>, <span class="dv">3</span>, <span class="dv">4</span>),</span>
+<span id="cb125-5"><a href="#cb125-5" aria-hidden="true" tabindex="-1"></a>             <span class="at">linetype =</span> <span class="st">"dashed"</span>,</span>
+<span id="cb125-6"><a href="#cb125-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">color =</span> <span class="fu">c</span>(<span class="st">"red"</span>, <span class="st">"orange"</span>, <span class="st">"black"</span>, <span class="st">"orange"</span>, <span class="st">"red"</span>) ) <span class="sc">+</span></span>
+<span id="cb125-7"><a href="#cb125-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="sc">-</span><span class="dv">6</span>, <span class="dv">6</span>) <span class="sc">+</span></span>
+<span id="cb125-8"><a href="#cb125-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"América do Norte"</span>) <span class="sc">+</span></span>
+<span id="cb125-9"><a href="#cb125-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"resíduos padronizados"</span>, <span class="at">x =</span> <span class="st">"resposta ajustada ('happiness_cantril_ladder')"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="DENYS-DERLIAN_JOAO-VIEIRA_RAFAEL-ROCHA_EXERCICIO-S03_files/figure-html/unnamed-chunk-33-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Ao observar os gráficos de resíduos normalizados para ambos os continentes percebe-se que não existem outliers nos dados pois todos os resíduos se encontram entre as retas que delimitam ± 3 desvios padrão.</p>
+</section>
+<section id="independência" class="level1">
+<h1>Independência</h1>
+<p>Uma outra hipótese do modelo de regressão que deve ser testada é a de que os erros não estão correlacionados. Para verificar essa hipótese, utiliza-se o teste de Durbin-Watson.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb126"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb126-1"><a href="#cb126-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Teste para a Amperica do Sul</span></span>
+<span id="cb126-2"><a href="#cb126-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dwtest</span>(lm_south, <span class="at">alternative =</span> <span class="st">"two.sided"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Durbin-Watson test
+
+data:  lm_south
+DW = 0.80037, p-value = 5.976e-08
+alternative hypothesis: true autocorrelation is not 0</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb128"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb128-1"><a href="#cb128-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Teste para a América do Norte</span></span>
+<span id="cb128-2"><a href="#cb128-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dwtest</span>(lm_north, <span class="at">alternative =</span> <span class="st">"two.sided"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Durbin-Watson test
+
+data:  lm_north
+DW = 0.5183, p-value &lt; 2.2e-16
+alternative hypothesis: true autocorrelation is not 0</code></pre>
+</div>
+</div>
+</section>
+<section id="normalidade" class="level1">
+<h1>Normalidade</h1>
+<p>Além das hipóteses já apresentadas, também é considerado que os resíduos são normalmente distribuídos. Para verificar a normalidade dos resíduos serão utilizados o histograma dos resíduos, o gráfico de quantis e o teste de Shapiro-Wilk.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb130"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb130-1"><a href="#cb130-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Histograma dos resíduos padronizados para América do Sul</span></span>
+<span id="cb130-2"><a href="#cb130-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(lm_south_data, <span class="fu">aes</span>(<span class="at">x =</span> resid_pad, <span class="at">y =</span> <span class="fu">after_stat</span>(density))) <span class="sc">+</span></span>
+<span id="cb130-3"><a href="#cb130-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">15</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="DENYS-DERLIAN_JOAO-VIEIRA_RAFAEL-ROCHA_EXERCICIO-S03_files/figure-html/unnamed-chunk-35-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb131"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb131-1"><a href="#cb131-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Histograma dos resíduos padronizados para América do Norte</span></span>
+<span id="cb131-2"><a href="#cb131-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(lm_north_data, <span class="fu">aes</span>(<span class="at">x =</span> resid_pad, <span class="at">y =</span> <span class="fu">after_stat</span>(density))) <span class="sc">+</span></span>
+<span id="cb131-3"><a href="#cb131-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">15</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="DENYS-DERLIAN_JOAO-VIEIRA_RAFAEL-ROCHA_EXERCICIO-S03_files/figure-html/unnamed-chunk-35-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Somente observando os histogramas dos resíduos para ambos os continentes não é possível afirmar com nenhuma segurança se os resíduos são distribuídos ou não próximos de uma distribuição normal. Uma análise qualitativa é melhor ser feita através dos gráficos de quantis.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb132"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb132-1"><a href="#cb132-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Gráfico de quantis para América do Sul</span></span>
+<span id="cb132-2"><a href="#cb132-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(lm_south_data, <span class="fu">aes</span>(<span class="at">sample =</span> resid_pad)) <span class="sc">+</span></span>
+<span id="cb132-3"><a href="#cb132-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_qq</span>() <span class="sc">+</span> <span class="fu">stat_qq_line</span>() <span class="sc">+</span></span>
+<span id="cb132-4"><a href="#cb132-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"quantis amostrais"</span>, <span class="at">x =</span> <span class="st">"quantis teóricos (dist. normal)"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="DENYS-DERLIAN_JOAO-VIEIRA_RAFAEL-ROCHA_EXERCICIO-S03_files/figure-html/unnamed-chunk-36-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb133"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb133-1"><a href="#cb133-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Gráfico de quantis para América do Norte</span></span>
+<span id="cb133-2"><a href="#cb133-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(lm_north_data, <span class="fu">aes</span>(<span class="at">sample =</span> resid_pad)) <span class="sc">+</span></span>
+<span id="cb133-3"><a href="#cb133-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_qq</span>() <span class="sc">+</span> <span class="fu">stat_qq_line</span>() <span class="sc">+</span></span>
+<span id="cb133-4"><a href="#cb133-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"quantis amostrais"</span>, <span class="at">x =</span> <span class="st">"quantis teóricos (dist. normal)"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="DENYS-DERLIAN_JOAO-VIEIRA_RAFAEL-ROCHA_EXERCICIO-S03_files/figure-html/unnamed-chunk-36-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Aparentemente, ambas as distribuições dos resíduos padronizados são próximas de uma distribuição normal. Além disso, para a América do Sul aparentemente a distribuiçaõ é mais próxima de uma normal que para a América do Norte. Para finalizar a análise de normalidade dos resíduos com um teste quantitativo, utiliza-se o teste de Shapiro-Wilk.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb134"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb134-1"><a href="#cb134-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Teste de Normalidade de Shapiro-Wilk</span></span>
+<span id="cb134-2"><a href="#cb134-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Ho: normal</span></span>
+<span id="cb134-3"><a href="#cb134-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Ha: não-normal</span></span>
+<span id="cb134-4"><a href="#cb134-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb134-5"><a href="#cb134-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Teste de Shapiro-Wilk para América do Sul</span></span>
+<span id="cb134-6"><a href="#cb134-6" aria-hidden="true" tabindex="-1"></a><span class="fu">shapiro.test</span>(lm_south_data<span class="sc">$</span>resid_pad)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Shapiro-Wilk normality test
+
+data:  lm_south_data$resid_pad
+W = 0.98764, p-value = 0.7807</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb136"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb136-1"><a href="#cb136-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Teste de Shapiro-Wilk para América do Norte</span></span>
+<span id="cb136-2"><a href="#cb136-2" aria-hidden="true" tabindex="-1"></a><span class="fu">shapiro.test</span>(lm_north_data<span class="sc">$</span>resid_pad)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Shapiro-Wilk normality test
+
+data:  lm_north_data$resid_pad
+W = 0.97474, p-value = 0.0628</code></pre>
+</div>
+</div>
 </section>
 
 </main>

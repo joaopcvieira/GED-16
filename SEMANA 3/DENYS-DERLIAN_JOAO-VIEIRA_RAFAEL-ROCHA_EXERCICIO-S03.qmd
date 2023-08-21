@@ -627,3 +627,154 @@ Já os intervalos de previsão para os valores de 237, 234 e 225 foram (`r round
 ## Parte 3
 
 Para os modelos considerando cada nível da variável `continent` no item (2) da seção anterior, realize o diagnóstico através da análise dos resíduos. Todos aparentam ter mesma variância dos erros? É necessário realizar alguma transformação de variáveis? Tente solucionar os possíveis problemas encontrados com o modelo. Que conclusões é possível obter a partir da análise?
+
+
+Será feita uma análise dos modelos de regressão linear simples para a variável "happinness_cantril_ladder" com a variável explicativa "deaths_air_pollution". São mostrados os resumos das duas regressões:
+```{r}
+summary(lm_south)
+
+summary(lm_north)
+```
+
+É possível perceber diferenças nos modelos de regressão para os continentes América do Norte e do Sul. Aparentemente os resíduos de ambos os modelos são simétricos e a estatística F aponta para uma possível correlação entre as variáveis. Já os coeficientes R² dos dois modelos diferem bastante, sendo de 0,269 para a América do Sul e 0,719 para a América do Norte.
+
+Após essa análise preliminar, analisa-se como os resíduos de ambos os modelos estão distribuídos.
+
+```{r}
+# Tabela com os dados da América do Sul
+lm_south_data <- owid %>% filter(continent == "South America") %>%
+    # incluindo as colunas com os valores ajustados
+    mutate(fitted = lm_south$fit) %>%
+    mutate(resid = lm_south$res)
+
+# Gráfico de resíduos para a América do Sul
+ggplot(lm_south_data, aes(x = fitted, y = resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("Resíduos América do Sul") +
+  labs(y = "resíduos", x = "resposta ajustada")
+```
+```{r}
+    # Tabela com os dados da América do Norte
+lm_north_data <- owid %>% filter(continent == "North America") %>%
+    # incluindo as colunas com os valores ajustados
+    mutate(fitted = lm_north$fit) %>%
+    mutate(resid = lm_north$res)
+
+# Gráfico de resíduos para a América do Norte
+ggplot(lm_north_data, aes(x = fitted, y = resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("Resíduos América do Norte") +
+  labs(y = "resíduos", x = "resposta ajustada")
+```
+
+# Homoscedasticidade
+
+Ao observar os resíduos para ambos os continentes, é possível perceber uma leve diferença na variância para diferentes valores da variável de interesse. Para verificar quantitativamente a homoscedasticidade utiliza-se o teste de Breusch-Pagan.
+
+```{r}
+library(lmtest)
+
+# Teste de Breusch-Pagan para a América do Sul
+bptest(lm_south)
+
+# Teste de Breusch-Pagan para a América do Norte
+bptest(lm_north)
+```
+
+# Outliers
+
+Para observar a presença ou não de outliers nos modelos de regressão, são utilizados os resíduos padronizados:
+
+```{r}
+# Cria nova coluna na tabela para os dados da América do Sul
+lm_south_data <- lm_south_data %>%
+  # resíduos padronizados
+  mutate(resid_pad = rstandard(lm_south))
+
+# Cria nova coluna na tabela para os dados da América do Norte
+lm_north_data <- lm_north_data %>%
+    # resíduos padronizados
+    mutate(resid_pad = rstandard(lm_north))
+
+# Gera gráficos dos resíduos padronizados América do Sul:
+ggplot(lm_south_data, aes(x = fitted, y = resid_pad)) +
+  geom_point() +
+  geom_hline(yintercept = c(-4, -3, 0, 3, 4),
+             linetype = "dashed",
+             color = c("red", "orange", "black", "orange", "red") ) +
+  ylim(-6, 6) +
+  ggtitle("América do Sul") +
+  labs(y = "resíduos padronizados", x = "resposta ajustada ('happiness_cantril_ladder')")
+
+# Gera gráficos dos resíduos padronizados América do Norte:
+ggplot(lm_north_data, aes(x = fitted, y = resid_pad)) +
+  geom_point() +
+  geom_hline(yintercept = c(-4, -3, 0, 3, 4),
+             linetype = "dashed",
+             color = c("red", "orange", "black", "orange", "red") ) +
+  ylim(-6, 6) +
+  ggtitle("América do Norte") +
+  labs(y = "resíduos padronizados", x = "resposta ajustada ('happiness_cantril_ladder')")
+```
+
+Ao observar os gráficos de resíduos normalizados para ambos os continentes percebe-se que não existem outliers nos dados pois todos os resíduos se encontram entre as retas que delimitam ± 3 desvios padrão.
+
+# Independência
+
+Uma outra hipótese do modelo de regressão que deve ser testada é a de que os erros não estão correlacionados. Para verificar essa hipótese, utiliza-se o teste de Durbin-Watson.
+
+```{r}
+# Teste para a Amperica do Sul
+dwtest(lm_south, alternative = "two.sided")
+
+# Teste para a América do Norte
+dwtest(lm_north, alternative = "two.sided")
+
+```
+
+# Normalidade
+
+Além das hipóteses já apresentadas, também é considerado que os resíduos são normalmente distribuídos. Para verificar a normalidade dos resíduos serão utilizados o histograma dos resíduos, o gráfico de quantis e o teste de Shapiro-Wilk.
+
+```{r}
+# Histograma dos resíduos padronizados para América do Sul
+ggplot(lm_south_data, aes(x = resid_pad, y = after_stat(density))) +
+  geom_histogram(bins = 15)
+
+# Histograma dos resíduos padronizados para América do Norte
+ggplot(lm_north_data, aes(x = resid_pad, y = after_stat(density))) +
+  geom_histogram(bins = 15)
+
+```
+
+Somente observando os histogramas dos resíduos para ambos os continentes não é possível afirmar com nenhuma segurança se os resíduos são distribuídos ou não próximos de uma distribuição normal. Uma análise qualitativa é melhor ser feita através dos gráficos de quantis.
+
+```{r}
+# Gráfico de quantis para América do Sul
+ggplot(lm_south_data, aes(sample = resid_pad)) +
+  stat_qq() + stat_qq_line() +
+  labs(y = "quantis amostrais", x = "quantis teóricos (dist. normal)")
+
+# Gráfico de quantis para América do Norte
+ggplot(lm_north_data, aes(sample = resid_pad)) +
+  stat_qq() + stat_qq_line() +
+  labs(y = "quantis amostrais", x = "quantis teóricos (dist. normal)")
+```
+
+Aparentemente, ambas as distribuições dos resíduos padronizados são próximas de uma distribuição normal. Além disso, para a América do Sul aparentemente a distribuiçaõ é mais próxima de uma normal que para a América do Norte. Para finalizar a análise de normalidade dos resíduos com um teste quantitativo, utiliza-se o teste de Shapiro-Wilk.
+
+```{r}
+# Teste de Normalidade de Shapiro-Wilk
+# Ho: normal
+# Ha: não-normal
+
+# Teste de Shapiro-Wilk para América do Sul
+shapiro.test(lm_south_data$resid_pad)
+
+# Teste de Shapiro-Wilk para América do Norte
+shapiro.test(lm_north_data$resid_pad)
+```
+
+Ao analisar os resíduos com o teste de Shapiro-Wilk é possível perceber que ...
