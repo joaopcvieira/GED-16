@@ -587,6 +587,102 @@ Os resultados indicam uma melhoria no desempenho do modelo após a transformaç�
 
 Para cada um dos modelos de regressão ajustados no item (1) da seção anterior, realize o diagnóstico através da análise dos resíduos e apresente um resumo de suas conclusões. O modelo de regressão linear simples clássico de 1a. ordem é adequado a alguma das situações investigadas?
 
+Para esta parte, todos as análises realizadas seguirão a mesma sequência dos dados ajustados no item (1) da seção anterior.
+
+### Linearidade
+
+Neste segmento, será analisada a relação estatística entre resposta e variável explicativa, de modo a se perscrutar se o observado se ajusta ao modelo linear.
+
+```{r}
+# Resumo da regressão para birth_rate
+summary(owid_rls_birth)
+
+# Resumo da regressão para deaths_air_pollution
+summary(owid_rls_Dair)
+
+# Resumo da regressão para expected_schooling
+summary(owid_rls_ExpSchool)
+
+# Resumo da regressão para life_expectancy
+summary(owid_rls_LifeExpec)
+```
+
+Apenas analisando os dados acima, é difícil identificar diretamente o caráter de linearidade das variáveis envolvidas. De modo geral, o valor do teste F para as variáveis denota que o modelos, como um todo, são estatisticamente significativos, ou seja, pelo menos uma das variáveis independentes tem um efeito significativo na variável dependente. Os resíduos têm uma distribuição que varia de modo que a mediana próxima de zero, o que pode indicar que os resíduos estão bem distribuídos em torno desse valor.
+
+A partir daí, segue uma análise gráfica da situação:
+
+```{r}
+# Constrói tabela com dados do modelo happiness_cantril_ladder ~ (variáveis explicativas)
+owid_rls_birth_data <- owid %>%
+  # inclui coluna com valores ajustados
+  mutate(fitted_birth = owid_rls_birth$fit) %>%
+  mutate(resid_birth = owid_rls_birth$res)
+
+owid_rls_Dair_data <- owid %>%
+  # inclui coluna com valores ajustados
+  mutate(fitted_Dair = owid_rls_Dair$fit) %>%
+  mutate(resid_Dair = owid_rls_Dair$res)
+
+owid_rls_ExpSchool_data <- owid %>%
+  # inclui coluna com valores ajustados
+  mutate(fitted_Exp = owid_rls_ExpSchool$fit) %>%
+  mutate(resid_Exp = owid_rls_ExpSchool$res)
+
+owid_rls_LifeExpec_data <- owid %>%
+  # inclui coluna com valores ajustados
+  mutate(fitted_Life = owid_rls_LifeExpec$fit) %>%
+  mutate(resid_Life = owid_rls_LifeExpec$res)
+
+# Gera gráficos dos resíduos:
+ggplot(owid_rls_birth_data, aes(x = fitted_birth, y = resid_birth)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("dados originais: modelo happiness ~ birth_rate") +
+  labs(y = "resíduos", x = "resposta ajustada (happiness)")
+ggplot(owid_rls_birth_data, aes(x = birth_rate, y = resid_birth)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("dados originais: modelo happiness ~ birth_rate") +
+  labs(y = "resíduos", x = "variável explicativa (birth_rate)")
+
+ggplot(owid_rls_Dair_data, aes(x = fitted_Dair, y = resid_Dair)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("dados originais: modelo happiness ~ deaths_air_pollution") +
+  labs(y = "resíduos", x = "resposta ajustada (happiness)")
+ggplot(owid_rls_Dair_data, aes(x = deaths_air_pollution, y = resid_Dair)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("dados originais: modelo happiness ~ deaths_air_pollution") +
+  labs(y = "resíduos", x = "variável explicativa (deaths_air_pollution)")
+
+ggplot(owid_rls_ExpSchool_data, aes(x = fitted_Exp, y = resid_Exp)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("dados originais: modelo happiness ~ expected_schooling") +
+  labs(y = "resíduos", x = "resposta ajustada (happiness)")
+ggplot(owid_rls_ExpSchool_data, aes(x = expected_schooling, y = resid_Exp)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("dados originais: modelo happiness ~ expected_schooling") +
+  labs(y = "resíduos", x = "variável explicativa (expected_schooling)")
+
+ggplot(owid_rls_LifeExpec_data, aes(x = fitted_Life, y = resid_Life)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("dados originais: modelo happiness ~ life_expectancy") +
+  labs(y = "resíduos", x = "resposta ajustada (happiness)")
+ggplot(owid_rls_LifeExpec_data, aes(x = life_expectancy, y = resid_Life)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("dados originais: modelo happiness ~ life_expectancy") +
+  labs(y = "resíduos", x = "variável explicativa (life_expectancy)")
+```
+
+Analisando graficamente os resíduos, verifica-se que as variáveis `birth_rate` e `expected_schooling` apresentam uma relação linear na distribuição de resíduos, embora possa apresentar problemas de homoscedasticidade, que será tratado a seguir. Já as variáveis `death_air_pollution` e `expected_schooling` apresentam uma relação que pode denotar não linearidade, sendo mais expressiva na primeira e mais sutil na segunda. Tal observação sugere que alguma transformação de dados pode ser realizada para melhorar a correlação das variáveis.
+
+### Homoscedasticidade
+
 ## Parte 2
 
 Ajuste um modelo de regressão linear simples para a variável `happiness_cantril_ladder` como função de `deaths_air_pollution` após excluir as observações 973 (X = 237 e Y = 6.00), 974 (X = 234 e Y = 5.99) e 975 (X = 225 e Y = 5.97). Obtenha intervalos de previsão de 95% de confiança para novas observações que apresentam valores da variável explicativa iguais a 237, 234 e 225. As observações eliminadas encontram-se nos limites dos intervalos de previsão obtidos? Discuta o significado dos resultados obtidos.
@@ -605,7 +701,7 @@ owid_filtered_happ_deaths
 
 O modelo, com a remoção dos outliers apontados é conforme:
 
-$happiness\_cantril\_ladder \ =$ `r round(owid_filtered_happ_deaths$coefficients[1], digits=2)` `r round(owid_filtered_happ_deaths$coefficients[2], digits=2)`  $\cdot \ deaths\_air\_pollution$
+$happiness\_cantril\_ladder \ =$ `r round(owid_filtered_happ_deaths$coefficients[1], digits=2)` `r round(owid_filtered_happ_deaths$coefficients[2], digits=2)` $\cdot \ deaths\_air\_pollution$
 
 Com relação ao intervalo de confiança para a previsão, com 95% de confiança, temos:
 
@@ -622,14 +718,14 @@ Dessa forma, os valores para a estimativa pontual foram de `r round(Y_predicted[
 
 Já os intervalos de previsão para os valores de 237, 234 e 225 foram (`r round(Y_predicted[4],digits = 2)` ,`r round(Y_predicted[5],digits = 2)`), (`r round(Y_predicted[7],digits = 2)` ,`r round(Y_predicted[8],digits = 2)`) e (`r round(Y_predicted[10],digits = 2)` ,`r round(Y_predicted[11],digits = 2)`), respectivamente. Desse modo, frente às previsões realizadas, nenhum dos valores "reais" dos dados em Y encontram-se nos intervalos de confiança para os valores de X. Isso indica que os valores de Y para os valores de X removidos são incomuns ou improváveis, indicando que podem ser considerados outliers.
 
-
-
 ## Parte 3
 
 Para os modelos considerando cada nível da variável `continent` no item (2) da seção anterior, realize o diagnóstico através da análise dos resíduos. Todos aparentam ter mesma variância dos erros? É necessário realizar alguma transformação de variáveis? Tente solucionar os possíveis problemas encontrados com o modelo. Que conclusões é possível obter a partir da análise?
 
+### Linearidade
 
-Será feita uma análise dos modelos de regressão linear simples para a variável "happinness_cantril_ladder" com a variável explicativa "deaths_air_pollution". São mostrados os resumos das duas regressões:
+Será feita uma análise dos modelos de regressão linear simples para a variável `happinness_cantril_ladder` com a variável explicativa `deaths_air_pollution`. São mostrados os resumos das duas regressões:
+
 ```{r}
 summary(lm_south)
 
@@ -654,6 +750,7 @@ ggplot(lm_south_data, aes(x = fitted, y = resid)) +
   ggtitle("Resíduos América do Sul") +
   labs(y = "resíduos", x = "resposta ajustada")
 ```
+
 ```{r}
     # Tabela com os dados da América do Norte
 lm_north_data <- owid %>% filter(continent == "North America") %>%
@@ -669,7 +766,7 @@ ggplot(lm_north_data, aes(x = fitted, y = resid)) +
   labs(y = "resíduos", x = "resposta ajustada")
 ```
 
-# Homoscedasticidade
+### Homoscedasticidade
 
 Ao observar os resíduos para ambos os continentes, é possível concluir que existe uma leve diferença na variância para diferentes valores da variável de interesse. Para verificar quantitativamente se a variância é ou não constate utiliza-se o teste de Breusch-Pagan.
 
@@ -685,7 +782,7 @@ bptest(lm_north)
 
 Os testes de Breusch-Pagan mostram que devemos adotar a hipótese nula de que a variância é constante para todos os valores da variável de interesse. Isso mostra que não é possível perceber com clareza se a variância é de fato ou não constante somente ao observar como estão distribuídos os resíduos.
 
-# Outliers
+### Outliers
 
 Para observar a presença ou não de outliers nos modelos de regressão, são utilizados os resíduos padronizados:
 
@@ -723,7 +820,7 @@ ggplot(lm_north_data, aes(x = fitted, y = resid_pad)) +
 
 Ao observar os gráficos de resíduos normalizados para ambos os continentes percebe-se que não existem outliers nos dados pois todos os resíduos se encontram entre as retas que delimitam ± 3 desvios padrão.
 
-# Independência
+### Independência
 
 Uma outra hipótese do modelo de regressão que deve ser testada é a de que os erros não estão correlacionados. Para verificar essa hipótese, utiliza-se o teste de Durbin-Watson.
 
@@ -738,7 +835,7 @@ dwtest(lm_north, alternative = "two.sided")
 
 Assim, os testes rejeitam a hipótese de que os erros não são independentes entre si.
 
-# Normalidade
+### Normalidade
 
 Além das hipóteses já apresentadas, também é considerado que os resíduos são normalmente distribuídos. Para verificar a normalidade dos resíduos serão utilizados o histograma dos resíduos, o gráfico de quantis e o teste de Shapiro-Wilk.
 
@@ -784,4 +881,3 @@ shapiro.test(lm_north_data$resid_pad)
 Ao analisar os resíduos com o teste de Shapiro-Wilk é possível perceber que não devemos rejeitar a hipótese nula de que os resíduos são distribuídos de forma normal para um nível de significância de 5%.
 
 Assim, devido aos resíduos dos modelos de ambos os continentes possuírem distribuição aproximadamente normal, não se fazem necessárias transformações na variável de interesse.
-
