@@ -339,7 +339,7 @@ Para cada nível da variável categórica `continent`, construa um modelo de reg
 
 ### Obtenha os modelos de regressão ajustados. As funções de regressão estimadas são semelhantes para todos os níveis da variável `continent`? Discuta.
 
-Vamos refazer as análises passadas \textit{clusterizando} as variáveis por continente somente para a variável "deaths_air_pollution".
+Vamos refazer as análises passadas *clusterizando* as variáveis por continente somente para a variável "deaths_air_pollution".
 
 ```{r}
 #| fig-width: 3
@@ -440,7 +440,7 @@ confint.lm(lm_south,level=0.95, parm = 2)
 
 ```
 
-Assim, é possível perceber que o intervalo de confiança do coeficiente angular para a América do Norte se sobrepõe com o da América do Sul. Isso é percebido pois os intervalos de confiança 95% possuem intersecção. Portanto, pode-se concluir que os intervalos de confiança indicam que as inclinações das retas de regressão para a relação entre a variável `deaths_air_pollution` e a variável de resposta `happiness_cantril_ladder` não parecem ser significativamente diferentes entre `North America` e `South America`. Isso sugere que a relação entre essas variáveis pode ser semelhante nos dois continentes.
+Assim, é possível perceber que o intervalo de confiança do coeficiente angular para a América do Norte se sobrepõe com o da América do Sul. Isso é percebido pois os intervalos de confiança 95% possuem intersecção. Portanto, estatisticamente, não se pode concluir algo sobre os intervalos de confiança em relação à indicação de que as inclinações das retas de regressão para a relação entre a variável `deaths_air_pollution` e a variável de resposta `happiness_cantril_ladder` não parecem ser significativamente diferentes entre `North America` e `South America`.
 
 ### Construa intervalos de confiança para a resposta esperada correspondendo a `deaths_air_pollution` = 50, para os continentes `North America` e `South America`. O que se pode concluir?
 
@@ -497,7 +497,7 @@ Ao comparar os intervalos de previsão para os cenários de `North America` e `S
 
 Construa um modelo de regressão para a variável de resposta `happiness_cantril_ladder` em função de `gdp_pc`. Assuma que o modelo de 1a. ordem é adequado para modelar essas relações. Faz sentido aplicar alguma transformação à variável explicativa? Replique os procedimentos realizados no item (1) para um modelo considerando a variável explicativa em sua forma original ou transformada.
 
-Inicia-se construindo o modelo de regressão para a variavel especificada normalmente repetindo os passos do item (1), sendo gerado o modelo linear, o gráfico, MSE e o valor de $R^2$.
+Inicia-se construindo o modelo de regressão para a variável especificada normalmente repetindo os passos do item (1), sendo gerado o modelo linear, o gráfico, MSE e o valor de $R^2$.
 
 ```{r}
 # Constrói modelo de regressão linear simples para gdp_pc
@@ -683,6 +683,80 @@ Analisando graficamente os resíduos, verifica-se que as variáveis `birth_rate`
 
 ### Homoscedasticidade
 
+Neste segmento, será analisada a homoscedasticidade, em que a situação em que a variância dos erros parece constante ou não. Caso seja constante, não haverá evidências de violação da hipótese de homoscedasticidade. Os gráficos de resíduos (para os dados originais e transformados) serão utilizados para verificar se a variância dos erros não se mantém constante, o que pode ser identificado por um "efeito cone". Analisando o modelo com os dados transformados, o gráfico dos resíduos absolutos permite aumentar a resolução do gráfico:
+
+```{r}
+# Gráficos de |resíduos| para dados transformados: |resíduos| x (variáveis)
+ggplot(owid_rls_birth_data, aes(x = fitted_birth, y = abs(resid_birth))) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("dados transformados: modelo happiness ~ birth_rate") +
+  labs(y = "|resíduos|", x = "resposta ajustada (happiness)")
+ggplot(owid_rls_birth_data, aes(x = birth_rate, y = abs(resid_birth))) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("dados transformados: modelo happiness ~ birth_rate") +
+  labs(y = "|resíduos|", x = "variável explicativa (birth_rate)")
+
+ggplot(owid_rls_Dair_data, aes(x = fitted_Dair, y = abs(resid_Dair))) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("dados transformados: modelo happiness ~ deaths_air_pollution") +
+  labs(y = "|resíduos|", x = "resposta ajustada (happiness)")
+ggplot(owid_rls_Dair_data, aes(x = deaths_air_pollution, y = abs(resid_Dair))) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("dados transformados: modelo happiness ~ deaths_air_pollution") +
+  labs(y = "|resíduos|", x = "variável explicativa (deaths_air_pollution)")
+
+ggplot(owid_rls_ExpSchool_data, aes(x = fitted_Exp, y = abs(resid_Exp))) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("dados transformados: modelo happiness ~ expected_schooling") +
+  labs(y = "|resíduos|", x = "resposta ajustada (happiness)")
+ggplot(owid_rls_ExpSchool_data, aes(x = expected_schooling, y = abs(resid_Exp))) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("dados transformados: modelo happiness ~ expected_schooling") +
+  labs(y = "|resíduos|", x = "variável explicativa (expected_schooling)")
+
+ggplot(owid_rls_LifeExpec_data, aes(x = fitted_Life, y = abs(resid_Life))) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("dados transformados: modelo happiness ~ life_expectancy") +
+  labs(y = "|resíduos|", x = "resposta ajustada (happiness)")
+ggplot(owid_rls_LifeExpec_data, aes(x = life_expectancy, y = abs(resid_Life))) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("dados transformados: modelo happiness ~ life_expectancy") +
+  labs(y = "|resíduos|", x = "variável explicativa (life_expectancy)")
+```
+
+Graficamente, pode-se notar o efeito cone mais acentuado nas variáveis `birth_rate` e `deaths_air_pollution`. Isso pode indicar a violação da hipótese de Homoscedasticidade. Nas outras variáveis, fica difícil de avaliar graficamente. Agora, é realizado o procedimento formal para testar a constância da variância por meio do **Teste de Breusch-Pagan**. A hipótese nula é de que a variância é constante; a hipótese alternativa é de que a variância não se mantém constante para todas as observações.
+
+```{r}
+# Teste de Homoscedasticidade de Breusch-Pagan
+# Ho: sigma^2  = cte
+# Ha: sigma^2 != cte
+library(lmtest)
+
+# Teste para birth_rate
+bptest(owid_rls_birth)
+
+# Teste para deaths_air_pollution
+bptest(owid_rls_Dair)
+
+# Teste para expected_schooling
+bptest(owid_rls_ExpSchool)
+
+# Teste para life_expectancy
+bptest(owid_rls_LifeExpec)
+```
+
+Analisando os resultados dos testes cada valor-p, verifica-se que há indícios de que não há homoscedasticidade nos resíduos do modelo com `birth_rate` como variável explicativa, enquanto não há evidências significativas de heteroscedasticidade nos resíduos dos modelos com `deaths_air_pollution`, `expected_schooling` e `life_expectancy` como variáveis explicativas. A ausência de homoscedasticidade nos resíduos pode indicar que o modelo de regressão pode não ser adequado para descrever adequadamente a relação entre a variável dependente e a variável explicativa associada. Nesses casos em que não há homoscedasticidade, pode ser necessário considerar transformações nas variáveis ou a utilização de técnicas mais avançadas para lidar com a variância não constante dos resíduos.
+
+### *Outliers*
+
 ## Parte 2
 
 Ajuste um modelo de regressão linear simples para a variável `happiness_cantril_ladder` como função de `deaths_air_pollution` após excluir as observações 973 (X = 237 e Y = 6.00), 974 (X = 234 e Y = 5.99) e 975 (X = 225 e Y = 5.97). Obtenha intervalos de previsão de 95% de confiança para novas observações que apresentam valores da variável explicativa iguais a 237, 234 e 225. As observações eliminadas encontram-se nos limites dos intervalos de previsão obtidos? Discuta o significado dos resultados obtidos.
@@ -782,9 +856,9 @@ bptest(lm_north)
 
 Os testes de Breusch-Pagan mostram que devemos adotar a hipótese nula de que a variância é constante para todos os valores da variável de interesse. Isso mostra que não é possível perceber com clareza se a variância é de fato ou não constante somente ao observar como estão distribuídos os resíduos.
 
-### Outliers
+### *Outliers*
 
-Para observar a presença ou não de outliers nos modelos de regressão, são utilizados os resíduos padronizados:
+Para observar a presença ou não de *outliers* nos modelos de regressão, são utilizados os resíduos padronizados:
 
 ```{r}
 # Cria nova coluna na tabela para os dados da América do Sul
@@ -818,11 +892,11 @@ ggplot(lm_north_data, aes(x = fitted, y = resid_pad)) +
   labs(y = "resíduos padronizados", x = "resposta ajustada ('happiness_cantril_ladder')")
 ```
 
-Ao observar os gráficos de resíduos normalizados para ambos os continentes percebe-se que não existem outliers nos dados pois todos os resíduos se encontram entre as retas que delimitam ± 3 desvios padrão.
+Ao observar os gráficos de resíduos normalizados para ambos os continentes percebe-se que não existem *outliers* nos dados pois todos os resíduos se encontram entre as retas que delimitam ± 3 desvios padrão.
 
 ### Independência
 
-Uma outra hipótese do modelo de regressão que deve ser testada é a de que os erros não estão correlacionados. Para verificar essa hipótese, utiliza-se o teste de Durbin-Watson.
+Uma outra hipótese do modelo de regressão que deve ser testada é a de que os erros não estão correlacionados. Para verificar essa hipótese, utiliza-se o **Teste de Durbin-Watson**.
 
 ```{r}
 # Teste para a Amperica do Sul
@@ -837,7 +911,7 @@ Assim, os testes rejeitam a hipótese de que os erros não são independentes en
 
 ### Normalidade
 
-Além das hipóteses já apresentadas, também é considerado que os resíduos são normalmente distribuídos. Para verificar a normalidade dos resíduos serão utilizados o histograma dos resíduos, o gráfico de quantis e o teste de Shapiro-Wilk.
+Além das hipóteses já apresentadas, também é considerado que os resíduos são normalmente distribuídos. Para verificar a normalidade dos resíduos serão utilizados o histograma dos resíduos, o gráfico de quantis e o **Teste de Shapiro-Wilk**.
 
 ```{r}
 # Histograma dos resíduos padronizados para América do Sul
