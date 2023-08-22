@@ -671,7 +671,7 @@ ggplot(lm_north_data, aes(x = fitted, y = resid)) +
 
 # Homoscedasticidade
 
-Ao observar os resíduos para ambos os continentes, é possível perceber uma leve diferença na variância para diferentes valores da variável de interesse. Para verificar quantitativamente a homoscedasticidade utiliza-se o teste de Breusch-Pagan.
+Ao observar os resíduos para ambos os continentes, é possível concluir que existe uma leve diferença na variância para diferentes valores da variável de interesse. Para verificar quantitativamente se a variância é ou não constate utiliza-se o teste de Breusch-Pagan.
 
 ```{r}
 library(lmtest)
@@ -682,6 +682,8 @@ bptest(lm_south)
 # Teste de Breusch-Pagan para a América do Norte
 bptest(lm_north)
 ```
+
+Os testes de Breusch-Pagan mostram que devemos adotar a hipótese nula de que a variância é constante para todos os valores da variável de interesse. Isso mostra que não é possível perceber com clareza se a variância é de fato ou não constante somente ao observar como estão distribuídos os resíduos.
 
 # Outliers
 
@@ -734,6 +736,8 @@ dwtest(lm_north, alternative = "two.sided")
 
 ```
 
+Assim, os testes rejeitam a hipótese de que os erros não são independentes entre si.
+
 # Normalidade
 
 Além das hipóteses já apresentadas, também é considerado que os resíduos são normalmente distribuídos. Para verificar a normalidade dos resíduos serão utilizados o histograma dos resíduos, o gráfico de quantis e o teste de Shapiro-Wilk.
@@ -777,4 +781,7 @@ shapiro.test(lm_south_data$resid_pad)
 shapiro.test(lm_north_data$resid_pad)
 ```
 
-Ao analisar os resíduos com o teste de Shapiro-Wilk é possível perceber que ...
+Ao analisar os resíduos com o teste de Shapiro-Wilk é possível perceber que não devemos rejeitar a hipótese nula de que os resíduos são distribuídos de forma normal para um nível de significância de 5%.
+
+Assim, devido aos resíduos dos modelos de ambos os continentes possuírem distribuição aproximadamente normal, não se fazem necessárias transformações na variável de interesse.
+
