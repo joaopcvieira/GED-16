@@ -757,6 +757,126 @@ Analisando os resultados dos testes cada valor-p, verifica-se que há indícios 
 
 ### *Outliers*
 
+Para identificar possíveis *outliers*, analisa-se os resíduos padronizados (os resíduos semi-studentizados produzem praticamente os mesmos gráficos):
+
+```{r}
+# Cria nova coluna na tabela para os dados do modelo hapiness ~ (variável explicativa)
+owid_rls_birth_data <- owid_rls_birth_data %>%
+  # resíduos padronizados
+  mutate(resid_pad_birth = rstandard(owid_rls_birth))
+
+owid_rls_Dair_data <- owid_rls_Dair_data %>%
+  # resíduos padronizados
+  mutate(resid_pad_Dair = rstandard(owid_rls_Dair))
+
+owid_rls_ExpSchool_data <- owid_rls_ExpSchool_data %>%
+  # resíduos padronizados
+  mutate(resid_pad_Exp = rstandard(owid_rls_ExpSchool))
+
+owid_rls_LifeExpec_data <- owid_rls_LifeExpec_data %>%
+  # resíduos padronizados
+  mutate(resid_pad_Life = rstandard(owid_rls_LifeExpec))
+
+
+# Gera gráficos dos resíduos padronizados:
+ggplot(owid_rls_birth_data, aes(x = fitted_birth, y = resid_pad_birth)) +
+  geom_point() +
+  geom_hline(yintercept = c(-4, -3, 0, 3, 4),
+             linetype = "dashed",
+             color = c("red", "orange", "black", "orange", "red") ) +
+  ylim(-6, 6) +
+  ggtitle("dados transformados: modelo happiness ~ birth_rate") +
+  labs(y = "resíduos padronizados", x = "resposta ajustada (happiness)")
+ggplot(owid_rls_birth_data, aes(x = birth_rate, y = resid_pad_birth)) +
+  geom_point() +
+  geom_hline(yintercept = c(-4, -3, 0, 3, 4),
+             linetype = "dashed",
+             color = c("red", "orange", "black", "orange", "red") ) +
+  ylim(-6, 6) +
+  ggtitle("dados transformados: modelo happiness ~ birth_rate") +
+  labs(y = "resíduos padronizados", x = "variável explicativa (birth_rate)")
+
+
+ggplot(owid_rls_Dair_data, aes(x = fitted_Dair, y = resid_pad_Dair)) +
+  geom_point() +
+  geom_hline(yintercept = c(-4, -3, 0, 3, 4),
+             linetype = "dashed",
+             color = c("red", "orange", "black", "orange", "red") ) +
+  ylim(-6, 6) +
+  ggtitle("dados transformados: modelo happiness ~ deaths_air_pollution") +
+  labs(y = "resíduos padronizados", x = "resposta ajustada (happiness)")
+ggplot(owid_rls_Dair_data, aes(x = deaths_air_pollution, y = resid_pad_Dair)) +
+  geom_point() +
+  geom_hline(yintercept = c(-4, -3, 0, 3, 4),
+             linetype = "dashed",
+             color = c("red", "orange", "black", "orange", "red") ) +
+  ylim(-6, 6) +
+  ggtitle("dados transformados: modelo happiness ~ deaths_air_pollution") +
+  labs(y = "resíduos padronizados", x = "variável explicativa (deaths_air_pollution)")
+
+
+ggplot(owid_rls_ExpSchool_data, aes(x = fitted_Exp, y = resid_pad_Exp)) +
+  geom_point() +
+  geom_hline(yintercept = c(-4, -3, 0, 3, 4),
+             linetype = "dashed",
+             color = c("red", "orange", "black", "orange", "red") ) +
+  ylim(-6, 6) +
+  ggtitle("dados transformados: modelo happiness ~ expected_schooling") +
+  labs(y = "resíduos padronizados", x = "resposta ajustada (happiness)")
+ggplot(owid_rls_ExpSchool_data, aes(x = expected_schooling, y = resid_pad_Exp)) +
+  geom_point() +
+  geom_hline(yintercept = c(-4, -3, 0, 3, 4),
+             linetype = "dashed",
+             color = c("red", "orange", "black", "orange", "red") ) +
+  ylim(-6, 6) +
+  ggtitle("dados transformados: modelo happiness ~ expected_schooling") +
+  labs(y = "resíduos padronizados", x = "variável explicativa (expected_schooling)")
+
+
+ggplot(owid_rls_LifeExpec_data, aes(x = fitted_Life, y = resid_pad_Life)) +
+  geom_point() +
+  geom_hline(yintercept = c(-4, -3, 0, 3, 4),
+             linetype = "dashed",
+             color = c("red", "orange", "black", "orange", "red") ) +
+  ylim(-6, 6) +
+  ggtitle("dados transformados: modelo happiness ~ life_expectancy") +
+  labs(y = "resíduos padronizados", x = "resposta ajustada (happiness)")
+ggplot(owid_rls_LifeExpec_data, aes(x = life_expectancy, y = resid_pad_Life)) +
+  geom_point() +
+  geom_hline(yintercept = c(-4, -3, 0, 3, 4),
+             linetype = "dashed",
+             color = c("red", "orange", "black", "orange", "red") ) +
+  ylim(-6, 6) +
+  ggtitle("dados transformados: modelo happiness ~ life_expectancy") +
+  labs(y = "resíduos padronizados", x = "variável explicativa (life_expectancy)")
+```
+
+Nota-se que, excessão feita à variável `deaths_air_pollution`, nenhum outro ajuste apresenta resíduos padronizados com valor absoluto maior que 3. Então, de modo geral, não se verifica observações extremas e não se pode indicar com precisão possíveis *outliers*.
+
+### Independência
+
+Neste segmento, serão verificados se os erros são correlacionados, já que o modelo de regressão linear simples assume que não são. A partir dos gráficos dos resíduos obtidos não é possível identificar padrões aparentes sugestivos de existência de correlação entre os erros. O procedimento formal para avaliar esta hipótese é o **Teste de Durbin-Watson** (a hipótese nula é de que a correlação é nula e a hipótese alternativa automática é de que a correlação é positiva). Realizando o teste bi-caudal para as variáveis em tela:
+
+```{r}
+# Teste de Durbin-Watson para correlação nula dos erros
+# Ho: corr  = 0
+# Ha: corr != 0
+
+# Teste para birth_rate
+dwtest(owid_rls_birth, alternative = "two.sided")
+
+# Teste para deaths_air_pollution
+dwtest(owid_rls_Dair, alternative = "two.sided")
+
+# Teste para expected_schooling
+dwtest(owid_rls_ExpSchool, alternative = "two.sided")
+
+# Teste para life_expectancy
+dwtest(owid_rls_LifeExpec, alternative = "two.sided")
+```
+
+Após a realização do teste, os resultados levam a rejeitar a hipótese nula e indicam que, em todos os modelos, há evidência de correlação não nula, conforme indicado pelos valores-p extremamente baixos. A presença de autocorrelação nos resíduos pode indicar que o modelo de regressão não está capturando completamente a estrutura temporal ou sequencial dos dados. Isso pode ter implicações para a interpretação e validade das conclusões do modelo e pode sugerir a necessidade de abordagens mais avançadas para lidar com a autocorrelação, como modelos autorregressivos ou modelos de séries temporais.
+
 ## Parte 2
 
 Ajuste um modelo de regressão linear simples para a variável `happiness_cantril_ladder` como função de `deaths_air_pollution` após excluir as observações 973 (X = 237 e Y = 6.00), 974 (X = 234 e Y = 5.99) e 975 (X = 225 e Y = 5.97). Obtenha intervalos de previsão de 95% de confiança para novas observações que apresentam valores da variável explicativa iguais a 237, 234 e 225. As observações eliminadas encontram-se nos limites dos intervalos de previsão obtidos? Discuta o significado dos resultados obtidos.
