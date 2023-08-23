@@ -851,7 +851,7 @@ ggplot(owid_rls_LifeExpec_data, aes(x = life_expectancy, y = resid_pad_Life)) +
   labs(y = "resíduos padronizados", x = "variável explicativa (life_expectancy)")
 ```
 
-Nota-se que, exceção feita à variável `deaths_air_pollution`, nenhum outro ajuste apresenta resíduos padronizados com valor absoluto maior que 3. Então, de modo geral, são verificadas poucas observações extremas, as quais precisam ser analisadas na condição de possíveis *outliers*.
+Nota-se que, exceção feita à variável `deaths_air_pollution`, nenhum outro ajuste apresenta resíduos padronizados com valor absoluto maior que 3. As variáveis `expected_schooling` e `life_expectancy` apresentam resíduos padronizados no limite de 3, o que podem ser levados a possíveis *outliers*. Então, de modo geral, são verificadas poucas observações extremas, as quais precisam ser analisadas na condição de possíveis *outliers*.
 
 ### Independência
 
