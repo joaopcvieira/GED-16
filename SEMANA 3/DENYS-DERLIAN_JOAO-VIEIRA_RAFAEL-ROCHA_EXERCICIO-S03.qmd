@@ -851,7 +851,7 @@ ggplot(owid_rls_LifeExpec_data, aes(x = life_expectancy, y = resid_pad_Life)) +
   labs(y = "resíduos padronizados", x = "variável explicativa (life_expectancy)")
 ```
 
-Nota-se que, excessão feita à variável `deaths_air_pollution`, nenhum outro ajuste apresenta resíduos padronizados com valor absoluto maior que 3. Então, de modo geral, não se verifica observações extremas e não se pode indicar com precisão possíveis *outliers*.
+Nota-se que, exceção feita à variável `deaths_air_pollution`, nenhum outro ajuste apresenta resíduos padronizados com valor absoluto maior que 3. Então, de modo geral, são verificadas poucas observações extremas, as quais precisam ser analisadas na condição de possíveis *outliers*.
 
 ### Independência
 
@@ -877,6 +877,65 @@ dwtest(owid_rls_LifeExpec, alternative = "two.sided")
 
 Após a realização do teste, os resultados levam a rejeitar a hipótese nula e indicam que, em todos os modelos, há evidência de correlação não nula, conforme indicado pelos valores-p extremamente baixos. A presença de autocorrelação nos resíduos pode indicar que o modelo de regressão não está capturando completamente a estrutura temporal ou sequencial dos dados. Isso pode ter implicações para a interpretação e validade das conclusões do modelo e pode sugerir a necessidade de abordagens mais avançadas para lidar com a autocorrelação, como modelos autorregressivos ou modelos de séries temporais.
 
+### Normalidade
+
+Neste segmento, a normalidade é avaliada por meio de métodos gráficos e testes de hipóteses. O procedimento gráfico se baseia na análise de histogramas, boxplots e gráficos de quantis para os resíduos (padronizados).
+
+```{r}
+# Histograma dos resíduos padronizados
+ggplot(owid_rls_birth_data, aes(x = resid_pad_birth, y = after_stat(density))) +
+  geom_histogram(bins = 10)
+ggplot(owid_rls_Dair_data, aes(x = resid_pad_Dair, y = after_stat(density))) +
+  geom_histogram(bins = 10)
+ggplot(owid_rls_ExpSchool_data, aes(x = resid_pad_Exp, y = after_stat(density))) +
+  geom_histogram(bins = 10)
+ggplot(owid_rls_LifeExpec_data, aes(x = resid_pad_Life, y = after_stat(density))) +
+  geom_histogram(bins = 10)
+
+
+# Gráfico de quantis
+ggplot(owid_rls_birth_data, aes(sample = resid_pad_birth)) +
+  stat_qq() + stat_qq_line() +
+  labs(y = "quantis amostrais", x = "quantis teóricos (dist. normal) birth_rate")
+ggplot(owid_rls_Dair_data, aes(sample = resid_pad_Dair)) +
+  stat_qq() + stat_qq_line() +
+  labs(y = "quantis amostrais", x = "quantis teóricos (dist. normal) deaths_air_pollution")
+ggplot(owid_rls_ExpSchool_data, aes(sample = resid_pad_Exp)) +
+  stat_qq() + stat_qq_line() +
+  labs(y = "quantis amostrais", x = "quantis teóricos (dist. normal) expected_schooling")
+ggplot(owid_rls_LifeExpec_data, aes(sample = resid_pad_Life)) +
+  stat_qq() + stat_qq_line() +
+  labs(y = "quantis amostrais", x = "quantis teóricos (dist. normal) life_expectancy")
+```
+
+Em relação aos histogramas, as variáveis `birth_rate` e `expected_schooling` apresentam uma distribuição aproximadamente simétrica, enquanto que as outras apresentam assimetrias, o que pode indicar "espalhamentos" em relação a uma distribuição normal. Em relação aos gráficos de quantis, todas as variáveis apresentam curvaturas nas extremidades, o que pode indicar alongamento ou encurtamento das caudas em relação a uma distribuição normal, a depender do perfil das curvaturas observadas.
+
+Agora, usando o **Teste de Shapiro-Wilk**, a hipótese de normalidade é formalmente testada. A hipótese nula é de que os resíduos são normalmente distribuídos, *versus* a hipótese alternativa de que os resíduos não seguem a distribuição normal:
+
+```{r}
+# Teste de Normalidade de Shapiro-Wilk
+# Ho: normal
+# Ha: não-normal
+
+# Teste para birth_rate
+shapiro.test(owid_rls_birth_data$resid_pad_birth)
+
+# Teste para deaths_air_pollution
+shapiro.test(owid_rls_Dair_data$resid_pad_Dair)
+
+# Teste para expected_schooling
+shapiro.test(owid_rls_ExpSchool_data$resid_pad_Exp)
+
+# Teste para life_expectancy
+shapiro.test(owid_rls_LifeExpec_data$resid_pad_Life)
+```
+
+Note que todos os valor-p são baixos. Por conseguinte, os resultados indicam que, em todos os modelos, os resíduos não se ajustam a uma distribuição normal. Isso pode ter implicações para a validade das inferências estatísticas baseadas nesses modelos, especialmente se as análises assumirem normalidade dos resíduos. Em situações em que a normalidade dos resíduos não é atendida, é importante considerar técnicas estatísticas alternativas ou transformações nos dados para obter resultados mais robustos.
+
+### Conclusões
+
+Com bases diagnóstico realizado, o qual considerou linearidade, homoscedasticidade, *outliers*, independência e normalidade, e considerando que as hipóteses assumidas para a passagem em todos os testes realizados são uma suposição importante para a regressão linear clássica, os modelos de regressão linear simples de primeira ordem não parecem ser adequadamente ajustados a nenhuma das situações investigadas. A não homoscedasticidade (mesmo que não em todos), a presença de possíveis *outliers*, a correlação dos resídios e a não-normalidade dos resíduos pode prejudicar a validade e a confiabilidade das análises realizadas com esses modelos. Isto posto, pode ser apropriado explorar abordagens alternativas, como transformações nos dados, considerar modelos mais flexíveis ou até mesmo explorar outras técnicas estatísticas.
+
 ## Parte 2
 
 Ajuste um modelo de regressão linear simples para a variável `happiness_cantril_ladder` como função de `deaths_air_pollution` após excluir as observações 973 (X = 237 e Y = 6.00), 974 (X = 234 e Y = 5.99) e 975 (X = 225 e Y = 5.97). Obtenha intervalos de previsão de 95% de confiança para novas observações que apresentam valores da variável explicativa iguais a 237, 234 e 225. As observações eliminadas encontram-se nos limites dos intervalos de previsão obtidos? Discuta o significado dos resultados obtidos.
@@ -893,7 +952,7 @@ owid_filtered_happ_deaths <- lm(happiness_cantril_ladder ~ deaths_air_pollution,
 owid_filtered_happ_deaths
 ```
 
-O modelo, com a remoção dos outliers apontados é conforme:
+O modelo, com a remoção dos *outliers* apontados é conforme:
 
 $happiness\_cantril\_ladder \ =$ `r round(owid_filtered_happ_deaths$coefficients[1], digits=2)` `r round(owid_filtered_happ_deaths$coefficients[2], digits=2)` $\cdot \ deaths\_air\_pollution$
 
@@ -910,7 +969,7 @@ print(Y_predicted)
 
 Dessa forma, os valores para a estimativa pontual foram de `r round(Y_predicted[1], digits = 2)`, `r round(Y_predicted[2],digits = 2)` e `r round(Y_predicted[3],digits = 2)` para os valores de 237, 234 e 225, respectivamente. Enquanto os valores originais dos dados eram de 6.00, 5.99 e 5.97, respectivamente.
 
-Já os intervalos de previsão para os valores de 237, 234 e 225 foram (`r round(Y_predicted[4],digits = 2)` ,`r round(Y_predicted[5],digits = 2)`), (`r round(Y_predicted[7],digits = 2)` ,`r round(Y_predicted[8],digits = 2)`) e (`r round(Y_predicted[10],digits = 2)` ,`r round(Y_predicted[11],digits = 2)`), respectivamente. Desse modo, frente às previsões realizadas, nenhum dos valores "reais" dos dados em Y encontram-se nos intervalos de confiança para os valores de X. Isso indica que os valores de Y para os valores de X removidos são incomuns ou improváveis, indicando que podem ser considerados outliers.
+Já os intervalos de previsão para os valores de 237, 234 e 225 foram (`r round(Y_predicted[4],digits = 2)` ,`r round(Y_predicted[5],digits = 2)`), (`r round(Y_predicted[7],digits = 2)` ,`r round(Y_predicted[8],digits = 2)`) e (`r round(Y_predicted[10],digits = 2)` ,`r round(Y_predicted[11],digits = 2)`), respectivamente. Desse modo, frente às previsões realizadas, nenhum dos valores "reais" dos dados em Y encontram-se nos intervalos de confiança para os valores de X. Isso indica que os valores de Y para os valores de X removidos são incomuns ou improváveis, indicando que podem ser considerados *outliers*.
 
 ## Parte 3
 
