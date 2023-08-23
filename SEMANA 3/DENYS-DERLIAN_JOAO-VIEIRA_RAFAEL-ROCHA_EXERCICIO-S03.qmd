@@ -940,6 +940,8 @@ Com bases diagnóstico realizado, o qual considerou linearidade, homoscedasticid
 
 Ajuste um modelo de regressão linear simples para a variável `happiness_cantril_ladder` como função de `deaths_air_pollution` após excluir as observações 973 (X = 237 e Y = 6.00), 974 (X = 234 e Y = 5.99) e 975 (X = 225 e Y = 5.97). Obtenha intervalos de previsão de 95% de confiança para novas observações que apresentam valores da variável explicativa iguais a 237, 234 e 225. As observações eliminadas encontram-se nos limites dos intervalos de previsão obtidos? Discuta o significado dos resultados obtidos.
 
+Primeiramente, remove-se os pontos indicados e constrói-se um modelo de regressão linear simples com os dados:
+
 ```{r}
 owid_filtered <- owid[-c(973, 974, 975), ]
 
@@ -952,7 +954,7 @@ owid_filtered_happ_deaths <- lm(happiness_cantril_ladder ~ deaths_air_pollution,
 owid_filtered_happ_deaths
 ```
 
-O modelo, com a remoção dos *outliers* apontados é conforme:
+O modelo, com a remoção dos pontos dados no enunciado (possíveis *outliers*) é conforme:
 
 $happiness\_cantril\_ladder \ =$ `r round(owid_filtered_happ_deaths$coefficients[1], digits=2)` `r round(owid_filtered_happ_deaths$coefficients[2], digits=2)` $\cdot \ deaths\_air\_pollution$
 
@@ -975,6 +977,8 @@ Já os intervalos de previsão para os valores de 237, 234 e 225 foram (`r round
 
 Para os modelos considerando cada nível da variável `continent` no item (2) da seção anterior, realize o diagnóstico através da análise dos resíduos. Todos aparentam ter mesma variância dos erros? É necessário realizar alguma transformação de variáveis? Tente solucionar os possíveis problemas encontrados com o modelo. Que conclusões é possível obter a partir da análise?
 
+Para esta questão, foram escolhidos `North_America` e `South_America`, de modo a ser realizado o diagnóstico e a solução de possíveis problemas com o modelo.
+
 ### Linearidade
 
 Será feita uma análise dos modelos de regressão linear simples para a variável `happinness_cantril_ladder` com a variável explicativa `deaths_air_pollution`. São mostrados os resumos das duas regressões:
@@ -987,7 +991,7 @@ summary(lm_north)
 
 É possível perceber diferenças nos modelos de regressão para os continentes América do Norte e do Sul. Aparentemente os resíduos de ambos os modelos são simétricos e a estatística F aponta para uma possível correlação entre as variáveis. Já os coeficientes R² dos dois modelos diferem bastante, sendo de 0,269 para a América do Sul e 0,719 para a América do Norte.
 
-Após essa análise preliminar, analisa-se como os resíduos de ambos os modelos estão distribuídos.
+Após essa análise preliminar, analisa-se, separadamente, como os resíduos de ambos os modelos estão distribuídos.
 
 ```{r}
 # Tabela com os dados da América do Sul
@@ -1019,9 +1023,11 @@ ggplot(lm_north_data, aes(x = fitted, y = resid)) +
   labs(y = "resíduos", x = "resposta ajustada")
 ```
 
+Em relação à linearidade, os resíduos de `South_America` podem indicar um padrão não linear, enquanto os de `North_America` apresentam um padrão mais distribuído. Em ambos os casos, pode-se verificar um leve "efeito cone", o qual pode estar relacionado com a hipótese de homoscedasticidade, o que será analisado a seguir.
+
 ### Homoscedasticidade
 
-Ao observar os resíduos para ambos os continentes, é possível concluir que existe uma leve diferença na variância para diferentes valores da variável de interesse. Para verificar quantitativamente se a variância é ou não constate utiliza-se o teste de Breusch-Pagan.
+Ao observar os resíduos para ambos os continentes, é possível concluir que existe uma leve diferença na variância para diferentes valores da variável de interesse (efeito cone). Para verificar quantitativamente se a variância é ou não constate utiliza-se o **Teste de Breusch-Pagan**.
 
 ```{r}
 library(lmtest)
@@ -1033,7 +1039,7 @@ bptest(lm_south)
 bptest(lm_north)
 ```
 
-Os testes de Breusch-Pagan mostram que devemos adotar a hipótese nula de que a variância é constante para todos os valores da variável de interesse. Isso mostra que não é possível perceber com clareza se a variância é de fato ou não constante somente ao observar como estão distribuídos os resíduos.
+Os testes mostram que devemos adotar a hipótese nula de que a variância é constante para todos os valores da variável de interesse. Isso mostra que não é possível perceber com clareza se a variância é de fato ou não constante somente ao observar como estão distribuídos os resíduos.
 
 ### *Outliers*
 
@@ -1071,7 +1077,7 @@ ggplot(lm_north_data, aes(x = fitted, y = resid_pad)) +
   labs(y = "resíduos padronizados", x = "resposta ajustada ('happiness_cantril_ladder')")
 ```
 
-Ao observar os gráficos de resíduos normalizados para ambos os continentes percebe-se que não existem *outliers* nos dados pois todos os resíduos se encontram entre as retas que delimitam ± 3 desvios padrão.
+Ao observar os gráficos de resíduos normalizados para ambos os continentes percebe-se que não existem observações extremas as quais poderiam ser classificadas como possíveis *outliers* nos dados, pois todos os resíduos se encontram entre as retas que delimitam ± 3 desvios padrão.
 
 ### Independência
 
@@ -1086,7 +1092,7 @@ dwtest(lm_north, alternative = "two.sided")
 
 ```
 
-Assim, os testes rejeitam a hipótese de que os erros não são independentes entre si.
+Assim, os testes rejeitam a hipótese de que os erros não são independentes entre si. A presença de autocorrelação nos resíduos pode indicar que o modelo de regressão não está capturando completamente a estrutura temporal ou sequencial dos dados. Isso pode ter implicações para a interpretação e validade das conclusões do modelo e pode sugerir a necessidade de abordagens mais avançadas para lidar com a autocorrelação, como modelos autorregressivos ou modelos de séries temporais.
 
 ### Normalidade
 
@@ -1103,7 +1109,7 @@ ggplot(lm_north_data, aes(x = resid_pad, y = after_stat(density))) +
 
 ```
 
-Somente observando os histogramas dos resíduos para ambos os continentes não é possível afirmar com nenhuma segurança se os resíduos são distribuídos ou não próximos de uma distribuição normal. Uma análise qualitativa é melhor ser feita através dos gráficos de quantis.
+Somente observando os histogramas dos resíduos para ambos os continentes não é possível afirmar com nenhuma segurança se os resíduos são distribuídos ou não próximos de uma distribuição normal, mas pode-se perceber assimetrias em ambos os perfis. Uma análise qualitativa é melhor ser feita através dos gráficos de quantis.
 
 ```{r}
 # Gráfico de quantis para América do Sul
@@ -1117,7 +1123,7 @@ ggplot(lm_north_data, aes(sample = resid_pad)) +
   labs(y = "quantis amostrais", x = "quantis teóricos (dist. normal)")
 ```
 
-Aparentemente, ambas as distribuições dos resíduos padronizados são próximas de uma distribuição normal. Além disso, para a América do Sul aparentemente a distribuiçaõ é mais próxima de uma normal que para a América do Norte. Para finalizar a análise de normalidade dos resíduos com um teste quantitativo, utiliza-se o teste de Shapiro-Wilk.
+Aparentemente, ambas as distribuições dos resíduos padronizados são próximas de uma distribuição normal, mas apresentam flutuações ao longo de todo o perfil observado. Além disso, para a América do Sul aparentemente a distribuição é mais próxima de uma normal que para a América do Norte. Para finalizar a análise de normalidade dos resíduos com um teste quantitativo, utiliza-se o **Teste de Shapiro-Wilk**:
 
 ```{r}
 # Teste de Normalidade de Shapiro-Wilk
@@ -1131,6 +1137,36 @@ shapiro.test(lm_south_data$resid_pad)
 shapiro.test(lm_north_data$resid_pad)
 ```
 
-Ao analisar os resíduos com o teste de Shapiro-Wilk é possível perceber que não devemos rejeitar a hipótese nula de que os resíduos são distribuídos de forma normal para um nível de significância de 5%.
+Ao analisar os resíduos com o teste, é possível perceber que não devemos rejeitar a hipótese nula de que os resíduos são distribuídos de forma normal para um nível de significância de 5%.
 
-Assim, devido aos resíduos dos modelos de ambos os continentes possuírem distribuição aproximadamente normal, não se fazem necessárias transformações na variável de interesse.
+### Análise Medidas Corretivas
+
+Verificou-se que os dados analisados não apresentaram problemas de homoscedasticidade e nem de não-normalidade. Mesmo assim, pode ser analisada se alguma transformação do tipo $Y' = Y^\lambda$ melhoraria a relação linear utilizando o procedimento Box-Cox:
+
+```{r}
+# Transformação Box-Cox
+library(MASS)
+
+bc_north <- boxcox(lm(happiness_cantril_ladder ~ deaths_air_pollution_north, data = df_north_america),
+             lambda = seq(-2, 2, by = 0.1), plotit = TRUE)
+
+bc_south <- boxcox(lm(happiness_cantril_ladder ~ deaths_air_pollution_south, data = df_south_america),
+             lambda = seq(-2, 2, by = 0.1), plotit = TRUE)
+```
+
+Chegando-se aos valores de lambda:
+
+```{r}
+lambda_north <- bc_north$x[which.max(bc_north$y)]
+cat(lambda_north)
+cat('\n')
+
+lambda_south <- bc_south$x[which.max(bc_south$y)]
+cat(lambda_south)
+```
+
+Dessa forma, nota-se valores próximos de 1 para ambos os $\lambda$, o que denota que a aproximação linear pode ser considerada adequada. As transformações acima poderiam melhorar a correlação, mas vale ressaltar que não há problemas de não homoscedasticidade e de não-normalidade.
+
+### Conclusões
+
+Por fim, com bases diagnóstico realizado, o qual considerou linearidade, homoscedasticidade, *outliers*, independência e normalidade, e considerando que as hipóteses assumidas para a passagem em todos os testes realizados são uma suposição importante para a regressão linear clássica, devido aos resultados de ambos os continentes possuírem distribuição aproximadamente normal e não incorrer em problemas de heteroscesdaticidade, nas transformações analisadas poderiam ser implementadas para melhorar a correlação, todavia, a aproximação linear pode ser considerada adequada.
