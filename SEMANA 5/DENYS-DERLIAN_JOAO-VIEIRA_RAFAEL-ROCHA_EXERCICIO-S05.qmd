@@ -1180,14 +1180,21 @@ Dois modelos foram propostos para prever o a expectativa de vida de um país (`l
 ```{r}
 
 # construindo o modelo 1
-owid_model1 <- owid |> 
+owid_model1 <- owid |>
   # seleciona apenas variáveis de interesse
   select(life_expectancy, birth_rate, expected_schooling, milk_consumption_pc)
-
 
 ```
 
 **Modelo II:** utiliza como variáveis explicativas `log(gdp_pc)`, `no_water` e `urban_population_percent`.
+
+```{r}
+
+# construindo o modelo 1
+owid_model1 <- owid |>
+  # seleciona apenas variáveis de interesse
+  select(life_expectancy, log(gdp_pc), no_water, urban_population_percent)
+```
 
 1.  Construa a matriz de gráficos de dispersão, bem como a matriz de correlação para cada modelo proposto. Interprete os resultados obtidos.
 
