@@ -1177,17 +1177,25 @@ Dois modelos foram propostos para prever o a expectativa de vida de um país (`l
 
 **Modelo I:** utiliza como variáveis explicativas `birth_rate`, `expected_schooling` e `milk_consumption_pc`.
 
+```{r}
+# construindo o modelo 1
+owid_model1 <- owid |> 
+  # seleciona apenas variáveis de interesse
+  select(life_expextancy, birth_rate, expected_schooling, milk_consumption_pc)
+
+```
+
 **Modelo II:** utiliza como variáveis explicativas `log(gdp_pc)`, `no_water` e `urban_population_percent`.
 
-1. Construa a matriz de gráficos de dispersão, bem como a matriz de correlação para cada modelo proposto. Interprete os resultados obtidos.
+1.  Construa a matriz de gráficos de dispersão, bem como a matriz de correlação para cada modelo proposto. Interprete os resultados obtidos.
 
-2. Para cada modelo, ajuste um modelo de regressão de 1a. ordem com as três variáveis explicativas consideradas. Discuta os resultados obtidos.
+2.  Para cada modelo, ajuste um modelo de regressão de 1a. ordem com as três variáveis explicativas consideradas. Discuta os resultados obtidos.
 
-3. Realize o diagnóstico dos modelos. É possível identificar um modelo que seja mais adequado aos dados?
+3.  Realize o diagnóstico dos modelos. É possível identificar um modelo que seja mais adequado aos dados?
 
-4. Para cada nível da variável `continent`, construa um modelo de regressão de 1a. ordem para `life_expectancy` como função das variáveis explicativas de um dos modelos acima (`birth_rate`, `expected_schooling` e `milk_consumption_pc` ou `log(gdp_pc)`, `no_water` e `urban_population_percent`).
+4.  Para cada nível da variável `continent`, construa um modelo de regressão de 1a. ordem para `life_expectancy` como função das variáveis explicativas de um dos modelos acima (`birth_rate`, `expected_schooling` e `milk_consumption_pc` ou `log(gdp_pc)`, `no_water` e `urban_population_percent`).
 
-  + Comente sobre os resultados obtidos para os modelos ajustados.  
-  + As funções de regressão estimadas são semelhantes para os diferentes níveis da variável `continent`? Discuta.  
-  + Analise os valores de MSE e $R^2_{aj}$ para cada modelo. Essas medidas são semelhantes para os diferentes níveis de `continent`?   Discuta.   
-  + Realize o diagnóstico dos modelos construídos. Interprete os gráficos e os resultados obtidos.
+-   Comente sobre os resultados obtidos para os modelos ajustados.\
+-   As funções de regressão estimadas são semelhantes para os diferentes níveis da variável `continent`? Discuta.\
+-   Analise os valores de MSE e $R^2_{aj}$ para cada modelo. Essas medidas são semelhantes para os diferentes níveis de `continent`? Discuta.\
+-   Realize o diagnóstico dos modelos construídos. Interprete os gráficos e os resultados obtidos.
