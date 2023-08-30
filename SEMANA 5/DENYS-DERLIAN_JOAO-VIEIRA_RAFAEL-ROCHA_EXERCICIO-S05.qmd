@@ -1201,6 +1201,28 @@ owid_model2 <- owid |>
 
 ## 1. Construa a matriz de gráficos de dispersão, bem como a matriz de correlação para cada modelo proposto. Interprete os resultados obtidos.
 
+Construindo o resumo, a matriz de gráficos de dispersão e a matriz de correlação para o Modelo I:
+
+```{r}
+
+summary(owid_model1)
+
+plot(owid_model1)
+
+cor(owid_model1)
+```
+
+Construindo o resumo, a matriz de gráficos de dispersão e a matriz de correlação para o Modelo II:
+
+```{r}
+
+summary(owid_model2)
+
+plot(owid_model2)
+
+cor(owid_model2)
+```
+
 ## 2. Para cada modelo, ajuste um modelo de regressão de 1a. ordem com as três variáveis explicativas consideradas. Discuta os resultados obtidos.
 
 ## 3. Realize o diagnóstico dos modelos. É possível identificar um modelo que seja mais adequado aos dados?
