@@ -1178,10 +1178,12 @@ Dois modelos foram propostos para prever o a expectativa de vida de um país (`l
 **Modelo I:** utiliza como variáveis explicativas `birth_rate`, `expected_schooling` e `milk_consumption_pc`.
 
 ```{r}
+
 # construindo o modelo 1
 owid_model1 <- owid |> 
   # seleciona apenas variáveis de interesse
-  select(life_expextancy, birth_rate, expected_schooling, milk_consumption_pc)
+  select(life_expectancy, birth_rate, expected_schooling, milk_consumption_pc)
+
 
 ```
 
