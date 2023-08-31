@@ -1212,7 +1212,9 @@ plot(owid_model1)
 cor(owid_model1)
 ```
 
-Construindo o resumo, a matriz de gráficos de dispersão e a matriz de correlação para o Modelo II:
+Pela análise dos dados acima, nota-se que há uma correlação entre as variáveis `life_expectancy` e `birth_rate` e entre `life_expectancy` e `expected_schooling`. Ademais, é possível perceber uma correlação entre as variáveis explicativas `birth_rate` e `expected_schooling`, apesar de ser uma relação menos forte do que a de cada uma com a a variável de resposta. Por fim, a variável `milk_consumption_pc` apresenta correlação linear fraca tanto com as variáveis explicativas quanto com a variável de resposta.
+
+Agora, construindo o resumo, a matriz de gráficos de dispersão e a matriz de correlação para o Modelo II:
 
 ```{r}
 
@@ -1223,6 +1225,8 @@ plot(owid_model2)
 cor(owid_model2)
 ```
 
+A partir da análise do modelo 2, verifica-se correlação linear entre a variável de resposta `life_expectancy` e as variáveis explicativas `log_gdp`, `no_water` e `urban_population_percent`, sendo mais forte com a primeira. Ainda, é possível verificar uma correlação entre as variáveis explicativas `log_gdp` e `urban_population_percent`.
+
 ## 2. Para cada modelo, ajuste um modelo de regressão de 1a. ordem com as três variáveis explicativas consideradas. Discuta os resultados obtidos.
 
 ## 3. Realize o diagnóstico dos modelos. É possível identificar um modelo que seja mais adequado aos dados?
@@ -1231,14 +1235,14 @@ cor(owid_model2)
 
 ### Comente sobre os resultados obtidos para os modelos ajustados.
 
-###  
+### 
 
 ### As funções de regressão estimadas são semelhantes para os diferentes níveis da variável `continent`? Discuta.
 
-###  
+### 
 
 ### Analise os valores de MSE e $R^2_{aj}$ para cada modelo. Essas medidas são semelhantes para os diferentes níveis de `continent`? Discuta.
 
-###  
+### 
 
 ### Realize o diagnóstico dos modelos construídos. Interprete os gráficos e os resultados obtidos.
