@@ -1199,7 +1199,9 @@ owid_model2 <- owid |>
   dplyr::select(life_expectancy, log_gdp, no_water, urban_population_percent)
 ```
 
-## 1. Construa a matriz de gráficos de dispersão, bem como a matriz de correlação para cada modelo proposto. Interprete os resultados obtidos.
+## Parte 1
+
+### Construa a matriz de gráficos de dispersão, bem como a matriz de correlação para cada modelo proposto. Interprete os resultados obtidos.
 
 Construindo o resumo, a matriz de gráficos de dispersão e a matriz de correlação para o Modelo I:
 
@@ -1227,9 +1229,11 @@ cor(owid_model2)
 
 A partir da análise do modelo 2, verifica-se correlação linear entre a variável de resposta `life_expectancy` e as variáveis explicativas `log_gdp`, `no_water` e `urban_population_percent`, sendo mais forte com a primeira. Ainda, é possível verificar uma correlação entre as variáveis explicativas `log_gdp` e `urban_population_percent`.
 
-## 2. Para cada modelo, ajuste um modelo de regressão de 1a. ordem com as três variáveis explicativas consideradas. Discuta os resultados obtidos.
+## Parte 2
 
-Para o primeiro modelo foram utilizadas as variáveis explicativas "birth_rate", "expected_schooling" e "milk_comsumption_pc" para a váriável de resposta "life_expectancy".
+### Para cada modelo, ajuste um modelo de regressão de 1a. ordem com as três variáveis explicativas consideradas. Discuta os resultados obtidos.
+
+Para o primeiro modelo foram utilizadas as variáveis explicativas `birth_rate`, `expected_schooling` e `milk_comsumption_pc` para a variável de resposta `life_expectancy`.
 
 ```{r}
 # Construindo modelo de regressão linear multipla de 1ª ordem para o primeiro modelo
@@ -1247,7 +1251,7 @@ O resumo do primeiro modelo ajustado é mostrado a seguir:
 summary(rlm_model1_le_to_others)
 ```
 
-Já no segundo modelo as variáveis explicativas foram "birth_rate", "expected_schooling" e "milk_comsumption_pc" para a váriável de resposta "life_expectancy".
+Já no segundo modelo as variáveis explicativas foram `log_gdp`, `no_water` e `urban_population_percent` para a variável de resposta `life_expectancy`.
 
 ```{r}
 # Segundo modelo de regressão
@@ -1264,8 +1268,9 @@ O resumo do segundo modelo ajustado é mostrado a seguir:
 summary(rlm_model2_le_to_others)
 ```
 
+## Parte 3
 
-## 3. Realize o diagnóstico dos modelos. É possível identificar um modelo que seja mais adequado aos dados?
+### Realize o diagnóstico dos modelos. É possível identificar um modelo que seja mais adequado aos dados?
 
 O diagnóstico de ambos os modelos é feito utilizando-se da análise de resíduos.
 
@@ -1400,11 +1405,12 @@ ggplot(rlm_model2_le_to_others_data, aes(sample = resid)) +
 ggplot(rlm_model2_le_to_others_data, aes(sample = resid/sd(resid))) +
   stat_qq() + stat_qq_line() +
   labs(y = "quantis amostrais", x = "quantis teóricos (dist. normal)") +
-  ggtitle("Gráfico de quantis (resíduos padronizados) para modelo2")
+  ggtitle("Gráfico de quantis (resíduos padronizados) para modelo2")
 ```
 
+## Parte 4
 
-## 4. Para cada nível da variável `continent`, construa um modelo de regressão de 1a. ordem para `life_expectancy` como função das variáveis explicativas de um dos modelos acima (`birth_rate`, `expected_schooling` e `milk_consumption_pc` ou `log(gdp_pc)`, `no_water` e `urban_population_percent`).
+### Para cada nível da variável `continent`, construa um modelo de regressão de 1a. ordem para `life_expectancy` como função das variáveis explicativas de um dos modelos acima (`birth_rate`, `expected_schooling` e `milk_consumption_pc` ou `log(gdp_pc)`, `no_water` e `urban_population_percent`).
 
 ### Comente sobre os resultados obtidos para os modelos ajustados.
 
