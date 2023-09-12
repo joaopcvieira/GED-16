@@ -1424,3 +1424,91 @@ ggplot(rlm_model2_le_to_others_data, aes(sample = resid/sd(resid))) +
 ### 
 
 ### Realize o diagnóstico dos modelos construídos. Interprete os gráficos e os resultados obtidos.
+
+Construindo um conjunto de dados e filtrando para somente o continente "South America".
+
+```{r}
+# construindo o modelo
+owid_model3 <- owid |>
+  # cria nova variável `log_gdp`
+  mutate(log_gdp  = log(gdp_pc)) |>
+  # seleciona apenas variáveis de interesse
+  dplyr::select(life_expectancy, log_gdp, no_water, urban_population_percent,continent)
+
+
+owid_south_america <- owid_model3 %>% filter(continent == "South America")
+```
+
+Criando o modelo de regressão para as variáveis explicativas "log_gdp", "no_water" e "urban_population_percent".
+
+```{r}
+rlm_le_south_america <- lm(life_expectancy ~ log_gdp + no_water + urban_population_percent, data=owid_south_america)
+summary(rlm_le_south_america)
+```
+
+Diagnóstico do modelo usando os gráficos de resíduos
+
+```{r}
+# Construindo tabela com os dados do modelo de regressão para o continente América do Sul
+rlm_le_south_america_data <- owid_south_america %>%
+  # inclui coluna com valores ajustados
+  mutate(fitted = rlm_le_south_america$fit) %>%
+  mutate(resid = rlm_le_south_america$res)
+
+# Gera gráficos dos resíduos:
+# Grafico: resid x resposta ajustada (yhat)
+ggplot(rlm_le_south_america_data, aes(x = fitted, y = resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("Gráfico de resíduos") +
+  labs(y = "resíduos", x = "resposta ajustada (life_expectancy)")
+# Grafico: |resid| x resposta ajustada (yhat)
+ggplot(rlm_le_south_america_data, aes(x = fitted, y = abs(resid))) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("Gráfico de resíduos absolutos") +
+  labs(y = "|resíduos|", x = "resposta ajustada (life_expectancy)")
+
+```
+
+Gráficos de resíduos pelas variáveis explicativas
+
+```{r}
+# Gerando gráficos de resíduos
+# Gráfico de resíduo x var explicativa log_gpd
+ggplot(rlm_le_south_america_data, aes(x=log_gdp, y = resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("Resíduos modelo América do Sul por log_gpd") +
+  labs(y = "resíduos", x = "variavel explicativa (log_gpd)")
+
+# Gráfico de resíduo absoluto x var explicativa expected_schooling
+ggplot(rlm_le_south_america_data, aes(x=no_water, y = resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("Resíduos modelo 2 por no_water") +
+  labs(y = "resíduos", x = "resposta variavel explicativa (no_water)")
+
+# Gráfico de resíduo absoluto x resposta ajustada
+ggplot(rlm_le_south_america_data, aes(x=urban_population_percent, y = resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("Resíduos modelo 1 por urban_population_percent") +
+  labs(y = "resíduos", x = "resposta variavel explicativa (urban_population_percent)")
+
+```
+
+Gráfico de quantis para o modelo 1
+
+```{r}
+# Gráfico de quantis (para resíduos)
+ggplot(rlm_le_south_america_data, aes(sample = resid)) +
+  stat_qq() + stat_qq_line() +
+  labs(y = "quantis amostrais", x = "quantis teóricos (dist. normal)") +
+  ggtitle("Gráfico de quantis (resíduos) para modelo2")
+# Gráfico de quantis (para resíduos semi-studentizados)
+ggplot(rlm_le_south_america_data, aes(sample = resid/sd(resid))) +
+  stat_qq() + stat_qq_line() +
+  labs(y = "quantis amostrais", x = "quantis teóricos (dist. normal)") +
+  ggtitle("Gráfico de quantis (resíduos padronizados) para modelo2")
+```
