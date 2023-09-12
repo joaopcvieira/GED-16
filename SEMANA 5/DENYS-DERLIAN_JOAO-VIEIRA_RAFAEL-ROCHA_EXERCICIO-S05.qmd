@@ -1206,7 +1206,6 @@ owid_model2 <- owid |>
 Construindo o resumo, a matriz de gráficos de dispersão e a matriz de correlação para o Modelo I:
 
 ```{r}
-
 summary(owid_model1)
 
 plot(owid_model1)
@@ -1227,11 +1226,11 @@ plot(owid_model2)
 cor(owid_model2)
 ```
 
-A partir da análise do modelo 2, verifica-se correlação linear entre a variável de resposta `life_expectancy` e as variáveis explicativas `log_gdp`, `no_water` e `urban_population_percent`, sendo mais forte com a primeira. Ainda, é possível verificar uma correlação entre as variáveis explicativas `log_gdp` e `urban_population_percent`.
+A partir da análise do modelo 2, verifica-se correlação linear entre a variável de resposta `life_expectancy` e as variáveis explicativas `log_gdp`, `no_water` e `urban_population_percent`, sendo mais forte com a primeira. Ainda, é possível verificar uma correlação das variáveis explicativas entre si de forma geral. Vale ressaltar que a correlação entre as variáveis `no_water` e `log_gdp` (variáveis explicativas) é mais forte do que a relação de `no_water` com a variável de resposta `life_expectancy`.
 
 ## Parte 2
 
-### Para cada modelo, ajuste um modelo de regressão de 1a. ordem com as três variáveis explicativas consideradas. Discuta os resultados obtidos.
+### Para cada modelo, ajuste um modelo de regressão de 1ª ordem com as três variáveis explicativas consideradas. Discuta os resultados obtidos.
 
 Para o primeiro modelo foram utilizadas as variáveis explicativas `birth_rate`, `expected_schooling` e `milk_comsumption_pc` para a variável de resposta `life_expectancy`.
 
