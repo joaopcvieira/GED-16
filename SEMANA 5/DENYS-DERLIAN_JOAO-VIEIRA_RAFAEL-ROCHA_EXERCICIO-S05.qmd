@@ -1439,7 +1439,7 @@ A partir da análise dos gráficos de quantis, para o caso do modelo 2, nota-se 
 
 #### Detecção de Multicolinearidade
 
-\<\<\<\<\<\<\< HEAD Primeiramente, tomando para análise o modelo 1, com a análise feita na parte 1, foi observada uma correlação entre as variáveis explicativas `birth_rate` e `expected_schooling`. Essas variáveis explicativas estão mais correlacionadas entre si do que cada uma com a resposta. Analisando os VIFs para auxiliar a detecção de multicolinearidade:
+Primeiramente, tomando para análise o modelo 1, com a análise feita na parte 1, foi observada uma correlação entre as variáveis explicativas `birth_rate` e `expected_schooling`. Essas variáveis explicativas estão mais correlacionadas entre si do que cada uma com a resposta. Analisando os VIFs para auxiliar a detecção de multicolinearidade:
 
 ```{r}
 library(car)
