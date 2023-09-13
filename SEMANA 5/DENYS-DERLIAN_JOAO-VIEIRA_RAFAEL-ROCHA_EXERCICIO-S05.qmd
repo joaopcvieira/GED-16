@@ -1335,7 +1335,7 @@ ggplot(rlm_model1_le_to_others_data, aes(x=milk_consumption_pc, y = resid)) +
 
 Já para os gráficos de resíduos para as variáveis explicativas, pode-se notar um "efeito cone" para as variáveis `expected_schooling` e `milk_consumption`, o que pode indicar heteroscedasticidade.
 
-Gráfico de quantis para o modelo 1
+Gráfico de quantis para o modelo 1:
 
 ```{r}
 # Gráfico de quantis (para resíduos)
@@ -1349,6 +1349,8 @@ ggplot(rlm_model1_le_to_others_data, aes(sample = resid/sd(resid))) +
   labs(y = "quantis amostrais", x = "quantis teóricos (dist. normal)") +
   ggtitle("Gráfico de quantis (resíduos padronizados) para modelo1")
 ```
+
+Pelos gráficos de quantis, verifica-se desvio da normalidade na extremidade inicial do modelo. O desvio da normalidade pode ser um problema para se proceder com inferências utilizando o modelo ajustado.
 
 Já para o segundo modelo os resíduos são:
 
