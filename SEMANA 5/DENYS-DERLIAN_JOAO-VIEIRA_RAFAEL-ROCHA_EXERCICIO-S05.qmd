@@ -1275,17 +1275,9 @@ O diagnóstico de ambos os modelos é feito conforme abaixo:
 
 #### Linearidade
 
-Em relação à linearidade
+Em relação à linearidade, os dados podem ser avaliados a partir do apresentado na parte 2. A partir dos resultados apresentados, é importante notar que, em ambos os modelos, os coeficientes das variáveis independentes têm o valor-p baixo, o que sugere que essas variáveis são relevantes na explicação da variável dependente.
 
-#### Homoscedasticidade
-
-#### *Outliers*
-
-#### Independência
-
-#### Normalidade
-
-#### Análise Medidas Corretivas
+#### Análise de Adequação do Modelo
 
 Para o primeiro modelo os gráficos de resíduos são:
 
@@ -1420,6 +1412,8 @@ ggplot(rlm_model2_le_to_others_data, aes(sample = resid/sd(resid))) +
   labs(y = "quantis amostrais", x = "quantis teóricos (dist. normal)") +
   ggtitle("Gráfico de quantis (resíduos padronizados) para modelo2")
 ```
+
+#### Detecção de Multicolinearidade
 
 ## Parte 4
 
