@@ -1279,7 +1279,7 @@ Em relação à linearidade, os dados podem ser avaliados a partir do apresentad
 
 #### Análise de Adequação do Modelo
 
-Para o primeiro modelo os gráficos de resíduos são:
+Para o primeiro modelo, os gráficos de resíduos são:
 
 ```{r}
 rlm_model1_le_to_others_data <- owid_model1 %>%
@@ -1296,13 +1296,15 @@ ggplot(rlm_model1_le_to_others_data, aes(x=fitted, y = resid)) +
   labs(y = "resíduos", x = "resposta ajustada (life_expectancy)")
 
 # Gráfico de resíduo absoluto x resposta ajustada
-ggplot(rlm_model1_le_to_others_data, aes(x=fitted, y = resid)) +
+ggplot(rlm_model1_le_to_others_data, aes(x=fitted, y = abs(resid))) +
   geom_point() +
   geom_hline(yintercept = 0, linetype = "dashed") +
   ggtitle("Resíduos absolutos modelo 1") +
   labs(y = "|resíduos|", x = "resposta ajustada (life_expectancy)")
 
 ```
+
+Para o modelo 1, o gráfico de resíduos e de resíduos absolutos não mostram um desvio sistemático da resposta linear, com exceção feita a alguns pontos no meio, o que podem ser um indicativo de falta de homoscedasticidade ou de possíveis *outliers*.
 
 Gráficos de resíduos pelas variáveis explicativas
 
@@ -1315,14 +1317,14 @@ ggplot(rlm_model1_le_to_others_data, aes(x=birth_rate, y = resid)) +
   ggtitle("Resíduos modelo 1 por birth_rate") +
   labs(y = "resíduos", x = "variavel explicativa (birth_rate)")
 
-# Gráfico de resíduo absoluto x var explicativa expected_schooling
+# Gráfico de resíduo x var explicativa expected_schooling
 ggplot(rlm_model1_le_to_others_data, aes(x=expected_schooling, y = resid)) +
   geom_point() +
   geom_hline(yintercept = 0, linetype = "dashed") +
   ggtitle("Resíduos modelo 1 por expected_schooling") +
   labs(y = "resíduos", x = "resposta variavel explicativa (expected schooling)")
 
-# Gráfico de resíduo absoluto x resposta ajustada
+# Gráfico de resíduo x resposta ajustada
 ggplot(rlm_model1_le_to_others_data, aes(x=milk_consumption_pc, y = resid)) +
   geom_point() +
   geom_hline(yintercept = 0, linetype = "dashed") +
@@ -1330,6 +1332,8 @@ ggplot(rlm_model1_le_to_others_data, aes(x=milk_consumption_pc, y = resid)) +
   labs(y = "resíduos", x = "resposta variavel explicativa (milk_consumption_pc)")
 
 ```
+
+Já para os gráficos de resíduos para as variáveis explicativas, pode-se notar um "efeito cone" para as variáveis `expected_schooling` e `milk_consumption`, o que pode indicar heteroscedasticidade.
 
 Gráfico de quantis para o modelo 1
 
