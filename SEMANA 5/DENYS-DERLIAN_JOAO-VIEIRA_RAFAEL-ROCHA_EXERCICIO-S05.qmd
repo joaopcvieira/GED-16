@@ -1570,5 +1570,5 @@ ggplot(rlm_le_south_america_data, aes(sample = resid)) +
 ggplot(rlm_le_south_america_data, aes(sample = resid/sd(resid))) +
   stat_qq() + stat_qq_line() +
   labs(y = "quantis amostrais", x = "quantis teóricos (dist. normal)") +
-  ggtitle("Gráfico de quantis (resíduos padronizados) para modelo2")
+  ggtitle("Gráfico de quantis (resíduos padronizados) para modelo2")
 ```
