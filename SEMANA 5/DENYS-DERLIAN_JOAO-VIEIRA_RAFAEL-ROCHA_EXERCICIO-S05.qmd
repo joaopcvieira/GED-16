@@ -1427,9 +1427,31 @@ A partir da análise dos gráficos de quantis, para o caso do modelo 2, nota-se 
 
 #### Detecção de Multicolinearidade
 
+Primeiramente, tomando para análise o modelo 1, com a análise feita na parte 1, foi observada uma correlação entre as variáveis explicativas `birth_rate` e `expected_schooling`. Essas variáveis explicativas estão mais correlacionadas entre si do que cada uma com a resposta. Analisando os VIFs para auxiliar a detecção de multicolinearidade:
+
+```{r}
+library(car)
+
+# Calcula VIFs
+vif(rlm_model1_le_to_others)
+```
+
+Note que os valores dos VIFs são maiores que 1 para as variáveis analisadas. Assim, conforme suspeitado anteriormente, há um problema sério de multicolinearidade.
+
+Após a análise acima, tomando para análise o modelo 2, com a análise feita na parte 1, foi possível verificar uma correlação das variáveis explicativas entre si de forma geral. Além disso, notou-se que a correlação entre as variáveis `no_water` e `log_gdp` (variáveis explicativas) é mais forte do que a relação de `no_water` com a variável de resposta `life_expectancy`. Analisando os VIFs para auxiliar a detecção de multicolinearidade:
+
+```{r}
+# Calcula VIFs
+vif(rlm_model2_le_to_others)
+```
+
+Analisando os resultados para o modelo 2, novamente, os valores dos VIFs são maiores do que 1 e indicam problema sério de multicolinearidade.
+
 ## Parte 4
 
 ### Para cada nível da variável `continent`, construa um modelo de regressão de 1a. ordem para `life_expectancy` como função das variáveis explicativas de um dos modelos acima (`birth_rate`, `expected_schooling` e `milk_consumption_pc` ou `log(gdp_pc)`, `no_water` e `urban_population_percent`).
+
+Para esta parte, foi escolhido o modelo 2 (`life_expectancy` como variável de resposta e `log(gdp_pc)`, `no_water` e `urban_population_percent` como variáveis explicativas) e o continente `South_America` a ser analisado.
 
 ### Comente sobre os resultados obtidos para os modelos ajustados.
 
