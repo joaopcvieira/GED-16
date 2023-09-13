@@ -1362,12 +1362,12 @@ ggplot(rlm_model1_le_to_others_data, aes(sample = resid)) +
 ggplot(rlm_model1_le_to_others_data, aes(sample = resid/sd(resid))) +
   stat_qq() + stat_qq_line() +
   labs(y = "quantis amostrais", x = "quantis teóricos (dist. normal)") +
-  ggtitle("Gráfico de quantis (resíduos padronizados) para modelo1")
+  ggtitle("Gráfico de quantis (resíduos padronizados) para modelo 1")
 ```
 
 Pelos gráficos de quantis, verifica-se desvio da normalidade na extremidade inicial do modelo. O desvio da normalidade pode ser um problema para se proceder com inferências utilizando o modelo ajustado.
 
-Já para o segundo modelo os resíduos são:
+Agora, partindo para o diagnóstico do segundo modelo, os resíduos são:
 
 ```{r}
 rlm_model2_le_to_others_data <- owid_model2 %>%
@@ -1384,7 +1384,7 @@ ggplot(rlm_model2_le_to_others_data, aes(x=fitted, y = resid)) +
   labs(y = "resíduos", x = "resposta ajustada (life_expectancy)")
 
 # Gráfico de resíduo absoluto x resposta ajustada
-ggplot(rlm_model2_le_to_others_data, aes(x=fitted, y = resid)) +
+ggplot(rlm_model2_le_to_others_data, aes(x=fitted, y = abs(resid))) +
   geom_point() +
   geom_hline(yintercept = 0, linetype = "dashed") +
   ggtitle("Resíduos absolutos modelo 2") +
@@ -1392,7 +1392,9 @@ ggplot(rlm_model2_le_to_others_data, aes(x=fitted, y = resid)) +
 
 ```
 
-Gráficos de resíduos pelas variáveis explicativas
+Para o modelo 2, verifica-se um desvio sistemático da resposta linear, em que a variância dos erros é maior no centro do gráfico do que nas extremidades.
+
+Após, são gerados os gráficos de resíduos pelas variáveis explicativas
 
 ```{r}
 # Gerando gráficos de resíduos
@@ -1419,20 +1421,24 @@ ggplot(rlm_model2_le_to_others_data, aes(x=urban_population_percent, y = resid))
 
 ```
 
-Gráfico de quantis para o modelo 1
+Para os gráficos de resíduos das variáveis explicativas, podem ser observadas duas características importantes. Primeiramente, nota-se um "efeito cone" dos resíduos nos gráficos das variáveis `log_gdp` e `urban_population_percent`, efeito mais significativo no gráfico da primeira. Além disso, nota-se uma concentração significativa de pontos no início do gráfico da variável explicativa `no_water`, o que pode influenciar na abrangência do escopo do modelo.
+
+A partir daí, tem-se o gráfico de quantis para o modelo 2:
 
 ```{r}
 # Gráfico de quantis (para resíduos)
 ggplot(rlm_model2_le_to_others_data, aes(sample = resid)) +
   stat_qq() + stat_qq_line() +
   labs(y = "quantis amostrais", x = "quantis teóricos (dist. normal)") +
-  ggtitle("Gráfico de quantis (resíduos) para modelo2")
+  ggtitle("Gráfico de quantis (resíduos) para modelo1")
 # Gráfico de quantis (para resíduos semi-studentizados)
 ggplot(rlm_model2_le_to_others_data, aes(sample = resid/sd(resid))) +
   stat_qq() + stat_qq_line() +
   labs(y = "quantis amostrais", x = "quantis teóricos (dist. normal)") +
-  ggtitle("Gráfico de quantis (resíduos padronizados) para modelo2")
+  ggtitle("Gráfico de quantis (resíduos padronizados) para modelo 2")
 ```
+
+A partir da análise dos gráficos de quantis, para o caso do modelo 2, nota-se uma desvio significativo da normalidade do modelo ajustado, principalmente nas extremidades. Isso não atende às hipóteses do modelo linear e interfere na procedência de inferências a partir do modelo.
 
 #### Detecção de Multicolinearidade
 
