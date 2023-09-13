@@ -1523,7 +1523,9 @@ ggplot(rlm_le_south_america_data, aes(x = fitted, y = abs(resid))) +
 
 ```
 
-Gráficos de resíduos pelas variáveis explicativas
+O gráfico de resíduos apresenta uma distribuição não uniforme, o que pode indicar desvios sistemáticos da variância, heteroscedasticidade ou possíveis *outliers.*
+
+Gráficos de resíduos pelas variáveis explicativas:
 
 ```{r}
 # Gerando gráficos de resíduos
@@ -1550,7 +1552,9 @@ ggplot(rlm_le_south_america_data, aes(x=urban_population_percent, y = resid)) +
 
 ```
 
-Gráfico de quantis para o modelo 1
+Com os gráficos de resíduos por variável explicativa, verifica-se desvios sistemáticos, principalmente para a variável `urban_population_percent`.
+
+Gráfico de quantis para o modelo analisado:
 
 ```{r}
 # Gráfico de quantis (para resíduos)
@@ -1564,3 +1568,14 @@ ggplot(rlm_le_south_america_data, aes(sample = resid/sd(resid))) +
   labs(y = "quantis amostrais", x = "quantis teóricos (dist. normal)") +
   ggtitle("Gráfico de quantis (resíduos padronizados) para modelo2")
 ```
+
+Pela análise dos gráficos de quantis, não se verifica um desvio significativo da normalidade.
+
+Calculando o VIF:
+
+```{r}
+# Calcula VIFs
+vif(rlm_le_south_america)
+```
+
+Com os valores obtidos para os VIFs, verifica-se problema sério de multicolinearidade.
