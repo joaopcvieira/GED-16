@@ -1271,7 +1271,21 @@ summary(rlm_model2_le_to_others)
 
 ### Realize o diagnóstico dos modelos. É possível identificar um modelo que seja mais adequado aos dados?
 
-O diagnóstico de ambos os modelos é feito utilizando-se da análise de resíduos.
+O diagnóstico de ambos os modelos é feito conforme abaixo:
+
+#### Linearidade
+
+Em relação à linearidade
+
+#### Homoscedasticidade
+
+#### *Outliers*
+
+#### Independência
+
+#### Normalidade
+
+#### Análise Medidas Corretivas
 
 Para o primeiro modelo os gráficos de resíduos são:
 
