@@ -1250,13 +1250,11 @@ O resumo do primeiro modelo ajustado é mostrado a seguir:
 summary(rlm_model1_le_to_others)
 ```
 
-Tem-se, para o primeiro modelo, que o ajuste obtido foi de: 
-'life_expectancy = 72.8 - 0.5 * birth_rate + 0.7 * expected_schooling + 0.005 * milk_consumption_pc'
+Tem-se, para o primeiro modelo, que o ajuste obtido foi de: 'life_expectancy = 72.8 - 0.5 \* birth_rate + 0.7 \* expected_schooling + 0.005 \* milk_consumption_pc'
 
-Desse modo, apesar de não nulos os coeficientes da regressão, a variável `milk_consumption_pc` apresenta um coeficiente de regressão muito baixo, o que pode indicar que essa variável não é relevante para a explicação da variável de resposta `life_expectancy`. Além disso, o coeficiente de regressão da variável `birth_rate` é negativo, o que indica que essa variável não tem uma realação direta com a variável de resposta `life_expectancy`. 
+Desse modo, apesar de não nulos os coeficientes da regressão, a variável `milk_consumption_pc` apresenta um coeficiente de regressão muito baixo, o que pode indicar que essa variável não é relevante para a explicação da variável de resposta `life_expectancy`. Além disso, o coeficiente de regressão da variável `birth_rate` é negativo, o que indica que essa variável não tem uma realação direta com a variável de resposta `life_expectancy`.
 
 Vale notar, também, que as variáveis explicativas não são totalmente independentes, sendo que `birth_rate` e `life_expectancy` apresentam uma correlação de -0.81, relativamente forte. Desse modo, o poder de "explicar" a relação de expectativa de vida é afetada quando se utilizam essas variáveis explicativas em conjunto.
-
 
 Já no segundo modelo as variáveis explicativas foram `log_gdp`, `no_water` e `urban_population_percent` para a variável de resposta `life_expectancy`.
 
@@ -1275,8 +1273,7 @@ O resumo do segundo modelo ajustado é mostrado a seguir:
 summary(rlm_model2_le_to_others)
 ```
 
-De maneira análoga à anterior, tem-se que o modelo corresponde a:
-`life_expectancy` = 30.82 + 4.5 * `log_gdp` -0.2 * `no_water` + 0.003 * `urban_population_percent`
+De maneira análoga à anterior, tem-se que o modelo corresponde a: `life_expectancy` = 30.82 + 4.5 \* `log_gdp` -0.2 \* `no_water` + 0.003 \* `urban_population_percent`
 
 Dessa forma, percebe-se que o modelo tem uma dependência muito mais forte com a variável `log_gpd` do que com as outras variáveis explicativas, nesse modelo. Todavia, da análise anterior, foi anotado que a correlação entre as variáveis individualmente com a expectativa de vida eram equiparadamente fortes. Sendo assim, a diferença de dependência (coeficientes angulares) entre as variáveis explicativas pode ser explicada pela forte intercorrelação entre as variáveis, de modo que a interdependência de uma com a outra reduz a capacidade "explicativa" individual de cada variável.
 
@@ -1442,8 +1439,7 @@ A partir da análise dos gráficos de quantis, para o caso do modelo 2, nota-se 
 
 #### Detecção de Multicolinearidade
 
-<<<<<<< HEAD
-Primeiramente, tomando para análise o modelo 1, com a análise feita na parte 1, foi observada uma correlação entre as variáveis explicativas `birth_rate` e `expected_schooling`. Essas variáveis explicativas estão mais correlacionadas entre si do que cada uma com a resposta. Analisando os VIFs para auxiliar a detecção de multicolinearidade:
+\<\<\<\<\<\<\< HEAD Primeiramente, tomando para análise o modelo 1, com a análise feita na parte 1, foi observada uma correlação entre as variáveis explicativas `birth_rate` e `expected_schooling`. Essas variáveis explicativas estão mais correlacionadas entre si do que cada uma com a resposta. Analisando os VIFs para auxiliar a detecção de multicolinearidade:
 
 ```{r}
 library(car)
@@ -1462,8 +1458,6 @@ vif(rlm_model2_le_to_others)
 ```
 
 Analisando os resultados para o modelo 2, novamente, os valores dos VIFs são maiores do que 1 e indicam problema sério de multicolinearidade.
-=======
->>>>>>> 967c6031d30259b4cef07cfd5765c5a5540a8ec3
 
 ## Parte 4
 
@@ -1472,18 +1466,6 @@ Analisando os resultados para o modelo 2, novamente, os valores dos VIFs são ma
 Para esta parte, foi escolhido o modelo 2 (`life_expectancy` como variável de resposta e `log(gdp_pc)`, `no_water` e `urban_population_percent` como variáveis explicativas) e o continente `South_America` a ser analisado.
 
 ### Comente sobre os resultados obtidos para os modelos ajustados.
-
-### 
-
-### As funções de regressão estimadas são semelhantes para os diferentes níveis da variável `continent`? Discuta.
-
-### 
-
-### Analise os valores de MSE e $R^2_{aj}$ para cada modelo. Essas medidas são semelhantes para os diferentes níveis de `continent`? Discuta.
-
-### 
-
-### Realize o diagnóstico dos modelos construídos. Interprete os gráficos e os resultados obtidos.
 
 Construindo um conjunto de dados e filtrando para somente o continente "South America".
 
@@ -1499,12 +1481,22 @@ owid_model3 <- owid |>
 owid_south_america <- owid_model3 %>% filter(continent == "South America")
 ```
 
-Criando o modelo de regressão para as variáveis explicativas "log_gdp", "no_water" e "urban_population_percent".
+Criando o modelo de regressão para as variáveis explicativas `log_gdp`, `no_water` e `urban_population_percent`.
 
 ```{r}
 rlm_le_south_america <- lm(life_expectancy ~ log_gdp + no_water + urban_population_percent, data=owid_south_america)
 summary(rlm_le_south_america)
 ```
+
+### As funções de regressão estimadas são semelhantes para os diferentes níveis da variável `continent`? Discuta.
+
+Para o caso analisado, foi considerado apenas uma possibilidade de variável `continent`, o que impossibilita a comparação para diferentes níveis.
+
+### Analise os valores de MSE e $R^2_{aj}$ para cada modelo. Essas medidas são semelhantes para os diferentes níveis de `continent`? Discuta.
+
+Para o caso analisado, foi considerado apenas uma possibilidade de variável `continent`, o que impossibilita a comparação para diferentes níveis. Porém, o summary traz a informação de MSE e $R_{aj}^2$ para o modelo ajustado para `South_America`.
+
+### Realize o diagnóstico dos modelos construídos. Interprete os gráficos e os resultados obtidos.
 
 Diagnóstico do modelo usando os gráficos de resíduos
 
@@ -1527,7 +1519,7 @@ ggplot(rlm_le_south_america_data, aes(x = fitted, y = abs(resid))) +
   geom_point() +
   geom_hline(yintercept = 0, linetype = "dashed") +
   ggtitle("Gráfico de resíduos absolutos") +
-  labs(y = "|resíduos|", x = "resposta ajustada (life_expectancy)")
+  labs(y = "|resíduos|", x = "resposta ajustada (life_expectancy)")
 
 ```
 
