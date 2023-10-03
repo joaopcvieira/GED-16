@@ -1579,3 +1579,67 @@ vif(rlm_le_south_america)
 ```
 
 Com os valores obtidos para os VIFs, verifica-se problema sério de multicolinearidade.
+
+
+
+### PARTE 3: Construção de Modelos
+
+Utilize o procedimento para construir modelos de regressão para a resposta expectativa de vida (`life_expectancy`), considerando um dos conjuntos de variáveis explicativas: 
+
+**Conjunto I:** `continent`, `birth_rate`, `expected_schooling` e `milk_consumption_pc` (e/ou transformações) 
+**Conjunto II:** `continent`m `gdp_pc`, `no_water` e `urban_population_percent` (e/ou transformações)
+
+Considere apenas o ano de 2015 e exclua o continente 'Oceania'.
+
+Lembre-se que os passos apropriados em análise de regressão consistem em:
+
+**construção do modelo**
+
++ formulação e ajuste do modelo  
+
+Devemos utilizar o seguinte procedimento:
+
+1. inclusão de termos contendo as variáveis quantitativas (polinomiais, transformações, interações, etc.);
+2. inclusão de variáveis qualitativas e suas interações;
+3. inclusão de interações entre termos contendo variáveis quantitativas e qualitativas;
+
+**avaliação do modelo**
+
++ realizar análise de resíduos (verificar validade das hipóteses)
+
+**utilização do modelo**
+
++ para realizar inferências
++ para auxiliar o processo de tomada de decisão
+
+Forneça interpretações e discussão para os resultados obtidos.
+
+
+----
+
+Escolhe-se o modelo de regressão I com as variáveis `continent`, `birth_rate`, `expected_schooling` e `milk_consumption_pc`.
+
+# Separando os dados de interesse para o modelo
+
+```{r}
+# Filtrando os dados para o ano de 2015
+model1_data <- owid %>% filter(year == 2015)
+
+# Selecionando somente as variáveis de interesse
+model1_data <- model1_data[,c(1,5,15,18,19)]
+
+# Retirando os dados referentes a oceania
+model1_data <- subset(model1_data, model1_data$continent != "Oceania")
+
+# Juntando os dados referentes às Américas do Norte e Sul
+model1_data <- model1_data %>%
+  mutate(continent = dplyr::recode(continent, "North America" = "America", "South America" = "America"))
+```
+
+# Criando o modelo de regressão
+
+```{r}
+# Gráfico de dispersão dos dados
+plot(model1_data)
+```
+
