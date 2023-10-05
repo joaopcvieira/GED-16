@@ -1643,6 +1643,22 @@ model1_data <- model1_data %>%
 plot(model1_data)
 ```
 
+# Verificando correlação entre as variáveis explicativas
+```{r}
+cor(model1_data$birth_rate,model1_data$expected_schooling)
+```
+
+```{r}
+cor(model1_data$birth_rate,model1_data$milk_consumption_pc)
+```
+
+```{r}
+cor(model1_data$expected_schooling,model1_data$milk_consumption_pc)
+```
+
+É possível perceber que existe correlação entre as variáveis explicativas. A correlação mais forte é entre as variáveis "birth_rate" e "expected_schooling".
+
+
 Verificando correlação entre termos quadráticos e lineares das variáveis explicativas
 
 Para a variável `birth_rate`
@@ -1666,6 +1682,20 @@ cor(model1_data$milk_consumption_pc, model1_data$milk_consumption_pc^2)
 ```
 
 Conclui-se que para todas as três variáveis quantitativas do modelo a correlação entre seus valores lineares e seus valores quadráticos é muito elevada. Para diminuir esse efeito no modelo, centraliza-se as variáveis explicativas antes da construção do modelo.
+
+Gráficos de dispersão das variaveis explicativas com seus quadrados
+```{r}
+ggplot(model1_data , aes(x = birth_rate, y = birth_rate^2)) + 
+  geom_point()
+
+ggplot(model1_data, aes(x = expected_schooling, y = expected_schooling^2)) + 
+  geom_point()
+
+ggplot(model1_data, aes(x = milk_consumption_pc, y = milk_consumption_pc^2)) + 
+  geom_point()
+```
+
+É possível perceber que apesar do aspecto quadrático dos pontos, a variação é monotônica e possui caráter aproximadamente linear. Assim, as variáveis explicativas foram centralizadas.
 
 ```{r}
 # Criando variáveis quantitativas centralizadas
@@ -1698,7 +1728,37 @@ Para a variável `milk_consumption_pc_c`
 cor(model1_data$milk_consumption_pc_c, model1_data$milk_consumption_pc_c^2)
 ```
 
-É possível observar que as correlações diminuíram para todas as variáveis explicativas quantitativas do modelo após centralizadas pela média dos valores.
+É possível observar que as correlações entre os termos lineares e quadráticos diminuíram para todas as variáveis explicativas quantitativas do modelo após centralizadas pela média dos valores.
+
+Assim, os gráficos de dispersão das variáveis explicativas centralizadas com seus respectivos quadrados são dados por:
+
+```{r}
+ggplot(model1_data , aes(x = birth_rate_c, y = birth_rate_c^2)) + 
+  geom_point()
+
+ggplot(model1_data, aes(x = expected_schooling_c, y = expected_schooling_c^2)) + 
+  geom_point()
+
+ggplot(model1_data, aes(x = milk_consumption_pc_c, y = milk_consumption_pc_c^2)) + 
+  geom_point()
+```
+
+É possível pereber que ao centralizar as variáveis explicativas, o perfil parabólico do gráfico de dispersão se torna mais acentuado, mostrando de forma qualitativa que a correlação linear entre as variáveis diminuiu. Verificando novamente os coeficientes de correlação obtém-se:
+
+```{r}
+cor(model1_data$birth_rate_c,model1_data$expected_schooling_c)
+```
+
+```{r}
+cor(model1_data$birth_rate_c,model1_data$milk_consumption_pc_c)
+```
+
+```{r}
+cor(model1_data$expected_schooling_c,model1_data$milk_consumption_pc_c)
+```
+
+As correlações entre as variáveis explicativas permanecem inalteradas, mostrando que a centralização das variáveis não diminui suas correlações entre si.
+
 
 ## Criando o modelo de regressão
 
