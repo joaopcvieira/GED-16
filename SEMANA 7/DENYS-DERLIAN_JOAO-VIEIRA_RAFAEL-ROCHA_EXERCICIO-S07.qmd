@@ -1766,7 +1766,7 @@ As correlações entre as variáveis explicativas permanecem inalteradas, mostra
 # Modelo de regressão linear com as variáveis explicativas "birth_rate_c", "expected_schooling_c" e "milk_consumption_pc_c"
 
 # Modelo polinomial de segunda ordem completo com as variáveis quantitativas
-model1_quant <- lm(life_expectancy ~ I(birth_rate_c^2) + I(expected_schooling_c^2) + I(milk_consumption_pc_c^2) + birth_rate_c*expected_schooling_c + birth_rate_c*milk_consumption_pc_c + birth_rate_c*milk_consumption_pc_c, data = model1_data )
+model1_quant <- lm(life_expectancy ~ I(birth_rate_c^2) + I(expected_schooling_c^2) + I(milk_consumption_pc_c^2) + birth_rate_c*expected_schooling_c + birth_rate_c*milk_consumption_pc_c + expected_schooling_c*milk_consumption_pc_c, data = model1_data )
 
 
 summary(model1_quant)
