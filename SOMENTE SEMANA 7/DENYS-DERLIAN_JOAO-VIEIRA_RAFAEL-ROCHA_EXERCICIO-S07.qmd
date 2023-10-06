@@ -211,7 +211,6 @@ ggplot(model1_data, aes(x = milk_consumption_pc, y = milk_consumption_pc^2)) +
     )
 ```
 
-
 É possível perceber que apesar do aspecto quadrático dos pontos, a variação é monotônica e possui caráter aproximadamente linear. Assim, as variáveis explicativas foram centralizadas.
 
 ```{r}
@@ -251,7 +250,6 @@ cor(model1_data$milk_consumption_pc_c, model1_data$milk_consumption_pc_c^2)
 É possível observar que as correlações entre os termos lineares e quadráticos diminuíram para todas as variáveis explicativas quantitativas do modelo após centralizadas pela média dos valores.
 
 Assim, os gráficos de dispersão das variáveis explicativas centralizadas com seus respectivos quadrados são dados por:
-
 
 ```{r echo=FALSE, fig.height = 10}
 #| layout-ncol: 3
