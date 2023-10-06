@@ -382,3 +382,19 @@ m_quali <- lm(
 summary(m_quali)
 ```
 
+```{r}
+anova(m_quali)
+```
+
+## Inclusão de termos de interação entre variáveis quantitativas e qualitativas
+
+```{r}
+m_all <- lm(
+    life_expectancy ~ birth_rate_c*expected_schooling_c + continent:birth_rate_c + continent : expected_schooling_c + continent, data = model1_data 
+)
+
+anova(m_all)
+
+```
+
+Ao obversar a tabela anova, conclui-se adicionar as interações entre a variável `continent` com as outras variáveis explicativas do modelo não traz nenhuma melhoria no modelo ao observarmos seu valor-p
