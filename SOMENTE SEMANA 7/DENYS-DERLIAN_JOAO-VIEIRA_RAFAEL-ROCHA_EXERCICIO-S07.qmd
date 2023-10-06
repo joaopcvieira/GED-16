@@ -183,9 +183,16 @@ cor(model1_data$milk_consumption_pc, model1_data$milk_consumption_pc^2)
 
 Conclui-se que para todas as três variáveis quantitativas do modelo a correlação entre seus valores lineares e seus valores quadráticos é muito elevada. Para diminuir esse efeito no modelo, centraliza-se as variáveis explicativas antes da construção do modelo.
 
+<<<<<<< HEAD
 Gráficos de dispersão das variaveis explicativas com seus quadrados
 
 ```{r}
+=======
+Gráficos de dispersão das variáveis explicativas com seus quadrados
+```{r echo=FALSE, fig.height = 10}
+#| layout-ncol: 3
+par(mfrow=c(1,3), cex = 1.5)
+>>>>>>> 749f90cec2a8d47b463ded8dd849d5440c726ee4
 ggplot(model1_data , aes(x = birth_rate, y = birth_rate^2)) + 
   geom_point()
 
@@ -195,6 +202,7 @@ ggplot(model1_data, aes(x = expected_schooling, y = expected_schooling^2)) +
 ggplot(model1_data, aes(x = milk_consumption_pc, y = milk_consumption_pc^2)) + 
   geom_point()
 ```
+
 
 É possível perceber que apesar do aspecto quadrático dos pontos, a variação é monotônica e possui caráter aproximadamente linear. Assim, as variáveis explicativas foram centralizadas.
 
@@ -234,7 +242,9 @@ cor(model1_data$milk_consumption_pc_c, model1_data$milk_consumption_pc_c^2)
 
 Assim, os gráficos de dispersão das variáveis explicativas centralizadas com seus respectivos quadrados são dados por:
 
-```{r}
+
+```{r echo=FALSE, fig.height = 10}
+#| layout-ncol: 3
 ggplot(model1_data , aes(x = birth_rate_c, y = birth_rate_c^2)) + 
   geom_point()
 
