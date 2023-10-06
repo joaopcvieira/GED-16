@@ -193,39 +193,29 @@ Após, gera-se a nova matriz de gráficos de dispersão:
 plot(model1_data)
 ```
 
-Após esse procedimento, percebe-se que a variável `new_milk_consumption_pc` possui uma relação mais próxima de linear que `milk_consumption_pc` com a variável resposta `life_expectancy`. Outrossim, as demais variáveis quantitativas apresentam uma relação próxima da linear entre si.
+Após esse procedimento, percebe-se que a variável `new_milk_consumption_pc` possui uma relação mais próxima de linear que `milk_consumption_pc` com a variável resposta `life_expectancy`. Outrossim, as demais variáveis quantitativas apresentam uma relação próxima da linear entre si. A partir daí, pode-se pensar num modelo de segunda ordem para as variáveis quantitativas conforme abaixo:
 
-## Verificando correlação entre as variáveis explicativas
+$E[life\_expectancy] = \beta_0 + \beta_1 new\_milk\_consumption\_pc + \beta_{11} new\_milk\_consumption\_pc^2 + \beta_2 birth\_rate + \beta_{22} birth\_rate^2 + \beta_3 expected\_schooling + \beta_{33} expected\_schooling^2 + \beta_{12}new\_milk\_consumption\_pc\cdot birth\_rate  + \beta_{13}}new\_milk\_consumption\_pc cdot expected\_schooling+ \beta_{23} birth\_rate \cdot expected\_schooling$
+
+### Verificando correlação entre as variáveis explicativas
+
+A partir da idealização do modelo acima, pode-se verificar a relação linear entre as variáveis explicativas de primeira ordem:
 
 ```{r}
 cor(model1_data$birth_rate, model1_data$expected_schooling)
 ```
 
 ```{r}
-cor(model1_data$birth_rate, model1_data$milk_consumption_pc)
+cor(model1_data$birth_rate, model1_data$new_milk_consumption_pc)
 ```
 
 ```{r}
-cor(model1_data$expected_schooling, model1_data$milk_consumption_pc)
+cor(model1_data$expected_schooling, model1_data$new_milk_consumption_pc)
 ```
 
-```{r}
-cor(model1_data$birth_rate,model1_data$new_milk_consumption_pc)
-```
+É possível perceber que existe correlação entre as variáveis explicativas. A correlação mais forte é entre as variáveis `birth_rate` e `expected_schooling`. Agora, verificando correlação entre termos quadráticos e lineares das variáveis explicativas
 
-```{r}
-cor(model1_data$birth_rate,model1_data$new_milk_consumption_pc)
-```
-
-```{r}
-cor(model1_data$expected_schooling,model1_data$new_milk_consumption_pc)
-```
-
-É possível perceber que existe correlação entre as variáveis explicativas. A correlação mais forte é entre as variáveis "birth_rate" e "expected_schooling". Além disso, a variável `new_milk_consumption_pc` possui suas correlações reduzida com a variável `expected_schooling` e praticamente inalterada com a variável `birth_rate` se comparada com a variável não transformada `milk_consumption_pc`.
-
-Verificando correlação entre termos quadráticos e lineares das variáveis explicativas
-
-Para a variável `birth_rate`
+Para a variável `birth_rate`:
 
 ```{r}
 # Correlação para birth rate
@@ -239,13 +229,6 @@ Para a variável `expected_schooling`
 cor(model1_data$expected_schooling, model1_data$expected_schooling^2)
 ```
 
-Para a variável `milk_consumption_pc`
-
-```{r}
-# Correlação para milk_consumption_pc
-cor(model1_data$milk_consumption_pc, model1_data$milk_consumption_pc^2)
-```
-
 Para a variável transformada `new_milk_consumption_pc`
 
 ```{r}
@@ -253,7 +236,7 @@ Para a variável transformada `new_milk_consumption_pc`
 cor(model1_data$new_milk_consumption_pc, model1_data$new_milk_consumption_pc^2)
 ```
 
-Conclui-se que para todas as variáveis quantitativas do modelo a correlação entre seus valores lineares e seus valores quadráticos é muito elevada. Para diminuir esse efeito no modelo, centraliza-se as variáveis explicativas antes da construção do modelo.
+Conclui-se que para todas as variáveis quantitativas do modelo a correlação entre seus valores lineares e seus valores quadráticos é elevada. Para diminuir esse efeito no modelo, centraliza-se as variáveis explicativas antes da construção do modelo.
 
 Gráficos de dispersão das variáveis explicativas com seus quadrados
 
@@ -268,13 +251,6 @@ ggplot(model1_data, aes(x = birth_rate, y = birth_rate^2)) +
     )
 
 ggplot(model1_data, aes(x = expected_schooling, y = expected_schooling^2)) +
-    geom_point() +
-    theme(
-        axis.text = element_text(size = 15),
-        axis.title = element_text(size = 20, face = "bold")
-    )
-
-ggplot(model1_data, aes(x = milk_consumption_pc, y = milk_consumption_pc^2)) +
     geom_point() +
     theme(
         axis.text = element_text(size = 15),
@@ -297,7 +273,6 @@ model1_data <- model1_data %>%
     mutate(
         birth_rate_c = birth_rate - mean(birth_rate),
         expected_schooling_c = expected_schooling - mean(expected_schooling),
-        milk_consumption_pc_c = milk_consumption_pc - mean(milk_consumption_pc),
         new_milk_consumption_pc_c = new_milk_consumption_pc - mean(new_milk_consumption_pc)
     )
 
@@ -305,26 +280,21 @@ model1_data <- model1_data %>%
 
 Verificando novamente as correlações
 
-Para a variável `birth_rate_c`
+Para a variável `birth_rate_c`:
 
 ```{r}
 # Correlação para birth rate
 cor(model1_data$birth_rate_c, model1_data$birth_rate_c^2)
 ```
 
-Para a variável `expected_schooling_c`
+Para a variável `expected_schooling_c`:
 
 ```{r}
 # Correlação para expected schooling
 cor(model1_data$expected_schooling_c, model1_data$expected_schooling_c^2)
 ```
 
-Para a variável `milk_consumption_pc_c`
-
-```{r}
-# Correlação para milk_consumption_pc
-cor(model1_data$milk_consumption_pc_c, model1_data$milk_consumption_pc_c^2)
-```
+Para a variável `new_milk_consumption_pc_c`:
 
 ```{r}
 # Correlação para a variavel transformada de milk_consumption_pc
@@ -351,12 +321,6 @@ ggplot(model1_data, aes(x = expected_schooling_c, y = expected_schooling_c^2)) +
         axis.title = element_text(size = 20, face = "bold")
     )
 
-ggplot(model1_data, aes(x = milk_consumption_pc_c, y = milk_consumption_pc_c^2)) +
-    geom_point() +
-    theme(
-        axis.text = element_text(size = 15),
-        axis.title = element_text(size = 20, face = "bold")
-    )
 
 ggplot(model1_data, aes(x = new_milk_consumption_pc_c, y = new_milk_consumption_pc_c^2)) +
     geom_point() +
@@ -366,18 +330,10 @@ ggplot(model1_data, aes(x = new_milk_consumption_pc_c, y = new_milk_consumption_
     )
 ```
 
-É possível pereber que ao centralizar as variáveis explicativas, o perfil parabólico do gráfico de dispersão se torna mais acentuado, mostrando de forma qualitativa que a correlação linear entre as variáveis diminuiu. Verificando novamente os coeficientes de correlação obtém-se:
+É possível perceber que, ao centralizar as variáveis explicativas, o perfil parabólico do gráfico de dispersão se torna mais acentuado, mostrando de forma qualitativa que a correlação linear entre as variáveis diminuiu. Verificando novamente os coeficientes de correlação obtém-se:
 
 ```{r}
 cor(model1_data$birth_rate_c, model1_data$expected_schooling_c)
-```
-
-```{r}
-cor(model1_data$birth_rate_c, model1_data$milk_consumption_pc_c)
-```
-
-```{r}
-cor(model1_data$expected_schooling_c, model1_data$milk_consumption_pc_c)
 ```
 
 ```{r}
@@ -385,34 +341,56 @@ cor(model1_data$birth_rate_c, model1_data$new_milk_consumption_pc_c)
 ```
 
 ```{r}
-cor(model1_data$expected_schooling_c, model1_data$milk_consumption_pc_c)
+cor(model1_data$expected_schooling_c, model1_data$new_milk_consumption_pc_c)
 ```
 
-## Criando o modelo de regressão
+### Criando o modelo de regressão
+
+A partir da preparação dos dados feita até então, incluindo a sua centralização, o modelo polinomial de ordem 2 é ajustado considerando as variáveis explicativas e suas interações, conforme modelo descrito anteriormente:
 
 ```{r}
 # Modelo de regressão linear com as variáveis explicativas "birth_rate_c", "expected_schooling_c" e "milk_consumption_pc_c"
 
 # Modelo polinomial de segunda ordem completo com as variáveis quantitativas
 model1_quant <- lm(
-    life_expectancy ~ I(birth_rate_c^2) + I(expected_schooling_c^2) + I(milk_consumption_pc_c^2) + birth_rate_c * expected_schooling_c + birth_rate_c * milk_consumption_pc_c + expected_schooling_c * milk_consumption_pc_c,data = model1_data)
+    life_expectancy ~ I(birth_rate_c^2) + I(expected_schooling_c^2) + I(new_milk_consumption_pc_c^2) + birth_rate_c * expected_schooling_c + birth_rate_c * new_milk_consumption_pc_c + expected_schooling_c * new_milk_consumption_pc_c, data = model1_data)
 
 
 summary(model1_quant)
 ```
 
-\<\<\<\<\< ALGUMA CONTINUAÇÃO AQUI \>\>\>\>\>\>
+Com o modelo geral concebido, é possível verificar que ele é significativo (passa no teste-F global com valor-p da ordem de e-16) e o coeficiente de determinação indica que aproximadamente 85.3% da variabilidade na resposta é explicada pelo modelo (não há grande diferença entre R^2^ e R^2^ ajustado). No entanto, os seguintes termos não são significativos: `birth_rate_c^2`, `new_milk_consumption_pc_c^2`, `birth_rate_c:expected_schooling_c` e `expected_schooling_c:new_milk_consumption_pc_c`.
+
+A partir dessa análise, pode-se construir um modelo reduzido, removendo os termos não significativos para o modelo, chegando-se à expressão:
+
+$E[life\_expectancy] = \beta_0 + \beta_1 new\_milk\_consumption\_pc + \beta_2 birth\_rate  + \beta_3 expected\_schooling + \beta_{33} expected\_schooling^2 + \beta_{12}new\_milk\_consumption\_pc\cdot birth\_rate$
 
 ```{r}
-# modelo que inclui as variáveis explicativas qualitativas
-m_quant <- lm(
-    life_expectancy ~ birth_rate_c * expected_schooling_c, data = model1_data
-)
+# Modelo reduzido
+model1_quant_red <- lm(
+    life_expectancy ~ birth_rate_c + expected_schooling_c +I(expected_schooling_c^2) + new_milk_consumption_pc_c +  birth_rate_c * new_milk_consumption_pc_c, data = model1_data)
+
+
+summary(model1_quant_red)
 ```
 
-## Inclusão da variável categórica `continent`
+O modelo reduzido é significativo (passa no teste-F global com valor-p da ordem de e-16). Todos os coeficientes são significativos e o coeficiente de determinação indica que aproximadamente 85.2% da variabilidade na resposta é explicada pelo modelo (não há grande diferença, se comparado ao coeficiente de determinação ajustado).
 
-Vamos avaliar se o modelo de regressão melhora com a inclusão da variável categórica `continent`.
+Também é possível comparar o modelo completo ao reduzido utilizando a abordagem do teste linear geral. As hipóteses sendo testadas na comparação dos modelos aninhados são as seguintes:
+
+```{r}
+# teste-F
+# H_0: Betas(11,22,13 e 23) == 0
+# H_a: Nem todos são nulos
+
+anova(model1_quant_red, model1_quant, test="F")
+```
+
+Como o resultado da comparação é não-significativo (valor-p \> 0.05), a hipótese nula não pode ser rejeitada e, portanto, conclui-se que os termos eliminados do modelo completo são estatisticamente iguais a zero.
+
+## Inclusão de variáveis qualitativas e suas interações
+
+Agora, analisa-se o impacto do modelo de regressão com a inclusão da variável categórica `continent`:
 
 ```{r}
 # modelo que inclui as variáveis explicativas qualitativas
