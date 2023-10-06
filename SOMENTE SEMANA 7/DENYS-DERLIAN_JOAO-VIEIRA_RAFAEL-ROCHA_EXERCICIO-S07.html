@@ -587,6 +587,54 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 <p>De fato, o valor expresso para o teste F mostra que a variável <code>continent</code> agrega valor ao modelo.</p>
 </section>
+<section id="inclusão-de-termos-de-interação-entre-variáveis-quantitativas-e-qualitativas" class="level2">
+<h2 class="anchored" data-anchor-id="inclusão-de-termos-de-interação-entre-variáveis-quantitativas-e-qualitativas">Inclusão de termos de interação entre variáveis quantitativas e qualitativas</h2>
+<p>Verificando gráficamente se há interação entre as variáveis <code>birth_rate_c</code> e <code>expected_schooling_c</code> com a variável categórica <code>continent</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(model1_data, <span class="fu">aes</span>(<span class="at">x =</span> birth_rate_c, <span class="at">y =</span> life_expectancy)) <span class="sc">+</span></span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># adiciona pontos </span></span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># (cores e símbolos distintos para diferentes valores de `continent`)</span></span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> continent, <span class="at">shape =</span> continent)) <span class="sc">+</span> </span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># adiciona retas de tendência</span></span>
+<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="fu">aes</span>(<span class="at">color =</span> continent), <span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb53-7"><a href="#cb53-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"`life_expectancy` x `birth_rate_c`, para diferentes níveis de `continent`"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="DENYS-DERLIAN_JOAO-VIEIRA_RAFAEL-ROCHA_EXERCICIO-S07_files/figure-html/unnamed-chunk-33-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(model1_data, <span class="fu">aes</span>(<span class="at">x =</span> expected_schooling_c, <span class="at">y =</span> life_expectancy)) <span class="sc">+</span></span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># adiciona pontos </span></span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># (cores e símbolos distintos para diferentes valores de `continent`)</span></span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> continent, <span class="at">shape =</span> continent)) <span class="sc">+</span> </span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># adiciona retas de tendência</span></span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="fu">aes</span>(<span class="at">color =</span> continent), <span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"`life_expectancy` x `expected_schooling_c`, para diferentes níveis de `continent`"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="DENYS-DERLIAN_JOAO-VIEIRA_RAFAEL-ROCHA_EXERCICIO-S07_files/figure-html/unnamed-chunk-33-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Criando modelo de regressão com todas as interações possíveis</span></span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>m_all <span class="ot">&lt;-</span> <span class="fu">lm</span>(</span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>    life_expectancy <span class="sc">~</span> birth_rate_c<span class="sc">*</span>expected_schooling_c <span class="sc">+</span> continent<span class="sc">:</span>birth_rate_c <span class="sc">+</span> continent <span class="sc">:</span> expected_schooling_c <span class="sc">+</span> continent, <span class="at">data =</span> model1_data </span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Verificando se a inclusão das interações melhora o não o modelo:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificando a inclusao das novas alterações</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(m_quali,m_all, <span class="at">test=</span><span class="st">"F"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Variance Table
+
+Model 1: life_expectancy ~ birth_rate_c * expected_schooling_c + continent
+Model 2: life_expectancy ~ birth_rate_c * expected_schooling_c + continent:birth_rate_c + 
+    continent:expected_schooling_c + continent
+  Res.Df    RSS Df Sum of Sq      F Pr(&gt;F)
+1    131 1222.9                           
+2    125 1198.4  6    24.509 0.4261 0.8605</code></pre>
+</div>
+</div>
+<p>Ao observar a estatística do teste F é possível concluir que a inclusão das interações entre as variáveis quantitativas e a variável categórica <code>continent</code> não traz benefício para o modelo criado. Assim, o modelo a ser utilizado será o modelo <code>m_quali</code> sem a inclusão das interações.</p>
+</section>
 </section>
 
 </main>
