@@ -118,7 +118,11 @@ Forneça interpretações e discussão para os resultados obtidos.
 
 Escolhe-se o modelo de regressão I com as variáveis `continent`, `birth_rate`, `expected_schooling` e `milk_consumption_pc`.
 
-## Separando os dados de interesse para o modelo
+## Inclusão de termos contendo as variáveis quantitativas
+
+### Separando os dados de interesse para o modelo
+
+Para o modelo escolhido, será trabalhado o subconjunto das variáveis definidas para o modelo 1: `continent`, `birth_rate`, `expected_schooling` e `milk_consumption_pc`. A partir das análises anteriores, é sabido que, dentro desse subconjunto, as variáveis quantitativas são `birth_rate`, `expected_schooling` e `milk_consumption_pc`. Assim sendo, o procedimento de construção do modelo começará por tratar essas variáveis:
 
 ```{r}
 # Filtrando os dados para o ano de 2015
@@ -130,9 +134,22 @@ model1_data <- model1_data[, c(1, 5, 15, 18, 19)]
 # Retirando os dados referentes a oceania
 model1_data <- subset(model1_data, model1_data$continent != "Oceania")
 
+```
+
+Note que já foram retirados os dados referentes ao continente `Oceania`, conforme orientado no enunciado. O resumo dos dados pode ser visto abaixo:
+
+```{r}
+summary(model1_data)
+```
+
+A partir dessa análise inicial, é possível notar que a variável categórica `Continent` não está balanceada em número de observações. Por exemplo, enquanto a o continente `Europe` possui 40 observações, o continente `South_America` só possui 10. Para melhorar o balanceamento, as observações realizadas em `North_America` e `South_America` serão unificados para uma nova variável `America`:
+
+```{r}
 # Juntando os dados referentes às Américas do Norte e Sul
 model1_data <- model1_data %>%
     mutate(continent = dplyr::recode(continent, "North America" = "America", "South America" = "America"))
+
+summary(model1_data)
 ```
 
 ## Criando o modelo de regressão
@@ -208,15 +225,15 @@ cor(model1_data$milk_consumption_pc, model1_data$milk_consumption_pc^2)
 ```
 
 Para a variável transformada `new_milk_consumption_pc`
+
 ```{r}
 # Correlação para a variavel transformada de milk_consumption_pc
 cor(model1_data$new_milk_consumption_pc, model1_data$new_milk_consumption_pc^2)
 ```
 
-
 Conclui-se que para todas as variáveis quantitativas do modelo a correlação entre seus valores lineares e seus valores quadráticos é muito elevada. Para diminuir esse efeito no modelo, centraliza-se as variáveis explicativas antes da construção do modelo.
 
-Gráficos de dispersão das variaveis explicativas com seus quadrados
+Gráficos de dispersão das variáveis explicativas com seus quadrados
 
 ```{r echo=FALSE, fig.height = 10}
 #| layout-ncol: 3
@@ -362,10 +379,7 @@ model1_quant <- lm(
 summary(model1_quant)
 ```
 
-
-<<<<< ALGUMA CONTINUAÇÃO AQUI >>>>>>
-
-
+\<\<\<\<\< ALGUMA CONTINUAÇÃO AQUI \>\>\>\>\>\>
 
 ```{r}
 # modelo que inclui as variáveis explicativas qualitativas
@@ -378,7 +392,6 @@ m_quant <- lm(
 
 Vamos avaliar se o modelo de regressão melhora com a inclusão da variável categórica `continent`.
 
-
 ```{r}
 # modelo que inclui as variáveis explicativas qualitativas
 m_quali <- lm(
@@ -389,9 +402,9 @@ m_quali <- lm(
 summary(m_quali)
 ```
 
-A partir do resumo do modelo, é possível observar que a variável `continent` agrega valor ao modelo, tendo em vista que o valor p do teste F é menor que 0.05. 
+A partir do resumo do modelo, é possível observar que a variável `continent` agrega valor ao modelo, tendo em vista que o valor p do teste F é menor que 0.05.
 
-A fim de verificar isso, vamos realizar o teste ANOVA entre o modelo quando este não incluia a variável categórica e agora, incluindo a variável `continent`.
+A fim de verificar isso, vamos realizar o teste ANOVA entre o modelo quando este não incluía a variável categórica e agora, incluindo a variável `continent`.
 
 ```{r}
 # Teste ANOVA
@@ -402,7 +415,8 @@ anova(m_quant, m_quali, test="F")
 De fato, o valor expresso para o teste F mostra que a variável `continent` agrega valor ao modelo.
 
 ## Inclusão de termos de interação entre variáveis quantitativas e qualitativas
-Verificando gráficamente se há interação entre as variáveis `birth_rate_c` e `expected_schooling_c` com a variável categórica `continent`. 
+
+Verificando gráficamente se há interação entre as variáveis `birth_rate_c` e `expected_schooling_c` com a variável categórica `continent`.
 
 ```{r}
 ggplot(model1_data, aes(x = birth_rate_c, y = life_expectancy)) +
@@ -437,6 +451,4 @@ Verificando se a inclusão das interações melhora o não o modelo:
 anova(m_quali,m_all, test="F")
 ```
 
-
 Ao observar a estatística do teste F é possível concluir que a inclusão das interações entre as variáveis quantitativas e a variável categórica `continent` não traz benefício para o modelo criado. Assim, o modelo a ser utilizado será o modelo `m_quali` sem a inclusão das interações.
-
