@@ -183,7 +183,6 @@ cor(model1_data$milk_consumption_pc, model1_data$milk_consumption_pc^2)
 
 Conclui-se que para todas as três variáveis quantitativas do modelo a correlação entre seus valores lineares e seus valores quadráticos é muito elevada. Para diminuir esse efeito no modelo, centraliza-se as variáveis explicativas antes da construção do modelo.
 
-
 Gráficos de dispersão das variaveis explicativas com seus quadrados
 
 ```{r echo=FALSE, fig.height = 10}
