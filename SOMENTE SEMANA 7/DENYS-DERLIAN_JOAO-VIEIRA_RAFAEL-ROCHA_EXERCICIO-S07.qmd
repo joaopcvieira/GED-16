@@ -81,15 +81,13 @@ str(owid)
 
 Observamos, portanto, um total de 985 dados, sendo três colunas apresentadas como strings (`continent`, `entity` e `country_code`) e as demais como numéricas. Não obstante, os nomes das variáveis são intuitivos e não necessitam de alterações.
 
--------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------
 
+# Construção de Modelos
 
-### PARTE 3: Construção de Modelos
+Utilize o procedimento para construir modelos de regressão para a resposta expectativa de vida (`life_expectancy`), considerando um dos conjuntos de variáveis explicativas:
 
-Utilize o procedimento para construir modelos de regressão para a resposta expectativa de vida (`life_expectancy`), considerando um dos conjuntos de variáveis explicativas: 
-
-**Conjunto I:** `continent`, `birth_rate`, `expected_schooling` e `milk_consumption_pc` (e/ou transformações) 
-**Conjunto II:** `continent`m `gdp_pc`, `no_water` e `urban_population_percent` (e/ou transformações)
+**Conjunto I:** `continent`, `birth_rate`, `expected_schooling` e `milk_consumption_pc` (e/ou transformações) **Conjunto II:** `continent`m `gdp_pc`, `no_water` e `urban_population_percent` (e/ou transformações)
 
 Considere apenas o ano de 2015 e exclua o continente 'Oceania'.
 
@@ -97,27 +95,26 @@ Lembre-se que os passos apropriados em análise de regressão consistem em:
 
 **construção do modelo**
 
-+ formulação e ajuste do modelo  
+-   formulação e ajuste do modelo
 
 Devemos utilizar o seguinte procedimento:
 
-1. inclusão de termos contendo as variáveis quantitativas (polinomiais, transformações, interações, etc.);
-2. inclusão de variáveis qualitativas e suas interações;
-3. inclusão de interações entre termos contendo variáveis quantitativas e qualitativas;
+1.  inclusão de termos contendo as variáveis quantitativas (polinomiais, transformações, interações, etc.);
+2.  inclusão de variáveis qualitativas e suas interações;
+3.  inclusão de interações entre termos contendo variáveis quantitativas e qualitativas;
 
 **avaliação do modelo**
 
-+ realizar análise de resíduos (verificar validade das hipóteses)
+-   realizar análise de resíduos (verificar validade das hipóteses)
 
 **utilização do modelo**
 
-+ para realizar inferências
-+ para auxiliar o processo de tomada de decisão
+-   para realizar inferências
+-   para auxiliar o processo de tomada de decisão
 
 Forneça interpretações e discussão para os resultados obtidos.
 
-
-----
+------------------------------------------------------------------------
 
 Escolhe-se o modelo de regressão I com as variáveis `continent`, `birth_rate`, `expected_schooling` e `milk_consumption_pc`.
 
@@ -138,14 +135,15 @@ model1_data <- model1_data %>%
   mutate(continent = dplyr::recode(continent, "North America" = "America", "South America" = "America"))
 ```
 
-# Criando o modelo de regressão
+## Criando o modelo de regressão
 
 ```{r}
 # Gráfico de dispersão dos dados
 plot(model1_data)
 ```
 
-# Verificando correlação entre as variáveis explicativas
+## Verificando correlação entre as variáveis explicativas
+
 ```{r}
 cor(model1_data$birth_rate,model1_data$expected_schooling)
 ```
@@ -160,10 +158,10 @@ cor(model1_data$expected_schooling,model1_data$milk_consumption_pc)
 
 É possível perceber que existe correlação entre as variáveis explicativas. A correlação mais forte é entre as variáveis "birth_rate" e "expected_schooling".
 
-
 Verificando correlação entre termos quadráticos e lineares das variáveis explicativas
 
 Para a variável `birth_rate`
+
 ```{r}
 # Correlação para birth rate
 cor(model1_data$birth_rate, model1_data$birth_rate^2)
@@ -186,6 +184,7 @@ cor(model1_data$milk_consumption_pc, model1_data$milk_consumption_pc^2)
 Conclui-se que para todas as três variáveis quantitativas do modelo a correlação entre seus valores lineares e seus valores quadráticos é muito elevada. Para diminuir esse efeito no modelo, centraliza-se as variáveis explicativas antes da construção do modelo.
 
 Gráficos de dispersão das variaveis explicativas com seus quadrados
+
 ```{r}
 ggplot(model1_data , aes(x = birth_rate, y = birth_rate^2)) + 
   geom_point()
@@ -211,6 +210,7 @@ model1_data <- model1_data %>%
 Verificando novamente as correlações
 
 Para a variável `birth_rate_c`
+
 ```{r}
 # Correlação para birth rate
 cor(model1_data$birth_rate_c, model1_data$birth_rate_c^2)
@@ -260,7 +260,6 @@ cor(model1_data$expected_schooling_c,model1_data$milk_consumption_pc_c)
 ```
 
 As correlações entre as variáveis explicativas permanecem inalteradas, mostrando que a centralização das variáveis não diminui suas correlações entre si.
-
 
 ## Criando o modelo de regressão
 
