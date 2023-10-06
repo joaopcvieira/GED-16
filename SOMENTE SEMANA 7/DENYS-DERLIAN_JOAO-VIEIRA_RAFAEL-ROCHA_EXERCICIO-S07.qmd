@@ -152,26 +152,48 @@ model1_data <- model1_data %>%
 summary(model1_data)
 ```
 
-## Criando o modelo de regressão
+### Criando o modelo de regressão
+
+Com os dados preparados, gera-se a matriz de gráficos de dispersão para verificar as relações par-a-par entre as variáveis.
 
 ```{r}
 # Gráfico de dispersão dos dados
 plot(model1_data)
 ```
 
-É possível observar que as variáveis `milk_consumption_pc` e `life_expectancy` não aparentam possuir uma relação linear. Com isso o modelo construído será com uma transformação da variável `milk_conumption_pc`.
+A partir de uma análise inicial, é possível observar que as variáveis `milk_consumption_pc` e `life_expectancy` não aparentam possuir uma relação linear. Isto posto, pode-se tentar uma transformação da variável `milk_conumption_pc`. Para tanto, pode ser analisada se alguma transformação do tipo $Y' = Y^\lambda$ melhoraria a relação linear utilizando o procedimento Box-Cox:
+
+```{r}
+# Transformação Box-Cox
+library(MASS)
+
+bc_milk <- boxcox(lm(milk_consumption_pc ~ life_expectancy, data = model1_data),
+             lambda = seq(-2, 2, by = 0.1), plotit = TRUE)
+```
+
+```{r}
+lambda_milk <- bc_milk$x[which.max(bc_milk$y)]
+cat(lambda_milk)
+cat('\n')
+```
+
+Assim, aplica-se a transformação da variável para melhorar a aproximação linear entre as variáveis.
 
 ```{r}
 model1_data <- model1_data |>
-  mutate(new_milk_consumption_pc  = milk_consumption_pc^0.25) 
+  mutate(new_milk_consumption_pc  = milk_consumption_pc^lambda_milk)
+
+model1_data <- model1_data[, -c(5)]
 ```
+
+Após, gera-se a nova matriz de gráficos de dispersão:
 
 ```{r}
 # Gráfico de dispersão dos dados
 plot(model1_data)
 ```
 
-Percebe-se que a variável `new_milk_consumption_pc`possui uma relação mais próxima de linear que `milk_consumption_pc` com a variável resposta `life_expectancy`.
+Após esse procedimento, percebe-se que a variável `new_milk_consumption_pc` possui uma relação mais próxima de linear que `milk_consumption_pc` com a variável resposta `life_expectancy`. Outrossim, as demais variáveis quantitativas apresentam uma relação próxima da linear entre si.
 
 ## Verificando correlação entre as variáveis explicativas
 
