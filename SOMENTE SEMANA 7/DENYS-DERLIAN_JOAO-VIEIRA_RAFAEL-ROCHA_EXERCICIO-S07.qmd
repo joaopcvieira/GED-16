@@ -399,9 +399,8 @@ A fim de verificar isso, vamos realizar o teste ANOVA entre o modelo quando este
 anova(m_quant, m_quali, test="F")
 
 ```
-```{r}
-anova(m_quali)
-```
+
+De fato, o valor expresso para o teste F mostra que a variável `continent` agrega valor ao modelo.
 
 ## Inclusão de termos de interação entre variáveis quantitativas e qualitativas
 
@@ -411,8 +410,7 @@ m_all <- lm(
 )
 
 anova(m_all)
-
 ```
 
-De fato, o valor expresso para o teste F mostra que a variável `continent` agrega valor ao modelo.
+
 Ao obversar a tabela anova, conclui-se adicionar as interações entre a variável `continent` com as outras variáveis explicativas do modelo não traz nenhuma melhoria no modelo ao observarmos seu valor-p
