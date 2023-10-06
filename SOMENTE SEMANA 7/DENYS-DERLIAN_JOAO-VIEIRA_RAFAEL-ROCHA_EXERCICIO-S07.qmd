@@ -402,14 +402,41 @@ anova(m_quant, m_quali, test="F")
 De fato, o valor expresso para o teste F mostra que a variável `continent` agrega valor ao modelo.
 
 ## Inclusão de termos de interação entre variáveis quantitativas e qualitativas
+Verificando gráficamente se há interação entre as variáveis `birth_rate_c` e `expected_schooling_c` com a variável categórica `continent`. 
 
 ```{r}
+ggplot(model1_data, aes(x = birth_rate_c, y = life_expectancy)) +
+  # adiciona pontos 
+  # (cores e símbolos distintos para diferentes valores de `continent`)
+  geom_point(aes(color = continent, shape = continent)) + 
+  # adiciona retas de tendência
+  geom_smooth(aes(color = continent), method = "lm", se = FALSE) +
+  ggtitle("`life_expectancy` x `birth_rate_c`, para diferentes níveis de `continent`")
+ggplot(model1_data, aes(x = expected_schooling_c, y = life_expectancy)) +
+  # adiciona pontos 
+  # (cores e símbolos distintos para diferentes valores de `continent`)
+  geom_point(aes(color = continent, shape = continent)) + 
+  # adiciona retas de tendência
+  geom_smooth(aes(color = continent), method = "lm", se = FALSE) +
+  ggtitle("`life_expectancy` x `expected_schooling_c`, para diferentes níveis de `continent`")
+```
+
+Os gráficos apresentados mostram que aparentemente a interação entre as variáveis `birth_rate_c` e `expected_schooling_c` com a variável `continent` não são relevantes. Para definir se isso quantitativamente é adotado o procedimento a seguir:
+
+```{r}
+# Criando modelo de regressão com todas as interações possíveis
 m_all <- lm(
     life_expectancy ~ birth_rate_c*expected_schooling_c + continent:birth_rate_c + continent : expected_schooling_c + continent, data = model1_data 
 )
+```
 
-anova(m_all)
+Verificando se a inclusão das interações melhora o não o modelo:
+
+```{r}
+# Verificando a inclusao das novas alterações
+anova(m_quali,m_all, test="F")
 ```
 
 
-Ao obversar a tabela anova, conclui-se adicionar as interações entre a variável `continent` com as outras variáveis explicativas do modelo não traz nenhuma melhoria no modelo ao observarmos seu valor-p
+Ao observar a estatística do teste F é possível concluir que a inclusão das interações entre as variáveis quantitativas e a variável categórica `continent` não traz benefício para o modelo criado. Assim, o modelo a ser utilizado será o modelo `m_quali` sem a inclusão das interações.
+
