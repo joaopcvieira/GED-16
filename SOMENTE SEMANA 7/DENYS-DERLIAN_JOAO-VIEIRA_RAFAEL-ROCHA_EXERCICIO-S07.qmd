@@ -128,14 +128,14 @@ Escolhe-se o modelo de regressão I com as variáveis `continent`, `birth_rate`,
 model1_data <- owid %>% filter(year == 2015)
 
 # Selecionando somente as variáveis de interesse
-model1_data <- model1_data[,c(1,5,15,18,19)]
+model1_data <- model1_data[, c(1, 5, 15, 18, 19)]
 
 # Retirando os dados referentes a oceania
 model1_data <- subset(model1_data, model1_data$continent != "Oceania")
 
 # Juntando os dados referentes às Américas do Norte e Sul
 model1_data <- model1_data %>%
-  mutate(continent = dplyr::recode(continent, "North America" = "America", "South America" = "America"))
+    mutate(continent = dplyr::recode(continent, "North America" = "America", "South America" = "America"))
 ```
 
 # Criando o modelo de regressão
@@ -147,15 +147,15 @@ plot(model1_data)
 
 # Verificando correlação entre as variáveis explicativas
 ```{r}
-cor(model1_data$birth_rate,model1_data$expected_schooling)
+cor(model1_data$birth_rate, model1_data$expected_schooling)
 ```
 
 ```{r}
-cor(model1_data$birth_rate,model1_data$milk_consumption_pc)
+cor(model1_data$birth_rate, model1_data$milk_consumption_pc)
 ```
 
 ```{r}
-cor(model1_data$expected_schooling,model1_data$milk_consumption_pc)
+cor(model1_data$expected_schooling, model1_data$milk_consumption_pc)
 ```
 
 É possível perceber que existe correlação entre as variáveis explicativas. A correlação mais forte é entre as variáveis "birth_rate" e "expected_schooling".
@@ -188,15 +188,27 @@ Conclui-se que para todas as três variáveis quantitativas do modelo a correla�
 Gráficos de dispersão das variáveis explicativas com seus quadrados
 ```{r echo=FALSE, fig.height = 10}
 #| layout-ncol: 3
-par(mfrow=c(1,3), cex = 1.5)
-ggplot(model1_data , aes(x = birth_rate, y = birth_rate^2)) + 
-  geom_point()
 
-ggplot(model1_data, aes(x = expected_schooling, y = expected_schooling^2)) + 
-  geom_point()
+ggplot(model1_data, aes(x = birth_rate, y = birth_rate^2)) +
+    geom_point() +
+    theme(
+        axis.text = element_text(size = 15),
+        axis.title = element_text(size = 20, face = "bold")
+    )
 
-ggplot(model1_data, aes(x = milk_consumption_pc, y = milk_consumption_pc^2)) + 
-  geom_point()
+ggplot(model1_data, aes(x = expected_schooling, y = expected_schooling^2)) +
+    geom_point() +
+    theme(
+        axis.text = element_text(size = 15),
+        axis.title = element_text(size = 20, face = "bold")
+    )
+
+ggplot(model1_data, aes(x = milk_consumption_pc, y = milk_consumption_pc^2)) +
+    geom_point() +
+    theme(
+        axis.text = element_text(size = 15),
+        axis.title = element_text(size = 20, face = "bold")
+    )
 ```
 
 
@@ -205,9 +217,11 @@ ggplot(model1_data, aes(x = milk_consumption_pc, y = milk_consumption_pc^2)) +
 ```{r}
 # Criando variáveis quantitativas centralizadas
 model1_data <- model1_data %>%
-  mutate (birth_rate_c = birth_rate - mean(birth_rate),
-          expected_schooling_c = expected_schooling - mean(expected_schooling),
-          milk_consumption_pc_c = milk_consumption_pc - mean(milk_consumption_pc))
+    mutate(
+        birth_rate_c = birth_rate - mean(birth_rate),
+        expected_schooling_c = expected_schooling - mean(expected_schooling),
+        milk_consumption_pc_c = milk_consumption_pc - mean(milk_consumption_pc)
+    )
 
 ```
 
@@ -240,28 +254,40 @@ Assim, os gráficos de dispersão das variáveis explicativas centralizadas com 
 
 ```{r echo=FALSE, fig.height = 10}
 #| layout-ncol: 3
-ggplot(model1_data , aes(x = birth_rate_c, y = birth_rate_c^2)) + 
-  geom_point()
+ggplot(model1_data, aes(x = birth_rate_c, y = birth_rate_c^2)) +
+    geom_point() +
+    theme(
+        axis.text = element_text(size = 15),
+        axis.title = element_text(size = 20, face = "bold")
+    )
 
-ggplot(model1_data, aes(x = expected_schooling_c, y = expected_schooling_c^2)) + 
-  geom_point()
+ggplot(model1_data, aes(x = expected_schooling_c, y = expected_schooling_c^2)) +
+    geom_point() +
+    theme(
+        axis.text = element_text(size = 15),
+        axis.title = element_text(size = 20, face = "bold")
+    )
 
-ggplot(model1_data, aes(x = milk_consumption_pc_c, y = milk_consumption_pc_c^2)) + 
-  geom_point()
+ggplot(model1_data, aes(x = milk_consumption_pc_c, y = milk_consumption_pc_c^2)) +
+    geom_point() +
+    theme(
+        axis.text = element_text(size = 15),
+        axis.title = element_text(size = 20, face = "bold")
+    )
 ```
 
 É possível pereber que ao centralizar as variáveis explicativas, o perfil parabólico do gráfico de dispersão se torna mais acentuado, mostrando de forma qualitativa que a correlação linear entre as variáveis diminuiu. Verificando novamente os coeficientes de correlação obtém-se:
 
 ```{r}
-cor(model1_data$birth_rate_c,model1_data$expected_schooling_c)
+cor(model1_data$birth_rate_c, model1_data$expected_schooling_c)
 ```
 
 ```{r}
-cor(model1_data$birth_rate_c,model1_data$milk_consumption_pc_c)
+cor(model1_data$birth_rate_c, model1_data$milk_consumption_pc_c)
 ```
 
 ```{r}
-cor(model1_data$expected_schooling_c,model1_data$milk_consumption_pc_c)
+cor(model1_data$expected_schooling_c, model1_data$milk_consumption_pc_c)
 ```
 
 As correlações entre as variáveis explicativas permanecem inalteradas, mostrando que a centralização das variáveis não diminui suas correlações entre si.
@@ -273,7 +299,7 @@ As correlações entre as variáveis explicativas permanecem inalteradas, mostra
 # Modelo de regressão linear com as variáveis explicativas "birth_rate_c", "expected_schooling_c" e "milk_consumption_pc_c"
 
 # Modelo polinomial de segunda ordem completo com as variáveis quantitativas
-model1_quant <- lm(life_expectancy ~ I(birth_rate_c^2) + I(expected_schooling_c^2) + I(milk_consumption_pc_c^2) + birth_rate_c*expected_schooling_c + birth_rate_c*milk_consumption_pc_c + expected_schooling_c*milk_consumption_pc_c, data = model1_data )
+model1_quant <- lm(life_expectancy ~ I(birth_rate_c^2) + I(expected_schooling_c^2) + I(milk_consumption_pc_c^2) + birth_rate_c * expected_schooling_c + birth_rate_c * milk_consumption_pc_c + expected_schooling_c * milk_consumption_pc_c, data = model1_data)
 
 
 summary(model1_quant)
