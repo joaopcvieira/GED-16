@@ -367,6 +367,14 @@ summary(model1_quant)
 <<<<< ALGUMA CONTINUAÇÃO AQUI >>>>>>
 
 
+
+```{r}
+# modelo que inclui as variáveis explicativas qualitativas
+m_quant <- lm(
+    life_expectancy ~ birth_rate_c * expected_schooling_c, data = model1_data
+)
+```
+
 ## Inclusão da variável categórica `continent`
 
 Vamos avaliar se o modelo de regressão melhora com a inclusão da variável categórica `continent`.
@@ -382,6 +390,15 @@ m_quali <- lm(
 summary(m_quali)
 ```
 
+A partir do resumo do modelo, é possível observar que a variável `continent` agrega valor ao modelo, tendo em vista que o valor p do teste F é menor que 0.05. 
+
+A fim de verificar isso, vamos realizar o teste ANOVA entre o modelo quando este não incluia a variável categórica e agora, incluindo a variável `continent`.
+
+```{r}
+# Teste ANOVA
+anova(m_quant, m_quali, test="F")
+
+```
 ```{r}
 anova(m_quali)
 ```
@@ -397,4 +414,5 @@ anova(m_all)
 
 ```
 
+De fato, o valor expresso para o teste F mostra que a variável `continent` agrega valor ao modelo.
 Ao obversar a tabela anova, conclui-se adicionar as interações entre a variável `continent` com as outras variáveis explicativas do modelo não traz nenhuma melhoria no modelo ao observarmos seu valor-p
