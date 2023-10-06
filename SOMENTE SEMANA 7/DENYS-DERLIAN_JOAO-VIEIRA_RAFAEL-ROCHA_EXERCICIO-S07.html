@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt" xml:lang="pt"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.433">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Denys Derlian, João Vieira e Rafael Rocha">
+
+<title>GED-16: Análise de Regressão</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="DENYS-DERLIAN_JOAO-VIEIRA_RAFAEL-ROCHA_EXERCICIO-S07_files/libs/clipboard/clipboard.min.js"></script>
+<script src="DENYS-DERLIAN_JOAO-VIEIRA_RAFAEL-ROCHA_EXERCICIO-S07_files/libs/quarto-html/quarto.js"></script>
+<script src="DENYS-DERLIAN_JOAO-VIEIRA_RAFAEL-ROCHA_EXERCICIO-S07_files/libs/quarto-html/popper.min.js"></script>
+<script src="DENYS-DERLIAN_JOAO-VIEIRA_RAFAEL-ROCHA_EXERCICIO-S07_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="DENYS-DERLIAN_JOAO-VIEIRA_RAFAEL-ROCHA_EXERCICIO-S07_files/libs/quarto-html/anchor.min.js"></script>
+<link href="DENYS-DERLIAN_JOAO-VIEIRA_RAFAEL-ROCHA_EXERCICIO-S07_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="DENYS-DERLIAN_JOAO-VIEIRA_RAFAEL-ROCHA_EXERCICIO-S07_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="DENYS-DERLIAN_JOAO-VIEIRA_RAFAEL-ROCHA_EXERCICIO-S07_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="DENYS-DERLIAN_JOAO-VIEIRA_RAFAEL-ROCHA_EXERCICIO-S07_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="DENYS-DERLIAN_JOAO-VIEIRA_RAFAEL-ROCHA_EXERCICIO-S07_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">GED-16: Análise de Regressão</h1>
+<p class="subtitle lead">AULA02: Prática (2o. semestre/2023)</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Autor</div>
+    <div class="quarto-title-meta-contents">
+             <p>Denys Derlian, João Vieira e Rafael Rocha </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Data de Publicação</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">8 de agosto de 2023</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<hr>
+<section id="introdução" class="level1">
+<h1>Introdução</h1>
+<p>Os dados disponíveis no arquivo <code>data/owid.csv</code> foram obtidos do portal <a href="https://ourworldindata.org/">Our World in Data</a>, cuja missão é publicar pesquisas e dados relacionados a grandes problemas mundiais como pobreza, doenças, fome, mudanças climáticas, guerras, riscos existenciais e desigualdade.</p>
+<p>Os dados originais foram pré-processados no sentido de remover observações faltantes. Há um total de 985 observações coletadas para 21 variáveis:</p>
+<p><strong>Variáveis</strong></p>
+<ol type="1">
+<li><code>continent</code>: continente em que está o país</li>
+<li><code>entity</code>: nome do país</li>
+<li><code>code</code>: código do país</li>
+<li><code>year</code>: ano</li>
+<li><code>birth_rate</code>: número de nascimentos com vida por 1.000 habitantes na população.</li>
+<li><code>child_mortality</code>: mortes de crianças menores de 5 anos de idade (% nascimentos)</li>
+<li><code>co2_emission_pc</code>: emissões anuais de CO2 per capita (t/pessoa)</li>
+<li><code>deaths_solid_fuels_pollution</code>: mortes resultantes de poluição por queima de combustíveis sólidos em ambientes internos (%)</li>
+<li><code>deaths_particulate_pollution</code>: mortes resultantes de poluição por material particulado em ambientes externos (%)</li>
+<li><code>deaths_air_pollution</code>: mortes resultantes de poluição do ar ambiente (%)</li>
+<li><code>deaths_ozone</code>: mortes resultantes de poluição por ozônio em ambientes externos (%)</li>
+<li><code>deaths_sanitation</code>: mortes resultantes de falta ou precariedade de acesso a saneamento básico (%)</li>
+<li><code>electricity_demand</code>: geração total de eletricidade anual, ajustada por importação e exportação de eletricidade (TWh)</li>
+<li><code>energy_use_pc</code>: consumo de energia médio anual (eletricidade, transporte, aquecimento, preparo de alimentos) per capita (KWh/pessoa)</li>
+<li><code>expected_schooling</code>: expectativa do número de anos de educação que uma criança que entra no sistema escolar deve receber</li>
+<li><code>happiness_cantril_ladder</code>: nível de felicidade médio populacional (0-10)</li>
+<li><code>gdp_pc</code>: produto interno bruto per capita ($ internacional, referência 2017)</li>
+<li><code>life_expectancy</code>: expectativa de vida no nascimento (anos)</li>
+<li><code>milk_consumption_pc</code>: consumo de leite médio anual per capita (kg)</li>
+<li><code>no_water</code>: população sem acesso a fontes seguras de água (encanada, poços, fontes, chuva e envasada) (%)</li>
+<li><code>urban_population_percent</code>: população habitante de áreas urbanas (% população total)</li>
+</ol>
+<hr>
+</section>
+<section id="análise-exploratória-de-dados" class="level1">
+<h1>Análise Exploratória de Dados</h1>
+<section id="análise-preliminar-e-preparação-da-massa-de-dados" class="level2">
+<h2 class="anchored" data-anchor-id="análise-preliminar-e-preparação-da-massa-de-dados">Análise Preliminar e Preparação da Massa de Dados</h2>
+<p>Nesta seção, é conduzida a análise exploratória da massa de dados <code>owid</code>, a fim de compreender suas características principais. De modo geral, a ideia inicial é procurar por possíveis correlações entre a felicidade média da população e as demais variáveis.</p>
+<p>Inicialmente, vamos limpar a área de trabalho e iniciar a leitura dos dados.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># limpa área de trabalho</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list =</span> <span class="fu">ls</span>())</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># carrega pacote `tidyverse`</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># carrega dados</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>owid <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="st">"data/owid.csv"</span>, <span class="at">delim =</span> <span class="st">","</span>, <span class="at">col_names =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># codifica variável `continent` como fator</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>owid<span class="sc">$</span>continent <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(owid<span class="sc">$</span>continent)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(owid)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>spc_tbl_ [985 × 21] (S3: spec_tbl_df/tbl_df/tbl/data.frame)
+ $ continent                   : Factor w/ 6 levels "Africa","Asia",..: 2 2 2 2 2 2 2 3 3 3 ...
+ $ country_code                : chr [1:985] "AFG" "AFG" "AFG" "AFG" ...
+ $ entity                      : chr [1:985] "Afghanistan" "Afghanistan" "Afghanistan" "Afghanistan" ...
+ $ year                        : num [1:985] 2011 2014 2015 2016 2017 ...
+ $ birth_rate                  : num [1:985] 39.9 39.1 38.8 37.9 37.3 ...
+ $ child_mortality             : num [1:985] 7.43 6.51 6.32 6.11 5.75 5.91 5.53 1.58 1.42 1.37 ...
+ $ co2_emission_pc             : num [1:985] 0.405 0.28 0.29 0.262 0.277 ...
+ $ deaths_solid_fuels_pollution: num [1:985] 252 217 208 201 194 ...
+ $ deaths_particulate_pollution: num [1:985] 41.3 53 54.3 53.7 53.3 ...
+ $ deaths_air_pollution        : num [1:985] 295 270 264 256 250 ...
+ $ deaths_ozone                : num [1:985] 5.11 4.93 5.15 5.44 5.79 5.11 5.05 1.08 1.06 0.87 ...
+ $ deaths_sanitation           : num [1:985] 8.57 6.93 6.47 6.1 5.85 5 4.58 0.07 0.06 0.06 ...
+ $ electricity_demand          : num [1:985] 3.03 4.87 4.96 5.54 5.88 6.16 5.98 7.41 7.75 7.24 ...
+ $ energy_use_pc               : num [1:985] 1614 1024 1097 995 1027 ...
+ $ expected_schooling          : num [1:985] 9.28 10.17 10.18 10.19 10.19 ...
+ $ happiness_cantril_ladder    : num [1:985] 4.26 3.58 3.36 3.79 3.63 ...
+ $ gdp_pc                      : num [1:985] 1961 2144 2109 2101 2096 ...
+ $ life_expectancy             : num [1:985] 61.4 62.5 62.7 63.1 63 ...
+ $ milk_consumption_pc         : num [1:985] 38.7 46.5 41 40 38.7 ...
+ $ no_water                    : num [1:985] 44.6 37.5 35.1 32.8 30.4 ...
+ $ urban_population_percent    : num [1:985] 23.9 24.6 24.8 25 25.2 ...
+ - attr(*, "spec")=
+  .. cols(
+  ..   continent = col_character(),
+  ..   country_code = col_character(),
+  ..   entity = col_character(),
+  ..   year = col_double(),
+  ..   birth_rate = col_double(),
+  ..   child_mortality = col_double(),
+  ..   co2_emission_pc = col_double(),
+  ..   deaths_solid_fuels_pollution = col_double(),
+  ..   deaths_particulate_pollution = col_double(),
+  ..   deaths_air_pollution = col_double(),
+  ..   deaths_ozone = col_double(),
+  ..   deaths_sanitation = col_double(),
+  ..   electricity_demand = col_double(),
+  ..   energy_use_pc = col_double(),
+  ..   expected_schooling = col_double(),
+  ..   happiness_cantril_ladder = col_double(),
+  ..   gdp_pc = col_double(),
+  ..   life_expectancy = col_double(),
+  ..   milk_consumption_pc = col_double(),
+  ..   no_water = col_double(),
+  ..   urban_population_percent = col_double()
+  .. )
+ - attr(*, "problems")=&lt;externalptr&gt; </code></pre>
+</div>
+</div>
+<p>Observamos, portanto, um total de 985 dados, sendo três colunas apresentadas como strings (<code>continent</code>, <code>entity</code> e <code>country_code</code>) e as demais como numéricas. Não obstante, os nomes das variáveis são intuitivos e não necessitam de alterações.</p>
+<hr>
+<section id="parte-3-construção-de-modelos" class="level3">
+<h3 class="anchored" data-anchor-id="parte-3-construção-de-modelos">PARTE 3: Construção de Modelos</h3>
+<p>Utilize o procedimento para construir modelos de regressão para a resposta expectativa de vida (<code>life_expectancy</code>), considerando um dos conjuntos de variáveis explicativas:</p>
+<p><strong>Conjunto I:</strong> <code>continent</code>, <code>birth_rate</code>, <code>expected_schooling</code> e <code>milk_consumption_pc</code> (e/ou transformações) <strong>Conjunto II:</strong> <code>continent</code>m <code>gdp_pc</code>, <code>no_water</code> e <code>urban_population_percent</code> (e/ou transformações)</p>
+<p>Considere apenas o ano de 2015 e exclua o continente ‘Oceania’.</p>
+<p>Lembre-se que os passos apropriados em análise de regressão consistem em:</p>
+<p><strong>construção do modelo</strong></p>
+<ul>
+<li>formulação e ajuste do modelo</li>
+</ul>
+<p>Devemos utilizar o seguinte procedimento:</p>
+<ol type="1">
+<li>inclusão de termos contendo as variáveis quantitativas (polinomiais, transformações, interações, etc.);</li>
+<li>inclusão de variáveis qualitativas e suas interações;</li>
+<li>inclusão de interações entre termos contendo variáveis quantitativas e qualitativas;</li>
+</ol>
+<p><strong>avaliação do modelo</strong></p>
+<ul>
+<li>realizar análise de resíduos (verificar validade das hipóteses)</li>
+</ul>
+<p><strong>utilização do modelo</strong></p>
+<ul>
+<li>para realizar inferências</li>
+<li>para auxiliar o processo de tomada de decisão</li>
+</ul>
+<p>Forneça interpretações e discussão para os resultados obtidos.</p>
+<hr>
+<p>Escolhe-se o modelo de regressão I com as variáveis <code>continent</code>, <code>birth_rate</code>, <code>expected_schooling</code> e <code>milk_consumption_pc</code>.</p>
+</section>
+</section>
+<section id="separando-os-dados-de-interesse-para-o-modelo" class="level2">
+<h2 class="anchored" data-anchor-id="separando-os-dados-de-interesse-para-o-modelo">Separando os dados de interesse para o modelo</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Filtrando os dados para o ano de 2015</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>model1_data <span class="ot">&lt;-</span> owid <span class="sc">%&gt;%</span> <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2015</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Selecionando somente as variáveis de interesse</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>model1_data <span class="ot">&lt;-</span> model1_data[,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">5</span>,<span class="dv">15</span>,<span class="dv">18</span>,<span class="dv">19</span>)]</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Retirando os dados referentes a oceania</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>model1_data <span class="ot">&lt;-</span> <span class="fu">subset</span>(model1_data, model1_data<span class="sc">$</span>continent <span class="sc">!=</span> <span class="st">"Oceania"</span>)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Juntando os dados referentes às Américas do Norte e Sul</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>model1_data <span class="ot">&lt;-</span> model1_data <span class="sc">%&gt;%</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">continent =</span> dplyr<span class="sc">::</span><span class="fu">recode</span>(continent, <span class="st">"North America"</span> <span class="ot">=</span> <span class="st">"America"</span>, <span class="st">"South America"</span> <span class="ot">=</span> <span class="st">"America"</span>))</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="criando-o-modelo-de-regressão" class="level1">
+<h1>Criando o modelo de regressão</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Gráfico de dispersão dos dados</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(model1_data)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="DENYS-DERLIAN_JOAO-VIEIRA_RAFAEL-ROCHA_EXERCICIO-S07_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="verificando-correlação-entre-as-variáveis-explicativas" class="level1">
+<h1>Verificando correlação entre as variáveis explicativas</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(model1_data<span class="sc">$</span>birth_rate,model1_data<span class="sc">$</span>expected_schooling)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -0.8168797</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(model1_data<span class="sc">$</span>birth_rate,model1_data<span class="sc">$</span>milk_consumption_pc)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -0.5756859</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(model1_data<span class="sc">$</span>expected_schooling,model1_data<span class="sc">$</span>milk_consumption_pc)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.6317135</code></pre>
+</div>
+</div>
+<p>É possível perceber que existe correlação entre as variáveis explicativas. A correlação mais forte é entre as variáveis “birth_rate” e “expected_schooling”.</p>
+<p>Verificando correlação entre termos quadráticos e lineares das variáveis explicativas</p>
+<p>Para a variável <code>birth_rate</code></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Correlação para birth rate</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(model1_data<span class="sc">$</span>birth_rate, model1_data<span class="sc">$</span>birth_rate<span class="sc">^</span><span class="dv">2</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.9814778</code></pre>
+</div>
+</div>
+<p>Para a variável <code>expected_schooling</code></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Correlação para expected schooling</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(model1_data<span class="sc">$</span>expected_schooling, model1_data<span class="sc">$</span>expected_schooling<span class="sc">^</span><span class="dv">2</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.9908</code></pre>
+</div>
+</div>
+<p>Para a variável <code>milk_consumption_pc</code></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Correlação para milk_consumption_pc</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(model1_data<span class="sc">$</span>milk_consumption_pc, model1_data<span class="sc">$</span>milk_consumption_pc<span class="sc">^</span><span class="dv">2</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.9401298</code></pre>
+</div>
+</div>
+<p>Conclui-se que para todas as três variáveis quantitativas do modelo a correlação entre seus valores lineares e seus valores quadráticos é muito elevada. Para diminuir esse efeito no modelo, centraliza-se as variáveis explicativas antes da construção do modelo.</p>
+<p>Gráficos de dispersão das variaveis explicativas com seus quadrados</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(model1_data , <span class="fu">aes</span>(<span class="at">x =</span> birth_rate, <span class="at">y =</span> birth_rate<span class="sc">^</span><span class="dv">2</span>)) <span class="sc">+</span> </span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="DENYS-DERLIAN_JOAO-VIEIRA_RAFAEL-ROCHA_EXERCICIO-S07_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(model1_data, <span class="fu">aes</span>(<span class="at">x =</span> expected_schooling, <span class="at">y =</span> expected_schooling<span class="sc">^</span><span class="dv">2</span>)) <span class="sc">+</span> </span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="DENYS-DERLIAN_JOAO-VIEIRA_RAFAEL-ROCHA_EXERCICIO-S07_files/figure-html/unnamed-chunk-11-2.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(model1_data, <span class="fu">aes</span>(<span class="at">x =</span> milk_consumption_pc, <span class="at">y =</span> milk_consumption_pc<span class="sc">^</span><span class="dv">2</span>)) <span class="sc">+</span> </span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="DENYS-DERLIAN_JOAO-VIEIRA_RAFAEL-ROCHA_EXERCICIO-S07_files/figure-html/unnamed-chunk-11-3.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>É possível perceber que apesar do aspecto quadrático dos pontos, a variação é monotônica e possui caráter aproximadamente linear. Assim, as variáveis explicativas foram centralizadas.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Criando variáveis quantitativas centralizadas</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>model1_data <span class="ot">&lt;-</span> model1_data <span class="sc">%&gt;%</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span> (<span class="at">birth_rate_c =</span> birth_rate <span class="sc">-</span> <span class="fu">mean</span>(birth_rate),</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">expected_schooling_c =</span> expected_schooling <span class="sc">-</span> <span class="fu">mean</span>(expected_schooling),</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">milk_consumption_pc_c =</span> milk_consumption_pc <span class="sc">-</span> <span class="fu">mean</span>(milk_consumption_pc))</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Verificando novamente as correlações</p>
+<p>Para a variável <code>birth_rate_c</code></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Correlação para birth rate</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(model1_data<span class="sc">$</span>birth_rate_c, model1_data<span class="sc">$</span>birth_rate_c<span class="sc">^</span><span class="dv">2</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.5754585</code></pre>
+</div>
+</div>
+<p>Para a variável <code>expected_schooling_c</code></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Correlação para expected schooling</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(model1_data<span class="sc">$</span>expected_schooling_c, model1_data<span class="sc">$</span>expected_schooling_c<span class="sc">^</span><span class="dv">2</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -0.1253899</code></pre>
+</div>
+</div>
+<p>Para a variável <code>milk_consumption_pc_c</code></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Correlação para milk_consumption_pc</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(model1_data<span class="sc">$</span>milk_consumption_pc_c, model1_data<span class="sc">$</span>milk_consumption_pc_c<span class="sc">^</span><span class="dv">2</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.6208407</code></pre>
+</div>
+</div>
+<p>É possível observar que as correlações entre os termos lineares e quadráticos diminuíram para todas as variáveis explicativas quantitativas do modelo após centralizadas pela média dos valores.</p>
+<p>Assim, os gráficos de dispersão das variáveis explicativas centralizadas com seus respectivos quadrados são dados por:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(model1_data , <span class="fu">aes</span>(<span class="at">x =</span> birth_rate_c, <span class="at">y =</span> birth_rate_c<span class="sc">^</span><span class="dv">2</span>)) <span class="sc">+</span> </span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="DENYS-DERLIAN_JOAO-VIEIRA_RAFAEL-ROCHA_EXERCICIO-S07_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(model1_data, <span class="fu">aes</span>(<span class="at">x =</span> expected_schooling_c, <span class="at">y =</span> expected_schooling_c<span class="sc">^</span><span class="dv">2</span>)) <span class="sc">+</span> </span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="DENYS-DERLIAN_JOAO-VIEIRA_RAFAEL-ROCHA_EXERCICIO-S07_files/figure-html/unnamed-chunk-16-2.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(model1_data, <span class="fu">aes</span>(<span class="at">x =</span> milk_consumption_pc_c, <span class="at">y =</span> milk_consumption_pc_c<span class="sc">^</span><span class="dv">2</span>)) <span class="sc">+</span> </span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="DENYS-DERLIAN_JOAO-VIEIRA_RAFAEL-ROCHA_EXERCICIO-S07_files/figure-html/unnamed-chunk-16-3.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>É possível pereber que ao centralizar as variáveis explicativas, o perfil parabólico do gráfico de dispersão se torna mais acentuado, mostrando de forma qualitativa que a correlação linear entre as variáveis diminuiu. Verificando novamente os coeficientes de correlação obtém-se:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(model1_data<span class="sc">$</span>birth_rate_c,model1_data<span class="sc">$</span>expected_schooling_c)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -0.8168797</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(model1_data<span class="sc">$</span>birth_rate_c,model1_data<span class="sc">$</span>milk_consumption_pc_c)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -0.5756859</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(model1_data<span class="sc">$</span>expected_schooling_c,model1_data<span class="sc">$</span>milk_consumption_pc_c)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.6317135</code></pre>
+</div>
+</div>
+<p>As correlações entre as variáveis explicativas permanecem inalteradas, mostrando que a centralização das variáveis não diminui suas correlações entre si.</p>
+<section id="criando-o-modelo-de-regressão-1" class="level2">
+<h2 class="anchored" data-anchor-id="criando-o-modelo-de-regressão-1">Criando o modelo de regressão</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Modelo de regressão linear com as variáveis explicativas "birth_rate_c", "expected_schooling_c" e "milk_consumption_pc_c"</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Modelo polinomial de segunda ordem completo com as variáveis quantitativas</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>model1_quant <span class="ot">&lt;-</span> <span class="fu">lm</span>(life_expectancy <span class="sc">~</span> <span class="fu">I</span>(birth_rate_c<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> <span class="fu">I</span>(expected_schooling_c<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> <span class="fu">I</span>(milk_consumption_pc_c<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> birth_rate_c<span class="sc">*</span>expected_schooling_c <span class="sc">+</span> birth_rate_c<span class="sc">*</span>milk_consumption_pc_c <span class="sc">+</span> expected_schooling_c<span class="sc">*</span>milk_consumption_pc_c, <span class="at">data =</span> model1_data )</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model1_quant)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = life_expectancy ~ I(birth_rate_c^2) + I(expected_schooling_c^2) + 
+    I(milk_consumption_pc_c^2) + birth_rate_c * expected_schooling_c + 
+    birth_rate_c * milk_consumption_pc_c + expected_schooling_c * 
+    milk_consumption_pc_c, data = model1_data)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-8.0222 -1.9207  0.3084  1.8037  7.2864 
+
+Coefficients:
+                                             Estimate Std. Error t value
+(Intercept)                                 7.204e+01  5.157e-01 139.701
+I(birth_rate_c^2)                          -3.239e-04  6.710e-03  -0.048
+I(expected_schooling_c^2)                   6.742e-02  8.306e-02   0.812
+I(milk_consumption_pc_c^2)                  5.421e-06  4.469e-05   0.121
+birth_rate_c                               -4.417e-01  5.340e-02  -8.272
+expected_schooling_c                        7.289e-01  1.787e-01   4.079
+milk_consumption_pc_c                       9.400e-03  5.664e-03   1.660
+birth_rate_c:expected_schooling_c          -3.246e-03  3.877e-02  -0.084
+birth_rate_c:milk_consumption_pc_c          1.585e-03  8.695e-04   1.823
+expected_schooling_c:milk_consumption_pc_c  2.520e-04  2.920e-03   0.086
+                                           Pr(&gt;|t|)    
+(Intercept)                                 &lt; 2e-16 ***
+I(birth_rate_c^2)                            0.9616    
+I(expected_schooling_c^2)                    0.4185    
+I(milk_consumption_pc_c^2)                   0.9036    
+birth_rate_c                               1.47e-13 ***
+expected_schooling_c                       7.90e-05 ***
+milk_consumption_pc_c                        0.0994 .  
+birth_rate_c:expected_schooling_c            0.9334    
+birth_rate_c:milk_consumption_pc_c           0.0706 .  
+expected_schooling_c:milk_consumption_pc_c   0.9313    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 3.129 on 128 degrees of freedom
+Multiple R-squared:  0.8477,    Adjusted R-squared:  0.8369 
+F-statistic: 79.13 on 9 and 128 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copiada");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copiada");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
