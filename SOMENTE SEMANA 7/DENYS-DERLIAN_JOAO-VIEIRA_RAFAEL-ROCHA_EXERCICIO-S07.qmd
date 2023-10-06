@@ -81,15 +81,13 @@ str(owid)
 
 Observamos, portanto, um total de 985 dados, sendo três colunas apresentadas como strings (`continent`, `entity` e `country_code`) e as demais como numéricas. Não obstante, os nomes das variáveis são intuitivos e não necessitam de alterações.
 
--------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------
 
+# Construção de Modelos
 
-### PARTE 3: Construção de Modelos
+Utilize o procedimento para construir modelos de regressão para a resposta expectativa de vida (`life_expectancy`), considerando um dos conjuntos de variáveis explicativas:
 
-Utilize o procedimento para construir modelos de regressão para a resposta expectativa de vida (`life_expectancy`), considerando um dos conjuntos de variáveis explicativas: 
-
-**Conjunto I:** `continent`, `birth_rate`, `expected_schooling` e `milk_consumption_pc` (e/ou transformações) 
-**Conjunto II:** `continent`m `gdp_pc`, `no_water` e `urban_population_percent` (e/ou transformações)
+**Conjunto I:** `continent`, `birth_rate`, `expected_schooling` e `milk_consumption_pc` (e/ou transformações) **Conjunto II:** `continent`m `gdp_pc`, `no_water` e `urban_population_percent` (e/ou transformações)
 
 Considere apenas o ano de 2015 e exclua o continente 'Oceania'.
 
@@ -97,27 +95,26 @@ Lembre-se que os passos apropriados em análise de regressão consistem em:
 
 **construção do modelo**
 
-+ formulação e ajuste do modelo  
+-   formulação e ajuste do modelo
 
 Devemos utilizar o seguinte procedimento:
 
-1. inclusão de termos contendo as variáveis quantitativas (polinomiais, transformações, interações, etc.);
-2. inclusão de variáveis qualitativas e suas interações;
-3. inclusão de interações entre termos contendo variáveis quantitativas e qualitativas;
+1.  inclusão de termos contendo as variáveis quantitativas (polinomiais, transformações, interações, etc.);
+2.  inclusão de variáveis qualitativas e suas interações;
+3.  inclusão de interações entre termos contendo variáveis quantitativas e qualitativas;
 
 **avaliação do modelo**
 
-+ realizar análise de resíduos (verificar validade das hipóteses)
+-   realizar análise de resíduos (verificar validade das hipóteses)
 
 **utilização do modelo**
 
-+ para realizar inferências
-+ para auxiliar o processo de tomada de decisão
+-   para realizar inferências
+-   para auxiliar o processo de tomada de decisão
 
 Forneça interpretações e discussão para os resultados obtidos.
 
-
-----
+------------------------------------------------------------------------
 
 Escolhe-se o modelo de regressão I com as variáveis `continent`, `birth_rate`, `expected_schooling` e `milk_consumption_pc`.
 
@@ -128,17 +125,17 @@ Escolhe-se o modelo de regressão I com as variáveis `continent`, `birth_rate`,
 model1_data <- owid %>% filter(year == 2015)
 
 # Selecionando somente as variáveis de interesse
-model1_data <- model1_data[,c(1,5,15,18,19)]
+model1_data <- model1_data[, c(1, 5, 15, 18, 19)]
 
 # Retirando os dados referentes a oceania
 model1_data <- subset(model1_data, model1_data$continent != "Oceania")
 
 # Juntando os dados referentes às Américas do Norte e Sul
 model1_data <- model1_data %>%
-  mutate(continent = dplyr::recode(continent, "North America" = "America", "South America" = "America"))
+    mutate(continent = dplyr::recode(continent, "North America" = "America", "South America" = "America"))
 ```
 
-# Criando o modelo de regressão
+## Criando o modelo de regressão
 
 ```{r}
 # Gráfico de dispersão dos dados
@@ -152,17 +149,22 @@ model1_data <- model1_data |>
   mutate(log_milk_consumption_pc  = milk_consumption_pc^0.25) 
 ```
 
-# Verificando correlação entre as variáveis explicativas
+## Verificando correlação entre as variáveis explicativas
+
 ```{r}
-cor(model1_data$birth_rate,model1_data$expected_schooling)
+cor(model1_data$birth_rate, model1_data$expected_schooling)
 ```
 
 ```{r}
-cor(model1_data$birth_rate,model1_data$milk_consumption_pc)
+cor(model1_data$birth_rate, model1_data$milk_consumption_pc)
 ```
 
 ```{r}
-cor(model1_data$expected_schooling,model1_data$milk_consumption_pc)
+cor(model1_data$expected_schooling, model1_data$milk_consumption_pc)
+```
+
+```{r}
+cor(model1_data$birth_rate,model1_data$log_milk_consumption_pc)
 ```
 
 ```{r}
@@ -175,10 +177,10 @@ cor(model1_data$expected_schooling,model1_data$log_milk_consumption_pc)
 
 É possível perceber que existe correlação entre as variáveis explicativas. A correlação mais forte é entre as variáveis "birth_rate" e "expected_schooling". Além disso, a variável `log_milk_consumption_pc` possui suas correlações reduzida com a variável `expected_schooling` e praticamente inalterada com a variável `birth_rate` se comparada com a variável não transformada `milk_consumption_pc`.
 
-
 Verificando correlação entre termos quadráticos e lineares das variáveis explicativas
 
 Para a variável `birth_rate`
+
 ```{r}
 # Correlação para birth rate
 cor(model1_data$birth_rate, model1_data$birth_rate^2)
@@ -203,35 +205,51 @@ Para a variável transformada `log_milk_consumption_pc`
 
 Conclui-se que para todas as três variáveis quantitativas do modelo a correlação entre seus valores lineares e seus valores quadráticos é muito elevada. Para diminuir esse efeito no modelo, centraliza-se as variáveis explicativas antes da construção do modelo.
 
-Gráficos de dispersão das variáveis explicativas com seus quadrados
+
+Gráficos de dispersão das variaveis explicativas com seus quadrados
+
 ```{r echo=FALSE, fig.height = 10}
 #| layout-ncol: 3
-par(mfrow=c(1,3), cex = 1.5)
+
 ggplot(model1_data , aes(x = birth_rate, y = birth_rate^2)) + 
-  geom_point()
+  geom_point() +
+    theme(
+        axis.text = element_text(size = 15),
+        axis.title = element_text(size = 20, face = "bold")
+    )
 
-ggplot(model1_data, aes(x = expected_schooling, y = expected_schooling^2)) + 
-  geom_point()
+ggplot(model1_data, aes(x = expected_schooling, y = expected_schooling^2)) +
+    geom_point() +
+    theme(
+        axis.text = element_text(size = 15),
+        axis.title = element_text(size = 20, face = "bold")
+    )
 
-ggplot(model1_data, aes(x = milk_consumption_pc, y = milk_consumption_pc^2)) + 
-  geom_point()
+ggplot(model1_data, aes(x = milk_consumption_pc, y = milk_consumption_pc^2)) +
+    geom_point() +
+    theme(
+        axis.text = element_text(size = 15),
+        axis.title = element_text(size = 20, face = "bold")
+    )
 ```
-
 
 É possível perceber que apesar do aspecto quadrático dos pontos, a variação é monotônica e possui caráter aproximadamente linear. Assim, as variáveis explicativas foram centralizadas.
 
 ```{r}
 # Criando variáveis quantitativas centralizadas
 model1_data <- model1_data %>%
-  mutate (birth_rate_c = birth_rate - mean(birth_rate),
-          expected_schooling_c = expected_schooling - mean(expected_schooling),
-          milk_consumption_pc_c = milk_consumption_pc - mean(milk_consumption_pc))
+    mutate(
+        birth_rate_c = birth_rate - mean(birth_rate),
+        expected_schooling_c = expected_schooling - mean(expected_schooling),
+        milk_consumption_pc_c = milk_consumption_pc - mean(milk_consumption_pc)
+    )
 
 ```
 
 Verificando novamente as correlações
 
 Para a variável `birth_rate_c`
+
 ```{r}
 # Correlação para birth rate
 cor(model1_data$birth_rate_c, model1_data$birth_rate_c^2)
@@ -255,35 +273,45 @@ cor(model1_data$milk_consumption_pc_c, model1_data$milk_consumption_pc_c^2)
 
 Assim, os gráficos de dispersão das variáveis explicativas centralizadas com seus respectivos quadrados são dados por:
 
-
 ```{r echo=FALSE, fig.height = 10}
 #| layout-ncol: 3
-ggplot(model1_data , aes(x = birth_rate_c, y = birth_rate_c^2)) + 
-  geom_point()
+ggplot(model1_data, aes(x = birth_rate_c, y = birth_rate_c^2)) +
+    geom_point() +
+    theme(
+        axis.text = element_text(size = 15),
+        axis.title = element_text(size = 20, face = "bold")
+    )
 
-ggplot(model1_data, aes(x = expected_schooling_c, y = expected_schooling_c^2)) + 
-  geom_point()
+ggplot(model1_data, aes(x = expected_schooling_c, y = expected_schooling_c^2)) +
+    geom_point() +
+    theme(
+        axis.text = element_text(size = 15),
+        axis.title = element_text(size = 20, face = "bold")
+    )
 
-ggplot(model1_data, aes(x = milk_consumption_pc_c, y = milk_consumption_pc_c^2)) + 
-  geom_point()
+ggplot(model1_data, aes(x = milk_consumption_pc_c, y = milk_consumption_pc_c^2)) +
+    geom_point() +
+    theme(
+        axis.text = element_text(size = 15),
+        axis.title = element_text(size = 20, face = "bold")
+    )
 ```
 
 É possível pereber que ao centralizar as variáveis explicativas, o perfil parabólico do gráfico de dispersão se torna mais acentuado, mostrando de forma qualitativa que a correlação linear entre as variáveis diminuiu. Verificando novamente os coeficientes de correlação obtém-se:
 
 ```{r}
-cor(model1_data$birth_rate_c,model1_data$expected_schooling_c)
+cor(model1_data$birth_rate_c, model1_data$expected_schooling_c)
 ```
 
 ```{r}
-cor(model1_data$birth_rate_c,model1_data$milk_consumption_pc_c)
+cor(model1_data$birth_rate_c, model1_data$milk_consumption_pc_c)
 ```
 
 ```{r}
-cor(model1_data$expected_schooling_c,model1_data$milk_consumption_pc_c)
+cor(model1_data$expected_schooling_c, model1_data$milk_consumption_pc_c)
 ```
 
 As correlações entre as variáveis explicativas permanecem inalteradas, mostrando que a centralização das variáveis não diminui suas correlações entre si.
-
 
 ## Criando o modelo de regressão
 
@@ -291,7 +319,7 @@ As correlações entre as variáveis explicativas permanecem inalteradas, mostra
 # Modelo de regressão linear com as variáveis explicativas "birth_rate_c", "expected_schooling_c" e "milk_consumption_pc_c"
 
 # Modelo polinomial de segunda ordem completo com as variáveis quantitativas
-model1_quant <- lm(life_expectancy ~ I(birth_rate_c^2) + I(expected_schooling_c^2) + I(milk_consumption_pc_c^2) + birth_rate_c*expected_schooling_c + birth_rate_c*milk_consumption_pc_c + expected_schooling_c*milk_consumption_pc_c, data = model1_data )
+model1_quant <- lm(life_expectancy ~ I(birth_rate_c^2) + I(expected_schooling_c^2) + I(milk_consumption_pc_c^2) + birth_rate_c * expected_schooling_c + birth_rate_c * milk_consumption_pc_c + expected_schooling_c * milk_consumption_pc_c, data = model1_data)
 
 
 summary(model1_quant)

@@ -211,8 +211,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>Observamos, portanto, um total de 985 dados, sendo três colunas apresentadas como strings (<code>continent</code>, <code>entity</code> e <code>country_code</code>) e as demais como numéricas. Não obstante, os nomes das variáveis são intuitivos e não necessitam de alterações.</p>
 <hr>
-<section id="parte-3-construção-de-modelos" class="level3">
-<h3 class="anchored" data-anchor-id="parte-3-construção-de-modelos">PARTE 3: Construção de Modelos</h3>
+</section>
+</section>
+<section id="construção-de-modelos" class="level1">
+<h1>Construção de Modelos</h1>
 <p>Utilize o procedimento para construir modelos de regressão para a resposta expectativa de vida (<code>life_expectancy</code>), considerando um dos conjuntos de variáveis explicativas:</p>
 <p><strong>Conjunto I:</strong> <code>continent</code>, <code>birth_rate</code>, <code>expected_schooling</code> e <code>milk_consumption_pc</code> (e/ou transformações) <strong>Conjunto II:</strong> <code>continent</code>m <code>gdp_pc</code>, <code>no_water</code> e <code>urban_population_percent</code> (e/ou transformações)</p>
 <p>Considere apenas o ano de 2015 e exclua o continente ‘Oceania’.</p>
@@ -239,8 +241,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Forneça interpretações e discussão para os resultados obtidos.</p>
 <hr>
 <p>Escolhe-se o modelo de regressão I com as variáveis <code>continent</code>, <code>birth_rate</code>, <code>expected_schooling</code> e <code>milk_consumption_pc</code>.</p>
-</section>
-</section>
 <section id="separando-os-dados-de-interesse-para-o-modelo" class="level2">
 <h2 class="anchored" data-anchor-id="separando-os-dados-de-interesse-para-o-modelo">Separando os dados de interesse para o modelo</h2>
 <div class="cell">
@@ -248,19 +248,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>model1_data <span class="ot">&lt;-</span> owid <span class="sc">%&gt;%</span> <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2015</span>)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Selecionando somente as variáveis de interesse</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>model1_data <span class="ot">&lt;-</span> model1_data[,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">5</span>,<span class="dv">15</span>,<span class="dv">18</span>,<span class="dv">19</span>)]</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>model1_data <span class="ot">&lt;-</span> model1_data[, <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">5</span>, <span class="dv">15</span>, <span class="dv">18</span>, <span class="dv">19</span>)]</span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Retirando os dados referentes a oceania</span></span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>model1_data <span class="ot">&lt;-</span> <span class="fu">subset</span>(model1_data, model1_data<span class="sc">$</span>continent <span class="sc">!=</span> <span class="st">"Oceania"</span>)</span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Juntando os dados referentes às Américas do Norte e Sul</span></span>
 <span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>model1_data <span class="ot">&lt;-</span> model1_data <span class="sc">%&gt;%</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">continent =</span> dplyr<span class="sc">::</span><span class="fu">recode</span>(continent, <span class="st">"North America"</span> <span class="ot">=</span> <span class="st">"America"</span>, <span class="st">"South America"</span> <span class="ot">=</span> <span class="st">"America"</span>))</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">continent =</span> dplyr<span class="sc">::</span><span class="fu">recode</span>(continent, <span class="st">"North America"</span> <span class="ot">=</span> <span class="st">"America"</span>, <span class="st">"South America"</span> <span class="ot">=</span> <span class="st">"America"</span>))</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-</section>
-<section id="criando-o-modelo-de-regressão" class="level1">
-<h1>Criando o modelo de regressão</h1>
+<section id="criando-o-modelo-de-regressão" class="level2">
+<h2 class="anchored" data-anchor-id="criando-o-modelo-de-regressão">Criando o modelo de regressão</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Gráfico de dispersão dos dados</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(model1_data)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -269,22 +268,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
-<section id="verificando-correlação-entre-as-variáveis-explicativas" class="level1">
-<h1>Verificando correlação entre as variáveis explicativas</h1>
+<section id="verificando-correlação-entre-as-variáveis-explicativas" class="level2">
+<h2 class="anchored" data-anchor-id="verificando-correlação-entre-as-variáveis-explicativas">Verificando correlação entre as variáveis explicativas</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(model1_data<span class="sc">$</span>birth_rate,model1_data<span class="sc">$</span>expected_schooling)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(model1_data<span class="sc">$</span>birth_rate, model1_data<span class="sc">$</span>expected_schooling)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] -0.8168797</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(model1_data<span class="sc">$</span>birth_rate,model1_data<span class="sc">$</span>milk_consumption_pc)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(model1_data<span class="sc">$</span>birth_rate, model1_data<span class="sc">$</span>milk_consumption_pc)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] -0.5756859</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(model1_data<span class="sc">$</span>expected_schooling,model1_data<span class="sc">$</span>milk_consumption_pc)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(model1_data<span class="sc">$</span>expected_schooling, model1_data<span class="sc">$</span>milk_consumption_pc)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.6317135</code></pre>
 </div>
@@ -316,7 +315,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <p>Conclui-se que para todas as três variáveis quantitativas do modelo a correlação entre seus valores lineares e seus valores quadráticos é muito elevada. Para diminuir esse efeito no modelo, centraliza-se as variáveis explicativas antes da construção do modelo.</p>
-<p>Gráficos de dispersão das variáveis explicativas com seus quadrados</p>
+<p>Gráficos de dispersão das variaveis explicativas com seus quadrados</p>
 <div class="cell quarto-layout-panel">
 <div class="quarto-layout-row quarto-layout-valign-top">
 <div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
@@ -334,9 +333,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Criando variáveis quantitativas centralizadas</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>model1_data <span class="ot">&lt;-</span> model1_data <span class="sc">%&gt;%</span></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span> (<span class="at">birth_rate_c =</span> birth_rate <span class="sc">-</span> <span class="fu">mean</span>(birth_rate),</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">expected_schooling_c =</span> expected_schooling <span class="sc">-</span> <span class="fu">mean</span>(expected_schooling),</span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">milk_consumption_pc_c =</span> milk_consumption_pc <span class="sc">-</span> <span class="fu">mean</span>(milk_consumption_pc))</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">birth_rate_c =</span> birth_rate <span class="sc">-</span> <span class="fu">mean</span>(birth_rate),</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">expected_schooling_c =</span> expected_schooling <span class="sc">-</span> <span class="fu">mean</span>(expected_schooling),</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">milk_consumption_pc_c =</span> milk_consumption_pc <span class="sc">-</span> <span class="fu">mean</span>(milk_consumption_pc)</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Verificando novamente as correlações</p>
 <p>Para a variável <code>birth_rate_c</code></p>
@@ -380,31 +381,32 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>É possível pereber que ao centralizar as variáveis explicativas, o perfil parabólico do gráfico de dispersão se torna mais acentuado, mostrando de forma qualitativa que a correlação linear entre as variáveis diminuiu. Verificando novamente os coeficientes de correlação obtém-se:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(model1_data<span class="sc">$</span>birth_rate_c,model1_data<span class="sc">$</span>expected_schooling_c)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(model1_data<span class="sc">$</span>birth_rate_c, model1_data<span class="sc">$</span>expected_schooling_c)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] -0.8168797</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(model1_data<span class="sc">$</span>birth_rate_c,model1_data<span class="sc">$</span>milk_consumption_pc_c)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(model1_data<span class="sc">$</span>birth_rate_c, model1_data<span class="sc">$</span>milk_consumption_pc_c)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] -0.5756859</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(model1_data<span class="sc">$</span>expected_schooling_c,model1_data<span class="sc">$</span>milk_consumption_pc_c)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(model1_data<span class="sc">$</span>expected_schooling_c, model1_data<span class="sc">$</span>milk_consumption_pc_c)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.6317135</code></pre>
 </div>
 </div>
 <p>As correlações entre as variáveis explicativas permanecem inalteradas, mostrando que a centralização das variáveis não diminui suas correlações entre si.</p>
+</section>
 <section id="criando-o-modelo-de-regressão-1" class="level2">
 <h2 class="anchored" data-anchor-id="criando-o-modelo-de-regressão-1">Criando o modelo de regressão</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Modelo de regressão linear com as variáveis explicativas "birth_rate_c", "expected_schooling_c" e "milk_consumption_pc_c"</span></span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Modelo polinomial de segunda ordem completo com as variáveis quantitativas</span></span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>model1_quant <span class="ot">&lt;-</span> <span class="fu">lm</span>(life_expectancy <span class="sc">~</span> <span class="fu">I</span>(birth_rate_c<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> <span class="fu">I</span>(expected_schooling_c<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> <span class="fu">I</span>(milk_consumption_pc_c<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> birth_rate_c<span class="sc">*</span>expected_schooling_c <span class="sc">+</span> birth_rate_c<span class="sc">*</span>milk_consumption_pc_c <span class="sc">+</span> expected_schooling_c<span class="sc">*</span>milk_consumption_pc_c, <span class="at">data =</span> model1_data )</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>model1_quant <span class="ot">&lt;-</span> <span class="fu">lm</span>(life_expectancy <span class="sc">~</span> <span class="fu">I</span>(birth_rate_c<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> <span class="fu">I</span>(expected_schooling_c<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> <span class="fu">I</span>(milk_consumption_pc_c<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> birth_rate_c <span class="sc">*</span> expected_schooling_c <span class="sc">+</span> birth_rate_c <span class="sc">*</span> milk_consumption_pc_c <span class="sc">+</span> expected_schooling_c <span class="sc">*</span> milk_consumption_pc_c, <span class="at">data =</span> model1_data)</span>
 <span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model1_quant)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
