@@ -146,8 +146,15 @@ plot(model1_data)
 
 ```{r}
 model1_data <- model1_data |>
-  mutate(log_milk_consumption_pc  = milk_consumption_pc^0.25) 
+  mutate(new_milk_consumption_pc  = milk_consumption_pc^0.25) 
 ```
+
+```{r}
+# Gráfico de dispersão dos dados
+plot(model1_data)
+```
+
+Percebe-se que a variável `new_milk_consumption_pc`possui uma relação mais próxima de linear que `milk_consumption_pc` com a variável resposta `life_expectancy`.
 
 ## Verificando correlação entre as variáveis explicativas
 
@@ -164,18 +171,18 @@ cor(model1_data$expected_schooling, model1_data$milk_consumption_pc)
 ```
 
 ```{r}
-cor(model1_data$birth_rate,model1_data$log_milk_consumption_pc)
+cor(model1_data$birth_rate,model1_data$new_milk_consumption_pc)
 ```
 
 ```{r}
-cor(model1_data$birth_rate,model1_data$log_milk_consumption_pc)
+cor(model1_data$birth_rate,model1_data$new_milk_consumption_pc)
 ```
 
 ```{r}
-cor(model1_data$expected_schooling,model1_data$log_milk_consumption_pc)
+cor(model1_data$expected_schooling,model1_data$new_milk_consumption_pc)
 ```
 
-É possível perceber que existe correlação entre as variáveis explicativas. A correlação mais forte é entre as variáveis "birth_rate" e "expected_schooling". Além disso, a variável `log_milk_consumption_pc` possui suas correlações reduzida com a variável `expected_schooling` e praticamente inalterada com a variável `birth_rate` se comparada com a variável não transformada `milk_consumption_pc`.
+É possível perceber que existe correlação entre as variáveis explicativas. A correlação mais forte é entre as variáveis "birth_rate" e "expected_schooling". Além disso, a variável `new_milk_consumption_pc` possui suas correlações reduzida com a variável `expected_schooling` e praticamente inalterada com a variável `birth_rate` se comparada com a variável não transformada `milk_consumption_pc`.
 
 Verificando correlação entre termos quadráticos e lineares das variáveis explicativas
 
@@ -200,10 +207,14 @@ Para a variável `milk_consumption_pc`
 cor(model1_data$milk_consumption_pc, model1_data$milk_consumption_pc^2)
 ```
 
-Para a variável transformada `log_milk_consumption_pc`
+Para a variável transformada `new_milk_consumption_pc`
+```{r}
+# Correlação para a variavel transformada de milk_consumption_pc
+cor(model1_data$new_milk_consumption_pc, model1_data$new_milk_consumption_pc^2)
+```
 
 
-Conclui-se que para todas as três variáveis quantitativas do modelo a correlação entre seus valores lineares e seus valores quadráticos é muito elevada. Para diminuir esse efeito no modelo, centraliza-se as variáveis explicativas antes da construção do modelo.
+Conclui-se que para todas as variáveis quantitativas do modelo a correlação entre seus valores lineares e seus valores quadráticos é muito elevada. Para diminuir esse efeito no modelo, centraliza-se as variáveis explicativas antes da construção do modelo.
 
 
 Gráficos de dispersão das variaveis explicativas com seus quadrados
@@ -231,6 +242,13 @@ ggplot(model1_data, aes(x = milk_consumption_pc, y = milk_consumption_pc^2)) +
         axis.text = element_text(size = 15),
         axis.title = element_text(size = 20, face = "bold")
     )
+
+ggplot(model1_data, aes(x = new_milk_consumption_pc, y = new_milk_consumption_pc^2)) +
+    geom_point() +
+    theme(
+        axis.text = element_text(size = 15),
+        axis.title = element_text(size = 20, face = "bold")
+    )
 ```
 
 É possível perceber que apesar do aspecto quadrático dos pontos, a variação é monotônica e possui caráter aproximadamente linear. Assim, as variáveis explicativas foram centralizadas.
@@ -241,7 +259,8 @@ model1_data <- model1_data %>%
     mutate(
         birth_rate_c = birth_rate - mean(birth_rate),
         expected_schooling_c = expected_schooling - mean(expected_schooling),
-        milk_consumption_pc_c = milk_consumption_pc - mean(milk_consumption_pc)
+        milk_consumption_pc_c = milk_consumption_pc - mean(milk_consumption_pc),
+        new_milk_consumption_pc_c = new_milk_consumption_pc - mean(new_milk_consumption_pc)
     )
 
 ```
@@ -267,6 +286,11 @@ Para a variável `milk_consumption_pc_c`
 ```{r}
 # Correlação para milk_consumption_pc
 cor(model1_data$milk_consumption_pc_c, model1_data$milk_consumption_pc_c^2)
+```
+
+```{r}
+# Correlação para a variavel transformada de milk_consumption_pc
+cor(model1_data$new_milk_consumption_pc_c, model1_data$new_milk_consumption_pc_c^2)
 ```
 
 É possível observar que as correlações entre os termos lineares e quadráticos diminuíram para todas as variáveis explicativas quantitativas do modelo após centralizadas pela média dos valores.
@@ -295,6 +319,13 @@ ggplot(model1_data, aes(x = milk_consumption_pc_c, y = milk_consumption_pc_c^2))
         axis.text = element_text(size = 15),
         axis.title = element_text(size = 20, face = "bold")
     )
+
+ggplot(model1_data, aes(x = new_milk_consumption_pc_c, y = new_milk_consumption_pc_c^2)) +
+    geom_point() +
+    theme(
+        axis.text = element_text(size = 15),
+        axis.title = element_text(size = 20, face = "bold")
+    )
 ```
 
 É possível pereber que ao centralizar as variáveis explicativas, o perfil parabólico do gráfico de dispersão se torna mais acentuado, mostrando de forma qualitativa que a correlação linear entre as variáveis diminuiu. Verificando novamente os coeficientes de correlação obtém-se:
@@ -311,7 +342,13 @@ cor(model1_data$birth_rate_c, model1_data$milk_consumption_pc_c)
 cor(model1_data$expected_schooling_c, model1_data$milk_consumption_pc_c)
 ```
 
-As correlações entre as variáveis explicativas permanecem inalteradas, mostrando que a centralização das variáveis não diminui suas correlações entre si.
+```{r}
+cor(model1_data$birth_rate_c, model1_data$new_milk_consumption_pc_c)
+```
+
+```{r}
+cor(model1_data$expected_schooling_c, model1_data$milk_consumption_pc_c)
+```
 
 ## Criando o modelo de regressão
 
@@ -320,6 +357,16 @@ As correlações entre as variáveis explicativas permanecem inalteradas, mostra
 
 # Modelo polinomial de segunda ordem completo com as variáveis quantitativas
 model1_quant <- lm(life_expectancy ~ I(birth_rate_c^2) + I(expected_schooling_c^2) + I(milk_consumption_pc_c^2) + birth_rate_c * expected_schooling_c + birth_rate_c * milk_consumption_pc_c + expected_schooling_c * milk_consumption_pc_c, data = model1_data)
+
+
+summary(model1_quant)
+```
+
+```{r}
+# Modelo de regressão linear com as variáveis explicativas "birth_rate_c", "expected_schooling_c" e "new_milk_consumption_pc_c"
+
+# Modelo polinomial de segunda ordem completo com as variáveis quantitativas
+model1_quant <- lm(life_expectancy ~ I(birth_rate_c^2) + I(expected_schooling_c^2) + I(new_milk_consumption_pc_c^2) + birth_rate_c * expected_schooling_c + birth_rate_c * new_milk_consumption_pc_c + expected_schooling_c * new_milk_consumption_pc_c, data = model1_data)
 
 
 summary(model1_quant)
