@@ -211,8 +211,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>Observamos, portanto, um total de 985 dados, sendo três colunas apresentadas como strings (<code>continent</code>, <code>entity</code> e <code>country_code</code>) e as demais como numéricas. Não obstante, os nomes das variáveis são intuitivos e não necessitam de alterações.</p>
 <hr>
-<section id="parte-3-construção-de-modelos" class="level3">
-<h3 class="anchored" data-anchor-id="parte-3-construção-de-modelos">PARTE 3: Construção de Modelos</h3>
+</section>
+</section>
+<section id="construção-de-modelos" class="level1">
+<h1>Construção de Modelos</h1>
 <p>Utilize o procedimento para construir modelos de regressão para a resposta expectativa de vida (<code>life_expectancy</code>), considerando um dos conjuntos de variáveis explicativas:</p>
 <p><strong>Conjunto I:</strong> <code>continent</code>, <code>birth_rate</code>, <code>expected_schooling</code> e <code>milk_consumption_pc</code> (e/ou transformações) <strong>Conjunto II:</strong> <code>continent</code>m <code>gdp_pc</code>, <code>no_water</code> e <code>urban_population_percent</code> (e/ou transformações)</p>
 <p>Considere apenas o ano de 2015 e exclua o continente ‘Oceania’.</p>
@@ -239,8 +241,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Forneça interpretações e discussão para os resultados obtidos.</p>
 <hr>
 <p>Escolhe-se o modelo de regressão I com as variáveis <code>continent</code>, <code>birth_rate</code>, <code>expected_schooling</code> e <code>milk_consumption_pc</code>.</p>
-</section>
-</section>
 <section id="separando-os-dados-de-interesse-para-o-modelo" class="level2">
 <h2 class="anchored" data-anchor-id="separando-os-dados-de-interesse-para-o-modelo">Separando os dados de interesse para o modelo</h2>
 <div class="cell">
@@ -258,9 +258,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">continent =</span> dplyr<span class="sc">::</span><span class="fu">recode</span>(continent, <span class="st">"North America"</span> <span class="ot">=</span> <span class="st">"America"</span>, <span class="st">"South America"</span> <span class="ot">=</span> <span class="st">"America"</span>))</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-</section>
-<section id="criando-o-modelo-de-regressão" class="level1">
-<h1>Criando o modelo de regressão</h1>
+<section id="criando-o-modelo-de-regressão" class="level2">
+<h2 class="anchored" data-anchor-id="criando-o-modelo-de-regressão">Criando o modelo de regressão</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Gráfico de dispersão dos dados</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(model1_data)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -269,8 +268,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
-<section id="verificando-correlação-entre-as-variáveis-explicativas" class="level1">
-<h1>Verificando correlação entre as variáveis explicativas</h1>
+<section id="verificando-correlação-entre-as-variáveis-explicativas" class="level2">
+<h2 class="anchored" data-anchor-id="verificando-correlação-entre-as-variáveis-explicativas">Verificando correlação entre as variáveis explicativas</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(model1_data<span class="sc">$</span>birth_rate, model1_data<span class="sc">$</span>expected_schooling)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -316,7 +315,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <p>Conclui-se que para todas as três variáveis quantitativas do modelo a correlação entre seus valores lineares e seus valores quadráticos é muito elevada. Para diminuir esse efeito no modelo, centraliza-se as variáveis explicativas antes da construção do modelo.</p>
-<p>Gráficos de dispersão das variáveis explicativas com seus quadrados</p>
+<p>Gráficos de dispersão das variaveis explicativas com seus quadrados</p>
 <div class="cell quarto-layout-panel">
 <div class="quarto-layout-row quarto-layout-valign-top">
 <div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
@@ -400,6 +399,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <p>As correlações entre as variáveis explicativas permanecem inalteradas, mostrando que a centralização das variáveis não diminui suas correlações entre si.</p>
+</section>
 <section id="criando-o-modelo-de-regressão-1" class="level2">
 <h2 class="anchored" data-anchor-id="criando-o-modelo-de-regressão-1">Criando o modelo de regressão</h2>
 <div class="cell">
