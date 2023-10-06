@@ -146,7 +146,7 @@ plot(model1_data)
 
 ```{r}
 model1_data <- model1_data |>
-  mutate(log_milk_consumption_pc  = milk_consumption_pc^0.25) 
+    mutate(log_milk_consumption_pc = milk_consumption_pc^0.25)
 ```
 
 ## Verificando correlação entre as variáveis explicativas
@@ -164,15 +164,15 @@ cor(model1_data$expected_schooling, model1_data$milk_consumption_pc)
 ```
 
 ```{r}
-cor(model1_data$birth_rate,model1_data$log_milk_consumption_pc)
+cor(model1_data$birth_rate, model1_data$log_milk_consumption_pc)
 ```
 
 ```{r}
-cor(model1_data$birth_rate,model1_data$log_milk_consumption_pc)
+cor(model1_data$birth_rate, model1_data$log_milk_consumption_pc)
 ```
 
 ```{r}
-cor(model1_data$expected_schooling,model1_data$log_milk_consumption_pc)
+cor(model1_data$expected_schooling, model1_data$log_milk_consumption_pc)
 ```
 
 É possível perceber que existe correlação entre as variáveis explicativas. A correlação mais forte é entre as variáveis "birth_rate" e "expected_schooling". Além disso, a variável `log_milk_consumption_pc` possui suas correlações reduzida com a variável `expected_schooling` e praticamente inalterada com a variável `birth_rate` se comparada com a variável não transformada `milk_consumption_pc`.
@@ -211,8 +211,8 @@ Gráficos de dispersão das variaveis explicativas com seus quadrados
 ```{r echo=FALSE, fig.height = 10}
 #| layout-ncol: 3
 
-ggplot(model1_data , aes(x = birth_rate, y = birth_rate^2)) + 
-  geom_point() +
+ggplot(model1_data, aes(x = birth_rate, y = birth_rate^2)) +
+    geom_point() +
     theme(
         axis.text = element_text(size = 15),
         axis.title = element_text(size = 20, face = "bold")
@@ -319,8 +319,29 @@ As correlações entre as variáveis explicativas permanecem inalteradas, mostra
 # Modelo de regressão linear com as variáveis explicativas "birth_rate_c", "expected_schooling_c" e "milk_consumption_pc_c"
 
 # Modelo polinomial de segunda ordem completo com as variáveis quantitativas
-model1_quant <- lm(life_expectancy ~ I(birth_rate_c^2) + I(expected_schooling_c^2) + I(milk_consumption_pc_c^2) + birth_rate_c * expected_schooling_c + birth_rate_c * milk_consumption_pc_c + expected_schooling_c * milk_consumption_pc_c, data = model1_data)
+model1_quant <- lm(
+    life_expectancy ~ I(birth_rate_c^2) + I(expected_schooling_c^2) + I(milk_consumption_pc_c^2) + birth_rate_c * expected_schooling_c + birth_rate_c * milk_consumption_pc_c + expected_schooling_c * milk_consumption_pc_c,data = model1_data)
 
 
 summary(model1_quant)
 ```
+
+
+<<<<< ALGUMA CONTINUAÇÃO AQUI >>>>>>
+
+
+## Inclusão da variável categórica `continent`
+
+Vamos avaliar se o modelo de regressão melhora com a inclusão da variável categórica `continent`.
+
+
+```{r}
+# modelo que inclui as variáveis explicativas qualitativas
+m_quali <- lm(
+    life_expectancy ~ birth_rate_c * expected_schooling_c + continent, data = model1_data
+)
+
+# resumo do modelo
+summary(m_quali)
+```
+
