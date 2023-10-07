@@ -388,6 +388,52 @@ anova(model1_quant_red, model1_quant, test="F")
 
 Como o resultado da comparação é não-significativo (valor-p \> 0.05), a hipótese nula não pode ser rejeitada e, portanto, conclui-se que os termos eliminados do modelo completo são estatisticamente iguais a zero.
 
+### Análise de Resíduos
+
+Prosseguindo para a análise de resíduos do modelo:
+
+```{r}
+# Constrói tabela com dados do modelo `model1_quant_red`
+model1_quant_red_data <- model1_data %>%
+  # inclui coluna com valores ajustados
+  mutate(fitted = model1_quant_red$fit) %>%
+  mutate(resid = model1_quant_red$res)
+
+# Gera gráficos dos resíduos:
+ggplot(model1_quant_red_data, aes(x = fitted, y = resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("gráfico de resíduos: modelo life_expectancy ~ new_milk_consumption_pc_c + birth_rate_c + expected_schooling_c + new_milk_consumption_pc_c * birth_rate_c") +
+  labs(y = "resíduos", x = "resposta ajustada (life_expectancy)")
+# Gráfico de quantis
+ggplot(model1_quant_red_data, aes(sample = resid)) +
+  stat_qq() + stat_qq_line() +
+  ggtitle("gráfico de quantis normais") +
+  labs(y = "quantis amostrais", x = "quantis teóricos (dist. normal)") 
+```
+
+Não parece haver variação sistemática no gráfico dos resíduos. O gráfico de quantis sugere desvio da normalidade nas extremidades. Realizando o procedimento formal de testes de hipóteses:
+
+```{r}
+# Teste de Homoscedasticidade de Breusch-Pagan
+# Ho: sigma^2  = cte
+# Ha: sigma^2 != cte
+
+library(lmtest)
+library(zoo)
+bptest(model1_quant_red)
+```
+
+```{r}
+# Teste de Normalidade de Shapiro-Wilk
+# Ho: normal
+# Ha: não-normal
+
+shapiro.test(model1_quant_red_data$resid)
+```
+
+A partir da análise do valor-p para os testes de Breusch-Pagan (0.3456) e de Shapiro-Wilk (0.7515), verifica-se que a hipótese nula não pode ser rejeitada e, para amostra de dados utilizada, podem ser consideradas as hipóteses de homoscedasticidade e normalidade.
+
 ## Inclusão de variáveis qualitativas e suas interações
 
 Agora, analisa-se o impacto do modelo de regressão com a inclusão da variável categórica `continent`. Para tanto, considera-se que o modelo, além dos termos polinomiais (quadrático e linear) para as variáveis quantitativas, inclui efeitos das variável categórica `continent`. Dessa forma, o modelo geral ficaria:
@@ -451,20 +497,66 @@ ggplot(model1_data, aes(x = new_milk_consumption_pc_c, y = life_expectancy)) +
   ggtitle("`life_expectancy` x `new_milk_consumption_pc`, para diferentes níveis de `continent`")
 ```
 
-Os gráficos apresentados mostram que aparentemente a interação entre as variáveis `birth_rate_c` e `expected_schooling_c` com a variável `continent` não aparentam ser relevantes, diferente para o que ocorre para a variável `new_milk_consumption_pc`, que apresenta diferentes curvas. Para definir se isso quantitativamente é adotado o procedimento a seguir:
+Os gráficos apresentados mostram que aparentemente a interação entre as variáveis `birth_rate_c` e `expected_schooling_c` com a variável `continent` não aparentam ser relevantes, diferente para o que ocorre para a variável `new_milk_consumption_pc`, que apresenta diferentes curvas. Para definir se isso quantitativamente é adotado o procedimento a seguir, construindo o modelo contendo todas as interações possíveis:
+
+$E[life\_expectancy] = \beta_0 + \beta_1 new\_milk\_consumption\_pc\_c + \beta_2 birth\_rate + \beta_3 expected\_schooling + \beta_{12}new\_milk\_consumption\_pc\cdot birth\_rate + \beta_4 continent + \beta_{14} new\_milk\_consumption\_pc\_c \cdot continent + \beta_{24} birth\_rate \cdot continent + \beta_{34} expected\_schooling \cdot continent + \beta_{124}new\_milk\_consumption\_pc\cdot birth\_rate \cdot continent$
 
 ```{r}
 # Criando modelo de regressão com todas as interações possíveis
-m_all <- lm(
-    life_expectancy ~ birth_rate_c*expected_schooling_c + continent:birth_rate_c + continent : expected_schooling_c + continent, data = model1_data 
+model1_all <- lm(
+    life_expectancy ~ new_milk_consumption_pc_c + birth_rate_c + expected_schooling_c + new_milk_consumption_pc_c * birth_rate_c + continent + continent * new_milk_consumption_pc_c + continent * birth_rate_c + continent * expected_schooling_c + continent * new_milk_consumption_pc_c * birth_rate_c, data = model1_data 
 )
+
+summary(model1_all)
 ```
 
-Verificando se a inclusão das interações melhora o não o modelo:
+O modelo é significativo (veja o valor-p da estatística-F global), porém nenhum termo de interação com a variável categórica `continent` é significativo. O coeficiente de determinação ajustado aumentou
+em relação ao anterior. Verificando a tabela ANOVA:
 
 ```{r}
-# Verificando a inclusao das novas alterações
-anova(m_quali,m_all, test="F")
+# tabela ANOVA
+anova(model1_all)
 ```
 
-Ao observar a estatística do teste F é possível concluir que a inclusão das interações entre as variáveis quantitativas e a variável categórica `continent` não traz benefício para o modelo criado. Assim, o modelo a ser utilizado será o modelo `m_quali` sem a inclusão das interações.
+Note que nenhum dos termos de interação com a variável categórica é significativo. Assim, pode-se verificar usando a abordagem do teste linear geral:
+
+```{r}
+# H_0: Betas(14, 24, 34, 124) = 0
+# H_a: Nem todos os coeficientes são nulos
+
+# Verificando a inclusao das novas alterações
+anova(model1_quali,model1_all, test="F")
+```
+
+No modelo completo, têm-se 130-118 = 12 parâmetros adicionais (Df 12). A comparação resultou em valor-p de aproximadamente 0.5922; portanto, os efeitos de interação considerados não são significativos e podem ser descartados do modelo. Ao observar a estatística do teste F é possível concluir que a inclusão das interações entre as variáveis quantitativas e a variável categórica `continent` não traz benefício para o modelo criado. Assim, o modelo a ser utilizado será o modelo `m_quali` sem a inclusão das interações.
+
+## Modelo Final
+
+Até agora, tem-se o seguinte modelo:
+
+$E[life\_expectancy] = \beta_0 + \beta_1 new\_milk\_consumption\_pc\_c + \beta_2 birth\_rate + \beta_3 expected\_schooling + \beta_{12}new\_milk\_consumption\_pc\cdot birth\_rate + \beta_4 continent$
+
+```{r}
+# Resumo do modelo final
+summary(model1_quali)
+```
+
+O modelo é significativo (valor-p associado à estatística-F global na ordem de e-16), o coeficiente de determinação de aproximadamente 85.35% indica que boa parte da variação da resposta é explicada pelo modelo. Pode-se verificar que a inclusão da variável categórica faz com que o termo de interação `new_milk_consumption_pc_c:birth_rate_c` deixe de ser significativo. Assim, pode-se removê-lo para um modelo final:
+
+```{r}
+# Criando modelo de regressão com todas as interações possíveis
+model1_final <- lm(
+    life_expectancy ~ new_milk_consumption_pc_c + birth_rate_c + expected_schooling_c  + continent, data = model1_data 
+)
+
+anova(model1_final, model1_quali, test="F")
+```
+
+A comparação resultou em valor-p de aproximadamente 0.1049; portanto, como esperado, o efeito do termo cruzado não é significativo e pode ser descartado do modelo. Obtendo o resumo para o modelo final:
+
+$E[life\_expectancy] = \beta_0 + \beta_1 new\_milk\_consumption\_pc\_c + \beta_2 birth\_rate + \beta_3 expected\_schooling + \beta_4 continent$
+
+```{r}
+# tabela ANOVA
+summary(model1_final)
+```
