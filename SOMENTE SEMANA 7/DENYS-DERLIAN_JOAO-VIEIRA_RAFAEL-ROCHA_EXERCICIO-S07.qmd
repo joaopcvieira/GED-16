@@ -423,7 +423,7 @@ De fato, o valor-p expresso para o teste F mostra que a variável `continent` ag
 
 ## Inclusão de termos de interação entre variáveis quantitativas e qualitativas
 
-Verificando gráficamente se há interação entre as variáveis `birth_rate_c` e `expected_schooling_c` com a variável categórica `continent`.
+Agora, considera-se a existência de interação entre as variáveis quantitativas `birth_rate_c`, `expected_schooling_c` e `new_milk_consumption_pc_c` e a variável categórica `continent`. Inicia-se a análise visualizando se há evidências de interação entre tais variáveis. Interação entre variáveis são evidenciadas pela presença de diferentes curvas para diferentes combinações dos níveis das variáveis categóricas. Verificando graficamente se há interação entre as variáveis `birth_rate_c`, `expected_schooling_c` e `new_milk_consumption_pc_c` com a variável categórica `continent`:
 
 ```{r}
 ggplot(model1_data, aes(x = birth_rate_c, y = life_expectancy)) +
@@ -433,6 +433,7 @@ ggplot(model1_data, aes(x = birth_rate_c, y = life_expectancy)) +
   # adiciona retas de tendência
   geom_smooth(aes(color = continent), method = "lm", se = FALSE) +
   ggtitle("`life_expectancy` x `birth_rate_c`, para diferentes níveis de `continent`")
+
 ggplot(model1_data, aes(x = expected_schooling_c, y = life_expectancy)) +
   # adiciona pontos 
   # (cores e símbolos distintos para diferentes valores de `continent`)
@@ -440,9 +441,17 @@ ggplot(model1_data, aes(x = expected_schooling_c, y = life_expectancy)) +
   # adiciona retas de tendência
   geom_smooth(aes(color = continent), method = "lm", se = FALSE) +
   ggtitle("`life_expectancy` x `expected_schooling_c`, para diferentes níveis de `continent`")
+
+ggplot(model1_data, aes(x = new_milk_consumption_pc_c, y = life_expectancy)) +
+  # adiciona pontos 
+  # (cores e símbolos distintos para diferentes valores de `continent`)
+  geom_point(aes(color = continent, shape = continent)) + 
+  # adiciona retas de tendência
+  geom_smooth(aes(color = continent), method = "lm", se = FALSE) +
+  ggtitle("`life_expectancy` x `new_milk_consumption_pc`, para diferentes níveis de `continent`")
 ```
 
-Os gráficos apresentados mostram que aparentemente a interação entre as variáveis `birth_rate_c` e `expected_schooling_c` com a variável `continent` não são relevantes. Para definir se isso quantitativamente é adotado o procedimento a seguir:
+Os gráficos apresentados mostram que aparentemente a interação entre as variáveis `birth_rate_c` e `expected_schooling_c` com a variável `continent` não aparentam ser relevantes, diferente para o que ocorre para a variável `new_milk_consumption_pc`, que apresenta diferentes curvas. Para definir se isso quantitativamente é adotado o procedimento a seguir:
 
 ```{r}
 # Criando modelo de regressão com todas as interações possíveis
