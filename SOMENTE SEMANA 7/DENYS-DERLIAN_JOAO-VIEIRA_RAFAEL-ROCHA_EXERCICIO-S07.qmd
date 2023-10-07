@@ -359,28 +359,28 @@ model1_quant <- lm(
 summary(model1_quant)
 ```
 
-Com o modelo geral concebido, é possível verificar que ele é significativo (passa no teste-F global com valor-p da ordem de e-16) e o coeficiente de determinação indica que aproximadamente 85.3% da variabilidade na resposta é explicada pelo modelo (não há grande diferença entre R^2^ e R^2^ ajustado). No entanto, os seguintes termos não são significativos: `birth_rate_c^2`, `new_milk_consumption_pc_c^2`, `birth_rate_c:expected_schooling_c` e `expected_schooling_c:new_milk_consumption_pc_c`.
+Com o modelo geral concebido, é possível verificar que ele é significativo (passa no teste-F global com valor-p da ordem de e-16) e o coeficiente de determinação indica que aproximadamente 85.3% da variabilidade na resposta é explicada pelo modelo (não há grande diferença entre R^2^ e R^2^ ajustado). No entanto, após algumas inspeções com o teste ANOVA, verifica-se que os seguintes termos não são significativos e podem ser removidos: `birth_rate_c^2`, `expected_schooling^2`, `new_milk_consumption_pc_c^2`, `birth_rate_c:expected_schooling_c`, `expected_schooling_c:new_milk_consumption_pc_c`.
 
 A partir dessa análise, pode-se construir um modelo reduzido, removendo os termos não significativos para o modelo, chegando-se à expressão:
 
-$E[life\_expectancy] = \beta_0 + \beta_1 new\_milk\_consumption\_pc + \beta_2 birth\_rate  + \beta_3 expected\_schooling + \beta_{33} expected\_schooling^2 + \beta_{12}new\_milk\_consumption\_pc\cdot birth\_rate$
+$E[life\_expectancy] = \beta_0 + \beta_1 new\_milk\_consumption\_pc\_c + \beta_2 birth\_rate + \beta_3 expected\_schooling + \beta_{12}new\_milk\_consumption\_pc\cdot birth\_rate$
 
 ```{r}
 # Modelo reduzido
 model1_quant_red <- lm(
-    life_expectancy ~ birth_rate_c + expected_schooling_c +I(expected_schooling_c^2) + new_milk_consumption_pc_c +  birth_rate_c * new_milk_consumption_pc_c, data = model1_data)
+    life_expectancy ~ new_milk_consumption_pc_c + birth_rate_c + expected_schooling_c + new_milk_consumption_pc_c * birth_rate_c, data = model1_data)
 
 
 summary(model1_quant_red)
 ```
 
-O modelo reduzido é significativo (passa no teste-F global com valor-p da ordem de e-16). Todos os coeficientes são significativos e o coeficiente de determinação indica que aproximadamente 85.2% da variabilidade na resposta é explicada pelo modelo (não há grande diferença, se comparado ao coeficiente de determinação ajustado).
+O modelo reduzido é significativo (passa no teste-F global com valor-p da ordem de e-16). Todos os coeficientes são significativos e o coeficiente de determinação indica que aproximadamente 82.9% da variabilidade na resposta é explicada pelo modelo (não há grande diferença, se comparado ao coeficiente de determinação ajustado).
 
 Também é possível comparar o modelo completo ao reduzido utilizando a abordagem do teste linear geral. As hipóteses sendo testadas na comparação dos modelos aninhados são as seguintes:
 
 ```{r}
 # teste-F
-# H_0: Betas(11,22,13 e 23) == 0
+# H_0: Betas(11, 22, 33, 13 e 23) == 0
 # H_a: Nem todos são nulos
 
 anova(model1_quant_red, model1_quant, test="F")
@@ -390,29 +390,36 @@ Como o resultado da comparação é não-significativo (valor-p \> 0.05), a hip�
 
 ## Inclusão de variáveis qualitativas e suas interações
 
-Agora, analisa-se o impacto do modelo de regressão com a inclusão da variável categórica `continent`:
+Agora, analisa-se o impacto do modelo de regressão com a inclusão da variável categórica `continent`. Para tanto, considera-se que o modelo, além dos termos polinomiais (quadrático e linear) para as variáveis quantitativas, inclui efeitos das variável categórica `continent`. Dessa forma, o modelo geral ficaria:
+
+$E[life\_expectancy] = \beta_0 + \beta_1 new\_milk\_consumption\_pc\_c + \beta_2 birth\_rate + \beta_3 expected\_schooling + \beta_{12}new\_milk\_consumption\_pc\cdot birth\_rate + \beta_4 continent$
 
 ```{r}
-# modelo que inclui as variáveis explicativas qualitativas
-m_quali <- lm(
-    life_expectancy ~ birth_rate_c * expected_schooling_c + continent, data = model1_data
-)
+# Modelo reduzido
+model1_quali <- lm(
+    life_expectancy ~ new_milk_consumption_pc_c + birth_rate_c + expected_schooling_c + new_milk_consumption_pc_c * birth_rate_c + continent, data = model1_data)
 
-# resumo do modelo
-summary(m_quali)
+
+summary(model1_quali)
 ```
 
-A partir do resumo do modelo, é possível observar que a variável `continent` agrega valor ao modelo, tendo em vista que o valor p do teste F é menor que 0.05.
+Do resumo da regressão, é possível notar que o modelo é significativo (baixo valor-p para a estatística-F do teste global para a regressão), e a variável categórica contribui com informação adicional, já que o coeficiente de determinação ajustado é um pouco superior àquele do modelo sem a variável categórica. Ressalta-se que o coeficiente de `continentEurope` é o menos significativo comparado aos outros continentes. Avaliando a significância incremental das variáveis explicativas, utilizando ANOVA:
 
-A fim de verificar isso, vamos realizar o teste ANOVA entre o modelo quando este não incluía a variável categórica e agora, incluindo a variável `continent`.
+```{r}
+# Tabela ANOVA
+anova(model1_quali)
+
+```
+
+À excessão da variável `new_milk_consumption_pc_c:birth_rate_c`, todos os termos contribuem de maneira significativa (e incluídos nesta ordem) para reduzir a variabilidade da resposta. Além disso, pode-se realizar o teste ANOVA entre o modelo quando este não incluía a variável categórica e agora, incluindo a variável `continent`.
 
 ```{r}
 # Teste ANOVA
-anova(m_quant, m_quali, test="F")
+anova(model1_quali, model1_quant_red, test="F")
 
 ```
 
-De fato, o valor expresso para o teste F mostra que a variável `continent` agrega valor ao modelo.
+De fato, o valor-p expresso para o teste F mostra que a variável `continent` agrega valor ao modelo.
 
 ## Inclusão de termos de interação entre variáveis quantitativas e qualitativas
 
