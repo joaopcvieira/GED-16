@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="pt" xml:lang="pt"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.433">
+<meta name="generator" content="quarto-1.3.450">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -2430,8 +2430,10 @@ F-statistic: 25.84 on 3 and 59 DF,  p-value: 8.439e-11</code></pre>
 </div>
 <p>Com os valores obtidos para os VIFs, verifica-se problema sério de multicolinearidade.</p>
 </section>
-<section id="parte-3-construção-de-modelos" class="level3">
-<h3 class="anchored" data-anchor-id="parte-3-construção-de-modelos">PARTE 3: Construção de Modelos</h3>
+</section>
+</section>
+<section id="construção-de-modelos" class="level1">
+<h1>Construção de Modelos</h1>
 <p>Utilize o procedimento para construir modelos de regressão para a resposta expectativa de vida (<code>life_expectancy</code>), considerando um dos conjuntos de variáveis explicativas:</p>
 <p><strong>Conjunto I:</strong> <code>continent</code>, <code>birth_rate</code>, <code>expected_schooling</code> e <code>milk_consumption_pc</code> (e/ou transformações) <strong>Conjunto II:</strong> <code>continent</code>m <code>gdp_pc</code>, <code>no_water</code> e <code>urban_population_percent</code> (e/ou transformações)</p>
 <p>Considere apenas o ano de 2015 e exclua o continente ‘Oceania’.</p>
@@ -2458,224 +2460,762 @@ F-statistic: 25.84 on 3 and 59 DF,  p-value: 8.439e-11</code></pre>
 <p>Forneça interpretações e discussão para os resultados obtidos.</p>
 <hr>
 <p>Escolhe-se o modelo de regressão I com as variáveis <code>continent</code>, <code>birth_rate</code>, <code>expected_schooling</code> e <code>milk_consumption_pc</code>.</p>
-</section>
-</section>
-<section id="separando-os-dados-de-interesse-para-o-modelo" class="level2">
-<h2 class="anchored" data-anchor-id="separando-os-dados-de-interesse-para-o-modelo">Separando os dados de interesse para o modelo</h2>
+<section id="inclusão-de-termos-contendo-as-variáveis-quantitativas" class="level2">
+<h2 class="anchored" data-anchor-id="inclusão-de-termos-contendo-as-variáveis-quantitativas">Inclusão de termos contendo as variáveis quantitativas</h2>
+<section id="separando-os-dados-de-interesse-para-o-modelo" class="level3">
+<h3 class="anchored" data-anchor-id="separando-os-dados-de-interesse-para-o-modelo">Separando os dados de interesse para o modelo</h3>
+<p>Para o modelo escolhido, será trabalhado o subconjunto das variáveis definidas para o modelo 1: <code>continent</code>, <code>birth_rate</code>, <code>expected_schooling</code> e <code>milk_consumption_pc</code>. A partir das análises anteriores, é sabido que, dentro desse subconjunto, as variáveis quantitativas são <code>birth_rate</code>, <code>expected_schooling</code> e <code>milk_consumption_pc</code>. Assim sendo, o procedimento de construção do modelo começará por tratar essas variáveis:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb257"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb257-1"><a href="#cb257-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Filtrando os dados para o ano de 2015</span></span>
 <span id="cb257-2"><a href="#cb257-2" aria-hidden="true" tabindex="-1"></a>model1_data <span class="ot">&lt;-</span> owid <span class="sc">%&gt;%</span> <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2015</span>)</span>
 <span id="cb257-3"><a href="#cb257-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb257-4"><a href="#cb257-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Selecionando somente as variáveis de interesse</span></span>
-<span id="cb257-5"><a href="#cb257-5" aria-hidden="true" tabindex="-1"></a>model1_data <span class="ot">&lt;-</span> model1_data[,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">5</span>,<span class="dv">15</span>,<span class="dv">18</span>,<span class="dv">19</span>)]</span>
+<span id="cb257-5"><a href="#cb257-5" aria-hidden="true" tabindex="-1"></a>model1_data <span class="ot">&lt;-</span> model1_data[, <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">5</span>, <span class="dv">15</span>, <span class="dv">18</span>, <span class="dv">19</span>)]</span>
 <span id="cb257-6"><a href="#cb257-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb257-7"><a href="#cb257-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Retirando os dados referentes a oceania</span></span>
-<span id="cb257-8"><a href="#cb257-8" aria-hidden="true" tabindex="-1"></a>model1_data <span class="ot">&lt;-</span> <span class="fu">subset</span>(model1_data, model1_data<span class="sc">$</span>continent <span class="sc">!=</span> <span class="st">"Oceania"</span>)</span>
-<span id="cb257-9"><a href="#cb257-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb257-10"><a href="#cb257-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Juntando os dados referentes às Américas do Norte e Sul</span></span>
-<span id="cb257-11"><a href="#cb257-11" aria-hidden="true" tabindex="-1"></a>model1_data <span class="ot">&lt;-</span> model1_data <span class="sc">%&gt;%</span></span>
-<span id="cb257-12"><a href="#cb257-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">continent =</span> dplyr<span class="sc">::</span><span class="fu">recode</span>(continent, <span class="st">"North America"</span> <span class="ot">=</span> <span class="st">"America"</span>, <span class="st">"South America"</span> <span class="ot">=</span> <span class="st">"America"</span>))</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb257-8"><a href="#cb257-8" aria-hidden="true" tabindex="-1"></a>model1_data <span class="ot">&lt;-</span> <span class="fu">subset</span>(model1_data, model1_data<span class="sc">$</span>continent <span class="sc">!=</span> <span class="st">"Oceania"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Note que já foram retirados os dados referentes ao continente <code>Oceania</code>, conforme orientado no enunciado. O resumo dos dados pode ser visto abaixo:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb258"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb258-1"><a href="#cb258-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model1_data)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         continent    birth_rate     expected_schooling life_expectancy
+ Africa       :40   Min.   : 7.948   Min.   : 5.918     Min.   :51.59  
+ Asia         :34   1st Qu.:11.538   1st Qu.:11.535     1st Qu.:65.49  
+ Europe       :40   Median :18.753   Median :13.570     Median :73.24  
+ North America:14   Mean   :21.154   Mean   :13.468     Mean   :71.91  
+ Oceania      : 0   3rd Qu.:30.220   3rd Qu.:15.408     3rd Qu.:77.56  
+ South America:10   Max.   :46.558   Max.   :19.763     Max.   :83.79  
+ milk_consumption_pc
+ Min.   :  0.2326   
+ 1st Qu.: 19.3363   
+ Median : 73.4894   
+ Mean   : 93.6080   
+ 3rd Qu.:148.1468   
+ Max.   :345.5473   </code></pre>
+</div>
+</div>
+<p>A partir dessa análise inicial, é possível notar que a variável categórica <code>Continent</code> não está balanceada em número de observações. Por exemplo, enquanto a o continente <code>Europe</code> possui 40 observações, o continente <code>South_America</code> só possui 10. Para melhorar o balanceamento, as observações realizadas em <code>North_America</code> e <code>South_America</code> serão unificados para uma nova variável <code>America</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb260"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb260-1"><a href="#cb260-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Juntando os dados referentes às Américas do Norte e Sul</span></span>
+<span id="cb260-2"><a href="#cb260-2" aria-hidden="true" tabindex="-1"></a>model1_data <span class="ot">&lt;-</span> model1_data <span class="sc">%&gt;%</span></span>
+<span id="cb260-3"><a href="#cb260-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">continent =</span> dplyr<span class="sc">::</span><span class="fu">recode</span>(continent, <span class="st">"North America"</span> <span class="ot">=</span> <span class="st">"America"</span>, <span class="st">"South America"</span> <span class="ot">=</span> <span class="st">"America"</span>))</span>
+<span id="cb260-4"><a href="#cb260-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb260-5"><a href="#cb260-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model1_data)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   continent    birth_rate     expected_schooling life_expectancy
+ Africa :40   Min.   : 7.948   Min.   : 5.918     Min.   :51.59  
+ Asia   :34   1st Qu.:11.538   1st Qu.:11.535     1st Qu.:65.49  
+ Europe :40   Median :18.753   Median :13.570     Median :73.24  
+ America:24   Mean   :21.154   Mean   :13.468     Mean   :71.91  
+ Oceania: 0   3rd Qu.:30.220   3rd Qu.:15.408     3rd Qu.:77.56  
+              Max.   :46.558   Max.   :19.763     Max.   :83.79  
+ milk_consumption_pc
+ Min.   :  0.2326   
+ 1st Qu.: 19.3363   
+ Median : 73.4894   
+ Mean   : 93.6080   
+ 3rd Qu.:148.1468   
+ Max.   :345.5473   </code></pre>
+</div>
 </div>
 </section>
-</section>
-<section id="criando-o-modelo-de-regressão" class="level1">
-<h1>Criando o modelo de regressão</h1>
+<section id="criando-o-modelo-de-regressão" class="level3">
+<h3 class="anchored" data-anchor-id="criando-o-modelo-de-regressão">Criando o modelo de regressão</h3>
+<p>Com os dados preparados, gera-se a matriz de gráficos de dispersão para verificar as relações par-a-par entre as variáveis.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb258"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb258-1"><a href="#cb258-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Gráfico de dispersão dos dados</span></span>
-<span id="cb258-2"><a href="#cb258-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(model1_data)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb262"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb262-1"><a href="#cb262-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Gráfico de dispersão dos dados</span></span>
+<span id="cb262-2"><a href="#cb262-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(model1_data)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="DENYS-DERLIAN_JOAO-VIEIRA_RAFAEL-ROCHA_EXERCICIO-S07_files/figure-html/unnamed-chunk-71-1.png" class="img-fluid" width="672"></p>
+<p><img src="DENYS-DERLIAN_JOAO-VIEIRA_RAFAEL-ROCHA_EXERCICIO-S07_files/figure-html/unnamed-chunk-73-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-</section>
-<section id="verificando-correlação-entre-as-variáveis-explicativas" class="level1">
-<h1>Verificando correlação entre as variáveis explicativas</h1>
+<p>A partir de uma análise inicial, é possível observar que as variáveis <code>milk_consumption_pc</code> e <code>life_expectancy</code> não aparentam possuir uma relação linear. Isto posto, pode-se tentar uma transformação da variável <code>milk_conumption_pc</code>. Para tanto, pode ser analisada se alguma transformação do tipo <span class="math inline">\(Y' = Y^\lambda\)</span> melhoraria a relação linear utilizando o procedimento Box-Cox:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb259"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb259-1"><a href="#cb259-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(model1_data<span class="sc">$</span>birth_rate,model1_data<span class="sc">$</span>expected_schooling)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb263"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb263-1"><a href="#cb263-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Transformação Box-Cox</span></span>
+<span id="cb263-2"><a href="#cb263-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(MASS)</span>
+<span id="cb263-3"><a href="#cb263-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb263-4"><a href="#cb263-4" aria-hidden="true" tabindex="-1"></a>bc_milk <span class="ot">&lt;-</span> <span class="fu">boxcox</span>(<span class="fu">lm</span>(milk_consumption_pc <span class="sc">~</span> life_expectancy, <span class="at">data =</span> model1_data),</span>
+<span id="cb263-5"><a href="#cb263-5" aria-hidden="true" tabindex="-1"></a>             <span class="at">lambda =</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="dv">2</span>, <span class="at">by =</span> <span class="fl">0.1</span>), <span class="at">plotit =</span> <span class="cn">TRUE</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="DENYS-DERLIAN_JOAO-VIEIRA_RAFAEL-ROCHA_EXERCICIO-S07_files/figure-html/unnamed-chunk-74-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb264"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb264-1"><a href="#cb264-1" aria-hidden="true" tabindex="-1"></a>lambda_milk <span class="ot">&lt;-</span> bc_milk<span class="sc">$</span>x[<span class="fu">which.max</span>(bc_milk<span class="sc">$</span>y)]</span>
+<span id="cb264-2"><a href="#cb264-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(lambda_milk)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>0.3434343</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb266"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb266-1"><a href="#cb266-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">'</span><span class="sc">\n</span><span class="st">'</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Assim, aplica-se a transformação da variável para melhorar a aproximação linear entre as variáveis.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb267"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb267-1"><a href="#cb267-1" aria-hidden="true" tabindex="-1"></a>model1_data <span class="ot">&lt;-</span> model1_data <span class="sc">|&gt;</span></span>
+<span id="cb267-2"><a href="#cb267-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">new_milk_consumption_pc  =</span> milk_consumption_pc<span class="sc">^</span>lambda_milk)</span>
+<span id="cb267-3"><a href="#cb267-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb267-4"><a href="#cb267-4" aria-hidden="true" tabindex="-1"></a>model1_data <span class="ot">&lt;-</span> model1_data[, <span class="sc">-</span><span class="fu">c</span>(<span class="dv">5</span>)]</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Após, gera-se a nova matriz de gráficos de dispersão:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb268"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb268-1"><a href="#cb268-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Gráfico de dispersão dos dados</span></span>
+<span id="cb268-2"><a href="#cb268-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(model1_data)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="DENYS-DERLIAN_JOAO-VIEIRA_RAFAEL-ROCHA_EXERCICIO-S07_files/figure-html/unnamed-chunk-77-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Após esse procedimento, percebe-se que a variável <code>new_milk_consumption_pc</code> possui uma relação mais próxima de linear que <code>milk_consumption_pc</code> com a variável resposta <code>life_expectancy</code>. Outrossim, as demais variáveis quantitativas apresentam uma relação próxima da linear entre si. A partir daí, pode-se pensar num modelo de segunda ordem para as variáveis quantitativas conforme abaixo:</p>
+<p>\[E[life\_expectancy] = \beta_0 + \beta_1 new\_milk\_consumption\_pc + \beta_{11} new\_milk\_consumption\_pc^2 + \beta_2 birth\_rate + \beta_{22} birth\_rate^2 + \beta_3 expected\_schooling + \beta_{33} expected\_schooling^2 + \beta_{12} new\_milk\_consumption\_pc \cdot birth\_rate +\beta_{13} new\_milk\_consumption\_pc cdot expected\_schooling+ \beta_{23} birth\_rate \cdot expected\_schooling\]</p>
+</section>
+<section id="verificando-correlação-entre-as-variáveis-explicativas" class="level3">
+<h3 class="anchored" data-anchor-id="verificando-correlação-entre-as-variáveis-explicativas">Verificando correlação entre as variáveis explicativas</h3>
+<p>A partir da idealização do modelo acima, pode-se verificar a relação linear entre as variáveis explicativas de primeira ordem:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb269"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb269-1"><a href="#cb269-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(model1_data<span class="sc">$</span>birth_rate, model1_data<span class="sc">$</span>expected_schooling)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] -0.8168797</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb261"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb261-1"><a href="#cb261-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(model1_data<span class="sc">$</span>birth_rate,model1_data<span class="sc">$</span>milk_consumption_pc)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb271"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb271-1"><a href="#cb271-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(model1_data<span class="sc">$</span>birth_rate, model1_data<span class="sc">$</span>new_milk_consumption_pc)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] -0.5756859</code></pre>
+<pre><code>[1] -0.610679</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb263"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb263-1"><a href="#cb263-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(model1_data<span class="sc">$</span>expected_schooling,model1_data<span class="sc">$</span>milk_consumption_pc)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb273"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb273-1"><a href="#cb273-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(model1_data<span class="sc">$</span>expected_schooling, model1_data<span class="sc">$</span>new_milk_consumption_pc)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.6317135</code></pre>
+<pre><code>[1] 0.621062</code></pre>
 </div>
 </div>
-<p>É possível perceber que existe correlação entre as variáveis explicativas. A correlação mais forte é entre as variáveis “birth_rate” e “expected_schooling”.</p>
-<p>Verificando correlação entre termos quadráticos e lineares das variáveis explicativas</p>
-<p>Para a variável <code>birth_rate</code></p>
+<p>É possível perceber que existe correlação entre as variáveis explicativas. A correlação mais forte é entre as variáveis <code>birth_rate</code> e <code>expected_schooling</code>. Agora, verificando correlação entre termos quadráticos e lineares das variáveis explicativas</p>
+<p>Para a variável <code>birth_rate</code>:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb265"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb265-1"><a href="#cb265-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Correlação para birth rate</span></span>
-<span id="cb265-2"><a href="#cb265-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(model1_data<span class="sc">$</span>birth_rate, model1_data<span class="sc">$</span>birth_rate<span class="sc">^</span><span class="dv">2</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb275"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb275-1"><a href="#cb275-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Correlação para birth rate</span></span>
+<span id="cb275-2"><a href="#cb275-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(model1_data<span class="sc">$</span>birth_rate, model1_data<span class="sc">$</span>birth_rate<span class="sc">^</span><span class="dv">2</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.9814778</code></pre>
 </div>
 </div>
 <p>Para a variável <code>expected_schooling</code></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb267"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb267-1"><a href="#cb267-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Correlação para expected schooling</span></span>
-<span id="cb267-2"><a href="#cb267-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(model1_data<span class="sc">$</span>expected_schooling, model1_data<span class="sc">$</span>expected_schooling<span class="sc">^</span><span class="dv">2</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb277"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb277-1"><a href="#cb277-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Correlação para expected schooling</span></span>
+<span id="cb277-2"><a href="#cb277-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(model1_data<span class="sc">$</span>expected_schooling, model1_data<span class="sc">$</span>expected_schooling<span class="sc">^</span><span class="dv">2</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.9908</code></pre>
 </div>
 </div>
-<p>Para a variável <code>milk_consumption_pc</code></p>
+<p>Para a variável transformada <code>new_milk_consumption_pc</code></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb269"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb269-1"><a href="#cb269-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Correlação para milk_consumption_pc</span></span>
-<span id="cb269-2"><a href="#cb269-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(model1_data<span class="sc">$</span>milk_consumption_pc, model1_data<span class="sc">$</span>milk_consumption_pc<span class="sc">^</span><span class="dv">2</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb279"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb279-1"><a href="#cb279-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Correlação para a variavel transformada de milk_consumption_pc</span></span>
+<span id="cb279-2"><a href="#cb279-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(model1_data<span class="sc">$</span>new_milk_consumption_pc, model1_data<span class="sc">$</span>new_milk_consumption_pc<span class="sc">^</span><span class="dv">2</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.9401298</code></pre>
+<pre><code>[1] 0.9789419</code></pre>
 </div>
 </div>
-<p>Conclui-se que para todas as três variáveis quantitativas do modelo a correlação entre seus valores lineares e seus valores quadráticos é muito elevada. Para diminuir esse efeito no modelo, centraliza-se as variáveis explicativas antes da construção do modelo.</p>
-<p>Gráficos de dispersão das variaveis explicativas com seus quadrados</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb271"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb271-1"><a href="#cb271-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(model1_data , <span class="fu">aes</span>(<span class="at">x =</span> birth_rate, <span class="at">y =</span> birth_rate<span class="sc">^</span><span class="dv">2</span>)) <span class="sc">+</span> </span>
-<span id="cb271-2"><a href="#cb271-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="DENYS-DERLIAN_JOAO-VIEIRA_RAFAEL-ROCHA_EXERCICIO-S07_files/figure-html/unnamed-chunk-78-1.png" class="img-fluid" width="672"></p>
+<p>Conclui-se que para todas as variáveis quantitativas do modelo a correlação entre seus valores lineares e seus valores quadráticos é elevada. Para diminuir esse efeito no modelo, centraliza-se as variáveis explicativas antes da construção do modelo.</p>
+<p>Gráficos de dispersão das variáveis explicativas com seus quadrados</p>
+<div class="cell quarto-layout-panel">
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="DENYS-DERLIAN_JOAO-VIEIRA_RAFAEL-ROCHA_EXERCICIO-S07_files/figure-html/unnamed-chunk-84-1.png" class="img-fluid" width="672"></p>
 </div>
-<div class="sourceCode cell-code" id="cb272"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb272-1"><a href="#cb272-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(model1_data, <span class="fu">aes</span>(<span class="at">x =</span> expected_schooling, <span class="at">y =</span> expected_schooling<span class="sc">^</span><span class="dv">2</span>)) <span class="sc">+</span> </span>
-<span id="cb272-2"><a href="#cb272-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="DENYS-DERLIAN_JOAO-VIEIRA_RAFAEL-ROCHA_EXERCICIO-S07_files/figure-html/unnamed-chunk-78-2.png" class="img-fluid" width="672"></p>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="DENYS-DERLIAN_JOAO-VIEIRA_RAFAEL-ROCHA_EXERCICIO-S07_files/figure-html/unnamed-chunk-84-2.png" class="img-fluid" width="672"></p>
 </div>
-<div class="sourceCode cell-code" id="cb273"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb273-1"><a href="#cb273-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(model1_data, <span class="fu">aes</span>(<span class="at">x =</span> milk_consumption_pc, <span class="at">y =</span> milk_consumption_pc<span class="sc">^</span><span class="dv">2</span>)) <span class="sc">+</span> </span>
-<span id="cb273-2"><a href="#cb273-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="DENYS-DERLIAN_JOAO-VIEIRA_RAFAEL-ROCHA_EXERCICIO-S07_files/figure-html/unnamed-chunk-78-3.png" class="img-fluid" width="672"></p>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="DENYS-DERLIAN_JOAO-VIEIRA_RAFAEL-ROCHA_EXERCICIO-S07_files/figure-html/unnamed-chunk-84-3.png" class="img-fluid" width="672"></p>
+</div>
 </div>
 </div>
 <p>É possível perceber que apesar do aspecto quadrático dos pontos, a variação é monotônica e possui caráter aproximadamente linear. Assim, as variáveis explicativas foram centralizadas.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb274"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb274-1"><a href="#cb274-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Criando variáveis quantitativas centralizadas</span></span>
-<span id="cb274-2"><a href="#cb274-2" aria-hidden="true" tabindex="-1"></a>model1_data <span class="ot">&lt;-</span> model1_data <span class="sc">%&gt;%</span></span>
-<span id="cb274-3"><a href="#cb274-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span> (<span class="at">birth_rate_c =</span> birth_rate <span class="sc">-</span> <span class="fu">mean</span>(birth_rate),</span>
-<span id="cb274-4"><a href="#cb274-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">expected_schooling_c =</span> expected_schooling <span class="sc">-</span> <span class="fu">mean</span>(expected_schooling),</span>
-<span id="cb274-5"><a href="#cb274-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">milk_consumption_pc_c =</span> milk_consumption_pc <span class="sc">-</span> <span class="fu">mean</span>(milk_consumption_pc))</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb281"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb281-1"><a href="#cb281-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Criando variáveis quantitativas centralizadas</span></span>
+<span id="cb281-2"><a href="#cb281-2" aria-hidden="true" tabindex="-1"></a>model1_data <span class="ot">&lt;-</span> model1_data <span class="sc">%&gt;%</span></span>
+<span id="cb281-3"><a href="#cb281-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
+<span id="cb281-4"><a href="#cb281-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">birth_rate_c =</span> birth_rate <span class="sc">-</span> <span class="fu">mean</span>(birth_rate),</span>
+<span id="cb281-5"><a href="#cb281-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">expected_schooling_c =</span> expected_schooling <span class="sc">-</span> <span class="fu">mean</span>(expected_schooling),</span>
+<span id="cb281-6"><a href="#cb281-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">new_milk_consumption_pc_c =</span> new_milk_consumption_pc <span class="sc">-</span> <span class="fu">mean</span>(new_milk_consumption_pc)</span>
+<span id="cb281-7"><a href="#cb281-7" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Verificando novamente as correlações</p>
-<p>Para a variável <code>birth_rate_c</code></p>
+<p>Para a variável <code>birth_rate_c</code>:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb275"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb275-1"><a href="#cb275-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Correlação para birth rate</span></span>
-<span id="cb275-2"><a href="#cb275-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(model1_data<span class="sc">$</span>birth_rate_c, model1_data<span class="sc">$</span>birth_rate_c<span class="sc">^</span><span class="dv">2</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb282"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb282-1"><a href="#cb282-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Correlação para birth rate</span></span>
+<span id="cb282-2"><a href="#cb282-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(model1_data<span class="sc">$</span>birth_rate_c, model1_data<span class="sc">$</span>birth_rate_c<span class="sc">^</span><span class="dv">2</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.5754585</code></pre>
 </div>
 </div>
-<p>Para a variável <code>expected_schooling_c</code></p>
+<p>Para a variável <code>expected_schooling_c</code>:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb277"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb277-1"><a href="#cb277-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Correlação para expected schooling</span></span>
-<span id="cb277-2"><a href="#cb277-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(model1_data<span class="sc">$</span>expected_schooling_c, model1_data<span class="sc">$</span>expected_schooling_c<span class="sc">^</span><span class="dv">2</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb284"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb284-1"><a href="#cb284-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Correlação para expected schooling</span></span>
+<span id="cb284-2"><a href="#cb284-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(model1_data<span class="sc">$</span>expected_schooling_c, model1_data<span class="sc">$</span>expected_schooling_c<span class="sc">^</span><span class="dv">2</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] -0.1253899</code></pre>
 </div>
 </div>
-<p>Para a variável <code>milk_consumption_pc_c</code></p>
+<p>Para a variável <code>new_milk_consumption_pc_c</code>:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb279"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb279-1"><a href="#cb279-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Correlação para milk_consumption_pc</span></span>
-<span id="cb279-2"><a href="#cb279-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(model1_data<span class="sc">$</span>milk_consumption_pc_c, model1_data<span class="sc">$</span>milk_consumption_pc_c<span class="sc">^</span><span class="dv">2</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb286"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb286-1"><a href="#cb286-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Correlação para a variavel transformada de milk_consumption_pc</span></span>
+<span id="cb286-2"><a href="#cb286-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(model1_data<span class="sc">$</span>new_milk_consumption_pc_c, model1_data<span class="sc">$</span>new_milk_consumption_pc_c<span class="sc">^</span><span class="dv">2</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.6208407</code></pre>
+<pre><code>[1] -0.1553723</code></pre>
 </div>
 </div>
 <p>É possível observar que as correlações entre os termos lineares e quadráticos diminuíram para todas as variáveis explicativas quantitativas do modelo após centralizadas pela média dos valores.</p>
 <p>Assim, os gráficos de dispersão das variáveis explicativas centralizadas com seus respectivos quadrados são dados por:</p>
+<div class="cell quarto-layout-panel">
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="DENYS-DERLIAN_JOAO-VIEIRA_RAFAEL-ROCHA_EXERCICIO-S07_files/figure-html/unnamed-chunk-89-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="DENYS-DERLIAN_JOAO-VIEIRA_RAFAEL-ROCHA_EXERCICIO-S07_files/figure-html/unnamed-chunk-89-2.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="DENYS-DERLIAN_JOAO-VIEIRA_RAFAEL-ROCHA_EXERCICIO-S07_files/figure-html/unnamed-chunk-89-3.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</div>
+<p>É possível perceber que, ao centralizar as variáveis explicativas, o perfil parabólico do gráfico de dispersão se torna mais acentuado, mostrando de forma qualitativa que a correlação linear entre as variáveis diminuiu. Verificando novamente os coeficientes de correlação obtém-se:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb281"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb281-1"><a href="#cb281-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(model1_data , <span class="fu">aes</span>(<span class="at">x =</span> birth_rate_c, <span class="at">y =</span> birth_rate_c<span class="sc">^</span><span class="dv">2</span>)) <span class="sc">+</span> </span>
-<span id="cb281-2"><a href="#cb281-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="DENYS-DERLIAN_JOAO-VIEIRA_RAFAEL-ROCHA_EXERCICIO-S07_files/figure-html/unnamed-chunk-83-1.png" class="img-fluid" width="672"></p>
-</div>
-<div class="sourceCode cell-code" id="cb282"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb282-1"><a href="#cb282-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(model1_data, <span class="fu">aes</span>(<span class="at">x =</span> expected_schooling_c, <span class="at">y =</span> expected_schooling_c<span class="sc">^</span><span class="dv">2</span>)) <span class="sc">+</span> </span>
-<span id="cb282-2"><a href="#cb282-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="DENYS-DERLIAN_JOAO-VIEIRA_RAFAEL-ROCHA_EXERCICIO-S07_files/figure-html/unnamed-chunk-83-2.png" class="img-fluid" width="672"></p>
-</div>
-<div class="sourceCode cell-code" id="cb283"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb283-1"><a href="#cb283-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(model1_data, <span class="fu">aes</span>(<span class="at">x =</span> milk_consumption_pc_c, <span class="at">y =</span> milk_consumption_pc_c<span class="sc">^</span><span class="dv">2</span>)) <span class="sc">+</span> </span>
-<span id="cb283-2"><a href="#cb283-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="DENYS-DERLIAN_JOAO-VIEIRA_RAFAEL-ROCHA_EXERCICIO-S07_files/figure-html/unnamed-chunk-83-3.png" class="img-fluid" width="672"></p>
-</div>
-</div>
-<p>É possível pereber que ao centralizar as variáveis explicativas, o perfil parabólico do gráfico de dispersão se torna mais acentuado, mostrando de forma qualitativa que a correlação linear entre as variáveis diminuiu. Verificando novamente os coeficientes de correlação obtém-se:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb284"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb284-1"><a href="#cb284-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(model1_data<span class="sc">$</span>birth_rate_c,model1_data<span class="sc">$</span>expected_schooling_c)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb288"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb288-1"><a href="#cb288-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(model1_data<span class="sc">$</span>birth_rate_c, model1_data<span class="sc">$</span>expected_schooling_c)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] -0.8168797</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb286"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb286-1"><a href="#cb286-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(model1_data<span class="sc">$</span>birth_rate_c,model1_data<span class="sc">$</span>milk_consumption_pc_c)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb290"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb290-1"><a href="#cb290-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(model1_data<span class="sc">$</span>birth_rate_c, model1_data<span class="sc">$</span>new_milk_consumption_pc_c)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] -0.5756859</code></pre>
+<pre><code>[1] -0.610679</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb288"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb288-1"><a href="#cb288-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(model1_data<span class="sc">$</span>expected_schooling_c,model1_data<span class="sc">$</span>milk_consumption_pc_c)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb292"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb292-1"><a href="#cb292-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(model1_data<span class="sc">$</span>expected_schooling_c, model1_data<span class="sc">$</span>new_milk_consumption_pc_c)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.6317135</code></pre>
+<pre><code>[1] 0.621062</code></pre>
 </div>
 </div>
-<p>As correlações entre as variáveis explicativas permanecem inalteradas, mostrando que a centralização das variáveis não diminui suas correlações entre si.</p>
-<section id="criando-o-modelo-de-regressão-1" class="level2">
-<h2 class="anchored" data-anchor-id="criando-o-modelo-de-regressão-1">Criando o modelo de regressão</h2>
+</section>
+<section id="criando-o-modelo-de-regressão-1" class="level3">
+<h3 class="anchored" data-anchor-id="criando-o-modelo-de-regressão-1">Criando o modelo de regressão</h3>
+<p>A partir da preparação dos dados feita até então, incluindo a sua centralização, o modelo polinomial de ordem 2 é ajustado considerando as variáveis explicativas e suas interações, conforme modelo descrito anteriormente:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb290"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb290-1"><a href="#cb290-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Modelo de regressão linear com as variáveis explicativas "birth_rate_c", "expected_schooling_c" e "milk_consumption_pc_c"</span></span>
-<span id="cb290-2"><a href="#cb290-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb290-3"><a href="#cb290-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Modelo polinomial de segunda ordem completo com as variáveis quantitativas</span></span>
-<span id="cb290-4"><a href="#cb290-4" aria-hidden="true" tabindex="-1"></a>model1_quant <span class="ot">&lt;-</span> <span class="fu">lm</span>(life_expectancy <span class="sc">~</span> <span class="fu">I</span>(birth_rate_c<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> <span class="fu">I</span>(expected_schooling_c<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> <span class="fu">I</span>(milk_consumption_pc_c<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> birth_rate_c<span class="sc">*</span>expected_schooling_c <span class="sc">+</span> birth_rate_c<span class="sc">*</span>milk_consumption_pc_c <span class="sc">+</span> expected_schooling_c<span class="sc">*</span>milk_consumption_pc_c, <span class="at">data =</span> model1_data )</span>
-<span id="cb290-5"><a href="#cb290-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb290-6"><a href="#cb290-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb290-7"><a href="#cb290-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model1_quant)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb294"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb294-1"><a href="#cb294-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Modelo de regressão linear com as variáveis explicativas "birth_rate_c", "expected_schooling_c" e "milk_consumption_pc_c"</span></span>
+<span id="cb294-2"><a href="#cb294-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb294-3"><a href="#cb294-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Modelo polinomial de segunda ordem completo com as variáveis quantitativas</span></span>
+<span id="cb294-4"><a href="#cb294-4" aria-hidden="true" tabindex="-1"></a>model1_quant <span class="ot">&lt;-</span> <span class="fu">lm</span>(</span>
+<span id="cb294-5"><a href="#cb294-5" aria-hidden="true" tabindex="-1"></a>    life_expectancy <span class="sc">~</span> <span class="fu">I</span>(birth_rate_c<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> <span class="fu">I</span>(expected_schooling_c<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> <span class="fu">I</span>(new_milk_consumption_pc_c<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> birth_rate_c <span class="sc">*</span> expected_schooling_c <span class="sc">+</span> birth_rate_c <span class="sc">*</span> new_milk_consumption_pc_c <span class="sc">+</span> expected_schooling_c <span class="sc">*</span> new_milk_consumption_pc_c, <span class="at">data =</span> model1_data)</span>
+<span id="cb294-6"><a href="#cb294-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb294-7"><a href="#cb294-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb294-8"><a href="#cb294-8" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model1_quant)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
 lm(formula = life_expectancy ~ I(birth_rate_c^2) + I(expected_schooling_c^2) + 
-    I(milk_consumption_pc_c^2) + birth_rate_c * expected_schooling_c + 
-    birth_rate_c * milk_consumption_pc_c + expected_schooling_c * 
-    milk_consumption_pc_c, data = model1_data)
+    I(new_milk_consumption_pc_c^2) + birth_rate_c * expected_schooling_c + 
+    birth_rate_c * new_milk_consumption_pc_c + expected_schooling_c * 
+    new_milk_consumption_pc_c, data = model1_data)
 
 Residuals:
     Min      1Q  Median      3Q     Max 
--8.0222 -1.9207  0.3084  1.8037  7.2864 
+-8.4528 -1.8119  0.1181  1.8709  7.4483 
 
 Coefficients:
-                                             Estimate Std. Error t value
-(Intercept)                                 7.204e+01  5.157e-01 139.701
-I(birth_rate_c^2)                          -3.239e-04  6.710e-03  -0.048
-I(expected_schooling_c^2)                   6.742e-02  8.306e-02   0.812
-I(milk_consumption_pc_c^2)                  5.421e-06  4.469e-05   0.121
-birth_rate_c                               -4.417e-01  5.340e-02  -8.272
-expected_schooling_c                        7.289e-01  1.787e-01   4.079
-milk_consumption_pc_c                       9.400e-03  5.664e-03   1.660
-birth_rate_c:expected_schooling_c          -3.246e-03  3.877e-02  -0.084
-birth_rate_c:milk_consumption_pc_c          1.585e-03  8.695e-04   1.823
-expected_schooling_c:milk_consumption_pc_c  2.520e-04  2.920e-03   0.086
-                                           Pr(&gt;|t|)    
-(Intercept)                                 &lt; 2e-16 ***
-I(birth_rate_c^2)                            0.9616    
-I(expected_schooling_c^2)                    0.4185    
-I(milk_consumption_pc_c^2)                   0.9036    
-birth_rate_c                               1.47e-13 ***
-expected_schooling_c                       7.90e-05 ***
-milk_consumption_pc_c                        0.0994 .  
-birth_rate_c:expected_schooling_c            0.9334    
-birth_rate_c:milk_consumption_pc_c           0.0706 .  
-expected_schooling_c:milk_consumption_pc_c   0.9313    
+                                                 Estimate Std. Error t value
+(Intercept)                                    72.1347614  0.5163284 139.707
+I(birth_rate_c^2)                               0.0002161  0.0069550   0.031
+I(expected_schooling_c^2)                       0.0824796  0.0779637   1.058
+I(new_milk_consumption_pc_c^2)                 -0.0491830  0.1301542  -0.378
+birth_rate_c                                   -0.4401043  0.0517446  -8.505
+expected_schooling_c                            0.7882217  0.1785360   4.415
+new_milk_consumption_pc_c                       0.3235650  0.2239050   1.445
+birth_rate_c:expected_schooling_c               0.0054610  0.0380974   0.143
+birth_rate_c:new_milk_consumption_pc_c          0.0480467  0.0395207   1.216
+expected_schooling_c:new_milk_consumption_pc_c -0.0410547  0.1500131  -0.274
+                                               Pr(&gt;|t|)    
+(Intercept)                                     &lt; 2e-16 ***
+I(birth_rate_c^2)                                 0.975    
+I(expected_schooling_c^2)                         0.292    
+I(new_milk_consumption_pc_c^2)                    0.706    
+birth_rate_c                                   4.09e-14 ***
+expected_schooling_c                           2.13e-05 ***
+new_milk_consumption_pc_c                         0.151    
+birth_rate_c:expected_schooling_c                 0.886    
+birth_rate_c:new_milk_consumption_pc_c            0.226    
+expected_schooling_c:new_milk_consumption_pc_c    0.785    
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 3.129 on 128 degrees of freedom
-Multiple R-squared:  0.8477,    Adjusted R-squared:  0.8369 
-F-statistic: 79.13 on 9 and 128 DF,  p-value: &lt; 2.2e-16</code></pre>
+Residual standard error: 3.076 on 128 degrees of freedom
+Multiple R-squared:  0.8528,    Adjusted R-squared:  0.8424 
+F-statistic: 82.38 on 9 and 128 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<p>Com o modelo geral concebido, é possível verificar que ele é significativo (passa no teste-F global com valor-p da ordem de e-16) e o coeficiente de determinação indica que aproximadamente 85.3% da variabilidade na resposta é explicada pelo modelo (não há grande diferença entre R<sup>2</sup> e R<sup>2</sup> ajustado). No entanto, após algumas inspeções com o teste ANOVA, verifica-se que os seguintes termos não são significativos e podem ser removidos: <code>birth_rate_c^2</code>, <code>expected_schooling^2</code>, <code>new_milk_consumption_pc_c^2</code>, <code>birth_rate_c:expected_schooling_c</code>, <code>expected_schooling_c:new_milk_consumption_pc_c</code>.</p>
+<p>A partir dessa análise, pode-se construir um modelo reduzido, removendo os termos não significativos para o modelo, chegando-se à expressão:</p>
+<p><span class="math inline">\(E[life\_expectancy] = \beta_0 + \beta_1 new\_milk\_consumption\_pc\_c + \beta_2 birth\_rate + \beta_3 expected\_schooling + \beta_{12}new\_milk\_consumption\_pc\cdot birth\_rate\)</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb296"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb296-1"><a href="#cb296-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Modelo reduzido</span></span>
+<span id="cb296-2"><a href="#cb296-2" aria-hidden="true" tabindex="-1"></a>model1_quant_red <span class="ot">&lt;-</span> <span class="fu">lm</span>(</span>
+<span id="cb296-3"><a href="#cb296-3" aria-hidden="true" tabindex="-1"></a>    life_expectancy <span class="sc">~</span> new_milk_consumption_pc_c <span class="sc">+</span> birth_rate_c <span class="sc">+</span> expected_schooling_c <span class="sc">+</span> new_milk_consumption_pc_c <span class="sc">*</span> birth_rate_c, <span class="at">data =</span> model1_data)</span>
+<span id="cb296-4"><a href="#cb296-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb296-5"><a href="#cb296-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb296-6"><a href="#cb296-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model1_quant_red)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = life_expectancy ~ new_milk_consumption_pc_c + birth_rate_c + 
+    expected_schooling_c + new_milk_consumption_pc_c * birth_rate_c, 
+    data = model1_data)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-8.7368 -1.9475  0.3189  1.7752  7.1324 
+
+Coefficients:
+                                       Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)                            72.51144    0.32932 220.185  &lt; 2e-16 ***
+new_milk_consumption_pc_c               0.50117    0.20211   2.480  0.01440 *  
+birth_rate_c                           -0.40941    0.04914  -8.332 8.62e-14 ***
+expected_schooling_c                    0.77729    0.17269   4.501 1.46e-05 ***
+new_milk_consumption_pc_c:birth_rate_c  0.05524    0.01814   3.045  0.00281 ** 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 3.083 on 133 degrees of freedom
+Multiple R-squared:  0.8463,    Adjusted R-squared:  0.8417 
+F-statistic: 183.1 on 4 and 133 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<p>O modelo reduzido é significativo (passa no teste-F global com valor-p da ordem de e-16). Todos os coeficientes são significativos e o coeficiente de determinação indica que aproximadamente 82.9% da variabilidade na resposta é explicada pelo modelo (não há grande diferença, se comparado ao coeficiente de determinação ajustado).</p>
+<p>Também é possível comparar o modelo completo ao reduzido utilizando a abordagem do teste linear geral. As hipóteses sendo testadas na comparação dos modelos aninhados são as seguintes:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb298"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb298-1"><a href="#cb298-1" aria-hidden="true" tabindex="-1"></a><span class="co"># teste-F</span></span>
+<span id="cb298-2"><a href="#cb298-2" aria-hidden="true" tabindex="-1"></a><span class="co"># H_0: Betas(11, 22, 33, 13 e 23) == 0</span></span>
+<span id="cb298-3"><a href="#cb298-3" aria-hidden="true" tabindex="-1"></a><span class="co"># H_a: Nem todos são nulos</span></span>
+<span id="cb298-4"><a href="#cb298-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb298-5"><a href="#cb298-5" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model1_quant_red, model1_quant, <span class="at">test=</span><span class="st">"F"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Variance Table
+
+Model 1: life_expectancy ~ new_milk_consumption_pc_c + birth_rate_c + 
+    expected_schooling_c + new_milk_consumption_pc_c * birth_rate_c
+Model 2: life_expectancy ~ I(birth_rate_c^2) + I(expected_schooling_c^2) + 
+    I(new_milk_consumption_pc_c^2) + birth_rate_c * expected_schooling_c + 
+    birth_rate_c * new_milk_consumption_pc_c + expected_schooling_c * 
+    new_milk_consumption_pc_c
+  Res.Df    RSS Df Sum of Sq      F Pr(&gt;F)
+1    133 1264.5                           
+2    128 1211.3  5    53.221 1.1248 0.3506</code></pre>
+</div>
+</div>
+<p>Como o resultado da comparação é não-significativo (valor-p &gt; 0.05), a hipótese nula não pode ser rejeitada e, portanto, conclui-se que os termos eliminados do modelo completo são estatisticamente iguais a zero.</p>
+</section>
+<section id="análise-de-resíduos" class="level3">
+<h3 class="anchored" data-anchor-id="análise-de-resíduos">Análise de Resíduos</h3>
+<p>Prosseguindo para a análise de resíduos do modelo:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb300"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb300-1"><a href="#cb300-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Constrói tabela com dados do modelo `model1_quant_red`</span></span>
+<span id="cb300-2"><a href="#cb300-2" aria-hidden="true" tabindex="-1"></a>model1_quant_red_data <span class="ot">&lt;-</span> model1_data <span class="sc">%&gt;%</span></span>
+<span id="cb300-3"><a href="#cb300-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># inclui coluna com valores ajustados</span></span>
+<span id="cb300-4"><a href="#cb300-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fitted =</span> model1_quant_red<span class="sc">$</span>fit) <span class="sc">%&gt;%</span></span>
+<span id="cb300-5"><a href="#cb300-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">resid =</span> model1_quant_red<span class="sc">$</span>res)</span>
+<span id="cb300-6"><a href="#cb300-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb300-7"><a href="#cb300-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Gera gráficos dos resíduos:</span></span>
+<span id="cb300-8"><a href="#cb300-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(model1_quant_red_data, <span class="fu">aes</span>(<span class="at">x =</span> fitted, <span class="at">y =</span> resid)) <span class="sc">+</span></span>
+<span id="cb300-9"><a href="#cb300-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb300-10"><a href="#cb300-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb300-11"><a href="#cb300-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"gráfico de resíduos: modelo life_expectancy ~ new_milk_consumption_pc_c + birth_rate_c + expected_schooling_c + new_milk_consumption_pc_c * birth_rate_c"</span>) <span class="sc">+</span></span>
+<span id="cb300-12"><a href="#cb300-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"resíduos"</span>, <span class="at">x =</span> <span class="st">"resposta ajustada (life_expectancy)"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="DENYS-DERLIAN_JOAO-VIEIRA_RAFAEL-ROCHA_EXERCICIO-S07_files/figure-html/unnamed-chunk-96-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb301"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb301-1"><a href="#cb301-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Gráfico de quantis</span></span>
+<span id="cb301-2"><a href="#cb301-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(model1_quant_red_data, <span class="fu">aes</span>(<span class="at">sample =</span> resid)) <span class="sc">+</span></span>
+<span id="cb301-3"><a href="#cb301-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_qq</span>() <span class="sc">+</span> <span class="fu">stat_qq_line</span>() <span class="sc">+</span></span>
+<span id="cb301-4"><a href="#cb301-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"gráfico de quantis normais"</span>) <span class="sc">+</span></span>
+<span id="cb301-5"><a href="#cb301-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"quantis amostrais"</span>, <span class="at">x =</span> <span class="st">"quantis teóricos (dist. normal)"</span>) </span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="DENYS-DERLIAN_JOAO-VIEIRA_RAFAEL-ROCHA_EXERCICIO-S07_files/figure-html/unnamed-chunk-96-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Não parece haver variação sistemática no gráfico dos resíduos. O gráfico de quantis sugere desvio da normalidade nas extremidades. Realizando o procedimento formal de testes de hipóteses:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb302"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb302-1"><a href="#cb302-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Teste de Homoscedasticidade de Breusch-Pagan</span></span>
+<span id="cb302-2"><a href="#cb302-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Ho: sigma^2  = cte</span></span>
+<span id="cb302-3"><a href="#cb302-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Ha: sigma^2 != cte</span></span>
+<span id="cb302-4"><a href="#cb302-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb302-5"><a href="#cb302-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lmtest)</span>
+<span id="cb302-6"><a href="#cb302-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(zoo)</span>
+<span id="cb302-7"><a href="#cb302-7" aria-hidden="true" tabindex="-1"></a><span class="fu">bptest</span>(model1_quant_red)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    studentized Breusch-Pagan test
+
+data:  model1_quant_red
+BP = 4.474, df = 4, p-value = 0.3456</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb304"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb304-1"><a href="#cb304-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Teste de Normalidade de Shapiro-Wilk</span></span>
+<span id="cb304-2"><a href="#cb304-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Ho: normal</span></span>
+<span id="cb304-3"><a href="#cb304-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Ha: não-normal</span></span>
+<span id="cb304-4"><a href="#cb304-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb304-5"><a href="#cb304-5" aria-hidden="true" tabindex="-1"></a><span class="fu">shapiro.test</span>(model1_quant_red_data<span class="sc">$</span>resid)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Shapiro-Wilk normality test
+
+data:  model1_quant_red_data$resid
+W = 0.99317, p-value = 0.7515</code></pre>
+</div>
+</div>
+<p>A partir da análise do valor-p para os testes de Breusch-Pagan (0.3456) e de Shapiro-Wilk (0.7515), verifica-se que a hipótese nula não pode ser rejeitada e, para amostra de dados utilizada, podem ser consideradas as hipóteses de homoscedasticidade e normalidade.</p>
+</section>
+</section>
+<section id="inclusão-de-variáveis-qualitativas-e-suas-interações" class="level2">
+<h2 class="anchored" data-anchor-id="inclusão-de-variáveis-qualitativas-e-suas-interações">Inclusão de variáveis qualitativas e suas interações</h2>
+<p>Agora, analisa-se o impacto do modelo de regressão com a inclusão da variável categórica <code>continent</code>. Para tanto, considera-se que o modelo, além dos termos polinomiais (quadrático e linear) para as variáveis quantitativas, inclui efeitos das variável categórica <code>continent</code>. Dessa forma, o modelo geral ficaria:</p>
+<p><span class="math inline">\(E[life\_expectancy] = \beta_0 + \beta_1 new\_milk\_consumption\_pc\_c + \beta_2 birth\_rate + \beta_3 expected\_schooling + \beta_{12}new\_milk\_consumption\_pc\cdot birth\_rate + \beta_4 continent\)</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb306"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb306-1"><a href="#cb306-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Modelo reduzido</span></span>
+<span id="cb306-2"><a href="#cb306-2" aria-hidden="true" tabindex="-1"></a>model1_quali <span class="ot">&lt;-</span> <span class="fu">lm</span>(</span>
+<span id="cb306-3"><a href="#cb306-3" aria-hidden="true" tabindex="-1"></a>    life_expectancy <span class="sc">~</span> new_milk_consumption_pc_c <span class="sc">+</span> birth_rate_c <span class="sc">+</span> expected_schooling_c <span class="sc">+</span> new_milk_consumption_pc_c <span class="sc">*</span> birth_rate_c <span class="sc">+</span> continent, <span class="at">data =</span> model1_data)</span>
+<span id="cb306-4"><a href="#cb306-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb306-5"><a href="#cb306-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb306-6"><a href="#cb306-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model1_quali)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = life_expectancy ~ new_milk_consumption_pc_c + birth_rate_c + 
+    expected_schooling_c + new_milk_consumption_pc_c * birth_rate_c + 
+    continent, data = model1_data)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-7.1550 -1.8991  0.1122  1.7411  6.7742 
+
+Coefficients:
+                                       Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)                            70.89145    0.79825  88.809  &lt; 2e-16 ***
+new_milk_consumption_pc_c               0.47804    0.22655   2.110   0.0368 *  
+birth_rate_c                           -0.35284    0.06321  -5.582 1.33e-07 ***
+expected_schooling_c                    0.81538    0.17126   4.761 5.06e-06 ***
+continentAsia                           2.25825    0.97231   2.323   0.0218 *  
+continentEurope                         1.66595    1.45325   1.146   0.2538    
+continentAmerica                        2.25018    1.08970   2.065   0.0409 *  
+new_milk_consumption_pc_c:birth_rate_c  0.03796    0.02325   1.633   0.1049    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 3.045 on 130 degrees of freedom
+Multiple R-squared:  0.8535,    Adjusted R-squared:  0.8456 
+F-statistic: 108.2 on 7 and 130 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<p>Do resumo da regressão, é possível notar que o modelo é significativo (baixo valor-p para a estatística-F do teste global para a regressão), e a variável categórica contribui com informação adicional, já que o coeficiente de determinação ajustado é um pouco superior àquele do modelo sem a variável categórica. Ressalta-se que o coeficiente de <code>continentEurope</code> é o menos significativo comparado aos outros continentes. Avaliando a significância incremental das variáveis explicativas, utilizando ANOVA:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb308"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb308-1"><a href="#cb308-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Tabela ANOVA</span></span>
+<span id="cb308-2"><a href="#cb308-2" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model1_quali)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Variance Table
+
+Response: life_expectancy
+                                        Df Sum Sq Mean Sq  F value    Pr(&gt;F)
+new_milk_consumption_pc_c                1 3380.6  3380.6 364.6951 &lt; 2.2e-16
+birth_rate_c                             1 3359.1  3359.1 362.3768 &lt; 2.2e-16
+expected_schooling_c                     1  135.2   135.2  14.5843 0.0002066
+continent                                3  122.9    41.0   4.4194 0.0054002
+new_milk_consumption_pc_c:birth_rate_c   1   24.7    24.7   2.6671 0.1048603
+Residuals                              130 1205.1     9.3                   
+                                          
+new_milk_consumption_pc_c              ***
+birth_rate_c                           ***
+expected_schooling_c                   ***
+continent                              ** 
+new_milk_consumption_pc_c:birth_rate_c    
+Residuals                                 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<p>À excessão da variável <code>new_milk_consumption_pc_c:birth_rate_c</code>, todos os termos contribuem de maneira significativa (e incluídos nesta ordem) para reduzir a variabilidade da resposta. Além disso, pode-se realizar o teste ANOVA entre o modelo quando este não incluía a variável categórica e agora, incluindo a variável <code>continent</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb310"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb310-1"><a href="#cb310-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Teste ANOVA</span></span>
+<span id="cb310-2"><a href="#cb310-2" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model1_quali, model1_quant_red, <span class="at">test=</span><span class="st">"F"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Variance Table
+
+Model 1: life_expectancy ~ new_milk_consumption_pc_c + birth_rate_c + 
+    expected_schooling_c + new_milk_consumption_pc_c * birth_rate_c + 
+    continent
+Model 2: life_expectancy ~ new_milk_consumption_pc_c + birth_rate_c + 
+    expected_schooling_c + new_milk_consumption_pc_c * birth_rate_c
+  Res.Df    RSS Df Sum of Sq      F  Pr(&gt;F)  
+1    130 1205.1                              
+2    133 1264.5 -3   -59.479 2.1388 0.09845 .
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<p>De fato, o valor-p expresso para o teste F mostra que a variável <code>continent</code> agrega valor ao modelo.</p>
+</section>
+<section id="inclusão-de-termos-de-interação-entre-variáveis-quantitativas-e-qualitativas" class="level2">
+<h2 class="anchored" data-anchor-id="inclusão-de-termos-de-interação-entre-variáveis-quantitativas-e-qualitativas">Inclusão de termos de interação entre variáveis quantitativas e qualitativas</h2>
+<p>Agora, considera-se a existência de interação entre as variáveis quantitativas <code>birth_rate_c</code>, <code>expected_schooling_c</code> e <code>new_milk_consumption_pc_c</code> e a variável categórica <code>continent</code>. Inicia-se a análise visualizando se há evidências de interação entre tais variáveis. Interação entre variáveis são evidenciadas pela presença de diferentes curvas para diferentes combinações dos níveis das variáveis categóricas. Verificando graficamente se há interação entre as variáveis <code>birth_rate_c</code>, <code>expected_schooling_c</code> e <code>new_milk_consumption_pc_c</code> com a variável categórica <code>continent</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb312"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb312-1"><a href="#cb312-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(model1_data, <span class="fu">aes</span>(<span class="at">x =</span> birth_rate_c, <span class="at">y =</span> life_expectancy)) <span class="sc">+</span></span>
+<span id="cb312-2"><a href="#cb312-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># adiciona pontos </span></span>
+<span id="cb312-3"><a href="#cb312-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># (cores e símbolos distintos para diferentes valores de `continent`)</span></span>
+<span id="cb312-4"><a href="#cb312-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> continent, <span class="at">shape =</span> continent)) <span class="sc">+</span> </span>
+<span id="cb312-5"><a href="#cb312-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># adiciona retas de tendência</span></span>
+<span id="cb312-6"><a href="#cb312-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="fu">aes</span>(<span class="at">color =</span> continent), <span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb312-7"><a href="#cb312-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"`life_expectancy` x `birth_rate_c`, para diferentes níveis de `continent`"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="DENYS-DERLIAN_JOAO-VIEIRA_RAFAEL-ROCHA_EXERCICIO-S07_files/figure-html/unnamed-chunk-102-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb313"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb313-1"><a href="#cb313-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(model1_data, <span class="fu">aes</span>(<span class="at">x =</span> expected_schooling_c, <span class="at">y =</span> life_expectancy)) <span class="sc">+</span></span>
+<span id="cb313-2"><a href="#cb313-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># adiciona pontos </span></span>
+<span id="cb313-3"><a href="#cb313-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># (cores e símbolos distintos para diferentes valores de `continent`)</span></span>
+<span id="cb313-4"><a href="#cb313-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> continent, <span class="at">shape =</span> continent)) <span class="sc">+</span> </span>
+<span id="cb313-5"><a href="#cb313-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># adiciona retas de tendência</span></span>
+<span id="cb313-6"><a href="#cb313-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="fu">aes</span>(<span class="at">color =</span> continent), <span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb313-7"><a href="#cb313-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"`life_expectancy` x `expected_schooling_c`, para diferentes níveis de `continent`"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="DENYS-DERLIAN_JOAO-VIEIRA_RAFAEL-ROCHA_EXERCICIO-S07_files/figure-html/unnamed-chunk-102-2.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb314"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb314-1"><a href="#cb314-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(model1_data, <span class="fu">aes</span>(<span class="at">x =</span> new_milk_consumption_pc_c, <span class="at">y =</span> life_expectancy)) <span class="sc">+</span></span>
+<span id="cb314-2"><a href="#cb314-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># adiciona pontos </span></span>
+<span id="cb314-3"><a href="#cb314-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># (cores e símbolos distintos para diferentes valores de `continent`)</span></span>
+<span id="cb314-4"><a href="#cb314-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> continent, <span class="at">shape =</span> continent)) <span class="sc">+</span> </span>
+<span id="cb314-5"><a href="#cb314-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># adiciona retas de tendência</span></span>
+<span id="cb314-6"><a href="#cb314-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="fu">aes</span>(<span class="at">color =</span> continent), <span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb314-7"><a href="#cb314-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"`life_expectancy` x `new_milk_consumption_pc`, para diferentes níveis de `continent`"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="DENYS-DERLIAN_JOAO-VIEIRA_RAFAEL-ROCHA_EXERCICIO-S07_files/figure-html/unnamed-chunk-102-3.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Os gráficos apresentados mostram que aparentemente a interação entre as variáveis <code>birth_rate_c</code> e <code>expected_schooling_c</code> com a variável <code>continent</code> não aparentam ser relevantes, diferente para o que ocorre para a variável <code>new_milk_consumption_pc</code>, que apresenta diferentes curvas. Para definir se isso quantitativamente é adotado o procedimento a seguir, construindo o modelo contendo todas as interações possíveis:</p>
+<p><span class="math inline">\(E[life\_expectancy] = \beta_0 + \beta_1 new\_milk\_consumption\_pc\_c + \beta_2 birth\_rate + \beta_3 expected\_schooling + \beta_{12}new\_milk\_consumption\_pc\cdot birth\_rate + \beta_4 continent + \beta_{14} new\_milk\_consumption\_pc\_c \cdot continent + \beta_{24} birth\_rate \cdot continent + \beta_{34} expected\_schooling \cdot continent + \beta_{124}new\_milk\_consumption\_pc\cdot birth\_rate \cdot continent\)</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb315"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb315-1"><a href="#cb315-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Criando modelo de regressão com todas as interações possíveis</span></span>
+<span id="cb315-2"><a href="#cb315-2" aria-hidden="true" tabindex="-1"></a>model1_all <span class="ot">&lt;-</span> <span class="fu">lm</span>(</span>
+<span id="cb315-3"><a href="#cb315-3" aria-hidden="true" tabindex="-1"></a>    life_expectancy <span class="sc">~</span> new_milk_consumption_pc_c <span class="sc">+</span> birth_rate_c <span class="sc">+</span> expected_schooling_c <span class="sc">+</span> new_milk_consumption_pc_c <span class="sc">*</span> birth_rate_c <span class="sc">+</span> continent <span class="sc">+</span> continent <span class="sc">*</span> new_milk_consumption_pc_c <span class="sc">+</span> continent <span class="sc">*</span> birth_rate_c <span class="sc">+</span> continent <span class="sc">*</span> expected_schooling_c <span class="sc">+</span> continent <span class="sc">*</span> new_milk_consumption_pc_c <span class="sc">*</span> birth_rate_c, <span class="at">data =</span> model1_data </span>
+<span id="cb315-4"><a href="#cb315-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb315-5"><a href="#cb315-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb315-6"><a href="#cb315-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model1_all)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = life_expectancy ~ new_milk_consumption_pc_c + birth_rate_c + 
+    expected_schooling_c + new_milk_consumption_pc_c * birth_rate_c + 
+    continent + continent * new_milk_consumption_pc_c + continent * 
+    birth_rate_c + continent * expected_schooling_c + continent * 
+    new_milk_consumption_pc_c * birth_rate_c, data = model1_data)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-6.4112 -1.6841 -0.0907  1.5272  7.2010 
+
+Coefficients:
+                                                          Estimate Std. Error
+(Intercept)                                              70.424481   1.236799
+new_milk_consumption_pc_c                                 0.631692   1.030193
+birth_rate_c                                             -0.375333   0.160795
+expected_schooling_c                                      0.413778   0.406714
+continentAsia                                             2.607278   1.379279
+continentEurope                                         -14.482790   8.786306
+continentAmerica                                          2.797129   1.534706
+new_milk_consumption_pc_c:birth_rate_c                    0.041803   0.077027
+new_milk_consumption_pc_c:continentAsia                  -0.453146   1.085223
+new_milk_consumption_pc_c:continentEurope                 7.988105   5.407764
+new_milk_consumption_pc_c:continentAmerica                0.538835   1.412057
+birth_rate_c:continentAsia                                0.017436   0.190322
+birth_rate_c:continentEurope                             -1.463758   0.866695
+birth_rate_c:continentAmerica                            -0.010588   0.282377
+expected_schooling_c:continentAsia                        0.541526   0.525876
+expected_schooling_c:continentEurope                      0.784566   0.505677
+expected_schooling_c:continentAmerica                     0.006030   0.689666
+new_milk_consumption_pc_c:birth_rate_c:continentAsia      0.008053   0.103676
+new_milk_consumption_pc_c:birth_rate_c:continentEurope    0.770383   0.524262
+new_milk_consumption_pc_c:birth_rate_c:continentAmerica   0.042109   0.157823
+                                                        t value Pr(&gt;|t|)    
+(Intercept)                                              56.941   &lt;2e-16 ***
+new_milk_consumption_pc_c                                 0.613   0.5409    
+birth_rate_c                                             -2.334   0.0213 *  
+expected_schooling_c                                      1.017   0.3111    
+continentAsia                                             1.890   0.0612 .  
+continentEurope                                          -1.648   0.1019    
+continentAmerica                                          1.823   0.0709 .  
+new_milk_consumption_pc_c:birth_rate_c                    0.543   0.5884    
+new_milk_consumption_pc_c:continentAsia                  -0.418   0.6770    
+new_milk_consumption_pc_c:continentEurope                 1.477   0.1423    
+new_milk_consumption_pc_c:continentAmerica                0.382   0.7034    
+birth_rate_c:continentAsia                                0.092   0.9272    
+birth_rate_c:continentEurope                             -1.689   0.0939 .  
+birth_rate_c:continentAmerica                            -0.037   0.9702    
+expected_schooling_c:continentAsia                        1.030   0.3052    
+expected_schooling_c:continentEurope                      1.552   0.1235    
+expected_schooling_c:continentAmerica                     0.009   0.9930    
+new_milk_consumption_pc_c:birth_rate_c:continentAsia      0.078   0.9382    
+new_milk_consumption_pc_c:birth_rate_c:continentEurope    1.469   0.1444    
+new_milk_consumption_pc_c:birth_rate_c:continentAmerica   0.267   0.7901    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 3.065 on 118 degrees of freedom
+Multiple R-squared:  0.8653,    Adjusted R-squared:  0.8436 
+F-statistic: 39.89 on 19 and 118 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<p>O modelo é significativo (veja o valor-p da estatística-F global), porém nenhum termo de interação com a variável categórica <code>continent</code> é significativo. O coeficiente de determinação ajustado aumentou em relação ao anterior. Verificando a tabela ANOVA:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb317"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb317-1"><a href="#cb317-1" aria-hidden="true" tabindex="-1"></a><span class="co"># tabela ANOVA</span></span>
+<span id="cb317-2"><a href="#cb317-2" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model1_all)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Variance Table
+
+Response: life_expectancy
+                                                  Df Sum Sq Mean Sq  F value
+new_milk_consumption_pc_c                          1 3380.6  3380.6 359.8789
+birth_rate_c                                       1 3359.1  3359.1 357.5912
+expected_schooling_c                               1  135.2   135.2  14.3917
+continent                                          3  122.9    41.0   4.3610
+new_milk_consumption_pc_c:birth_rate_c             1   24.7    24.7   2.6319
+new_milk_consumption_pc_c:continent                3   18.6     6.2   0.6613
+birth_rate_c:continent                             3   28.0     9.3   0.9925
+expected_schooling_c:continent                     3   29.2     9.7   1.0378
+new_milk_consumption_pc_c:birth_rate_c:continent   3   20.7     6.9   0.7361
+Residuals                                        118 1108.5     9.4         
+                                                    Pr(&gt;F)    
+new_milk_consumption_pc_c                        &lt; 2.2e-16 ***
+birth_rate_c                                     &lt; 2.2e-16 ***
+expected_schooling_c                             0.0002357 ***
+continent                                        0.0059645 ** 
+new_milk_consumption_pc_c:birth_rate_c           0.1074046    
+new_milk_consumption_pc_c:continent              0.5774609    
+birth_rate_c:continent                           0.3989230    
+expected_schooling_c:continent                   0.3785690    
+new_milk_consumption_pc_c:birth_rate_c:continent 0.5325054    
+Residuals                                                     
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<p>Note que nenhum dos termos de interação com a variável categórica é significativo. Assim, pode-se verificar usando a abordagem do teste linear geral:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb319"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb319-1"><a href="#cb319-1" aria-hidden="true" tabindex="-1"></a><span class="co"># H_0: Betas(14, 24, 34, 124) = 0</span></span>
+<span id="cb319-2"><a href="#cb319-2" aria-hidden="true" tabindex="-1"></a><span class="co"># H_a: Nem todos os coeficientes são nulos</span></span>
+<span id="cb319-3"><a href="#cb319-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb319-4"><a href="#cb319-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificando a inclusao das novas alterações</span></span>
+<span id="cb319-5"><a href="#cb319-5" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model1_quali,model1_all, <span class="at">test=</span><span class="st">"F"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Variance Table
+
+Model 1: life_expectancy ~ new_milk_consumption_pc_c + birth_rate_c + 
+    expected_schooling_c + new_milk_consumption_pc_c * birth_rate_c + 
+    continent
+Model 2: life_expectancy ~ new_milk_consumption_pc_c + birth_rate_c + 
+    expected_schooling_c + new_milk_consumption_pc_c * birth_rate_c + 
+    continent + continent * new_milk_consumption_pc_c + continent * 
+    birth_rate_c + continent * expected_schooling_c + continent * 
+    new_milk_consumption_pc_c * birth_rate_c
+  Res.Df    RSS Df Sum of Sq      F Pr(&gt;F)
+1    130 1205.1                           
+2    118 1108.5 12    96.599 0.8569 0.5922</code></pre>
+</div>
+</div>
+<p>No modelo completo, têm-se 130-118 = 12 parâmetros adicionais (Df 12). A comparação resultou em valor-p de aproximadamente 0.5922; portanto, os efeitos de interação considerados não são significativos e podem ser descartados do modelo. Ao observar a estatística do teste F é possível concluir que a inclusão das interações entre as variáveis quantitativas e a variável categórica <code>continent</code> não traz benefício para o modelo criado. Assim, o modelo a ser utilizado será o modelo <code>m_quali</code> sem a inclusão das interações.</p>
+</section>
+<section id="modelo-final" class="level2">
+<h2 class="anchored" data-anchor-id="modelo-final">Modelo Final</h2>
+<p>Até agora, tem-se o seguinte modelo:</p>
+<p><span class="math inline">\(E[life\_expectancy] = \beta_0 + \beta_1 new\_milk\_consumption\_pc\_c + \beta_2 birth\_rate + \beta_3 expected\_schooling + \beta_{12}new\_milk\_consumption\_pc\cdot birth\_rate + \beta_4 continent\)</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb321"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb321-1"><a href="#cb321-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Resumo do modelo final</span></span>
+<span id="cb321-2"><a href="#cb321-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model1_quali)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = life_expectancy ~ new_milk_consumption_pc_c + birth_rate_c + 
+    expected_schooling_c + new_milk_consumption_pc_c * birth_rate_c + 
+    continent, data = model1_data)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-7.1550 -1.8991  0.1122  1.7411  6.7742 
+
+Coefficients:
+                                       Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)                            70.89145    0.79825  88.809  &lt; 2e-16 ***
+new_milk_consumption_pc_c               0.47804    0.22655   2.110   0.0368 *  
+birth_rate_c                           -0.35284    0.06321  -5.582 1.33e-07 ***
+expected_schooling_c                    0.81538    0.17126   4.761 5.06e-06 ***
+continentAsia                           2.25825    0.97231   2.323   0.0218 *  
+continentEurope                         1.66595    1.45325   1.146   0.2538    
+continentAmerica                        2.25018    1.08970   2.065   0.0409 *  
+new_milk_consumption_pc_c:birth_rate_c  0.03796    0.02325   1.633   0.1049    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 3.045 on 130 degrees of freedom
+Multiple R-squared:  0.8535,    Adjusted R-squared:  0.8456 
+F-statistic: 108.2 on 7 and 130 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<p>O modelo é significativo (valor-p associado à estatística-F global na ordem de e-16), o coeficiente de determinação de aproximadamente 85.35% indica que boa parte da variação da resposta é explicada pelo modelo. Pode-se verificar que a inclusão da variável categórica faz com que o termo de interação <code>new_milk_consumption_pc_c:birth_rate_c</code> deixe de ser significativo. Assim, pode-se removê-lo para um modelo final:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb323"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb323-1"><a href="#cb323-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Criando modelo de regressão com todas as interações possíveis</span></span>
+<span id="cb323-2"><a href="#cb323-2" aria-hidden="true" tabindex="-1"></a>model1_final <span class="ot">&lt;-</span> <span class="fu">lm</span>(</span>
+<span id="cb323-3"><a href="#cb323-3" aria-hidden="true" tabindex="-1"></a>    life_expectancy <span class="sc">~</span> new_milk_consumption_pc_c <span class="sc">+</span> birth_rate_c <span class="sc">+</span> expected_schooling_c  <span class="sc">+</span> continent, <span class="at">data =</span> model1_data </span>
+<span id="cb323-4"><a href="#cb323-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb323-5"><a href="#cb323-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb323-6"><a href="#cb323-6" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model1_final, model1_quali, <span class="at">test=</span><span class="st">"F"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Variance Table
+
+Model 1: life_expectancy ~ new_milk_consumption_pc_c + birth_rate_c + 
+    expected_schooling_c + continent
+Model 2: life_expectancy ~ new_milk_consumption_pc_c + birth_rate_c + 
+    expected_schooling_c + new_milk_consumption_pc_c * birth_rate_c + 
+    continent
+  Res.Df    RSS Df Sum of Sq      F Pr(&gt;F)
+1    131 1229.8                           
+2    130 1205.1  1    24.724 2.6671 0.1049</code></pre>
+</div>
+</div>
+<p>A comparação resultou em valor-p de aproximadamente 0.1049; portanto, como esperado, o efeito do termo cruzado não é significativo e pode ser descartado do modelo. Obtendo o resumo para o modelo final:</p>
+<p><span class="math inline">\(E[life\_expectancy] = \beta_0 + \beta_1 new\_milk\_consumption\_pc\_c + \beta_2 birth\_rate + \beta_3 expected\_schooling + \beta_4 continent\)</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb325"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb325-1"><a href="#cb325-1" aria-hidden="true" tabindex="-1"></a><span class="co"># tabela ANOVA</span></span>
+<span id="cb325-2"><a href="#cb325-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model1_final)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = life_expectancy ~ new_milk_consumption_pc_c + birth_rate_c + 
+    expected_schooling_c + continent, data = model1_data)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-7.0151 -2.1194  0.2044  1.8417  6.6513 
+
+Coefficients:
+                          Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)               70.64956    0.78936  89.502  &lt; 2e-16 ***
+new_milk_consumption_pc_c  0.55881    0.22249   2.512  0.01323 *  
+birth_rate_c              -0.39910    0.05686  -7.019 1.08e-10 ***
+expected_schooling_c       0.75486    0.16826   4.486 1.57e-05 ***
+continentAsia              2.58178    0.95795   2.695  0.00796 ** 
+continentEurope            0.80526    1.36291   0.591  0.55565    
+continentAmerica           2.22425    1.09650   2.029  0.04454 *  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 3.064 on 131 degrees of freedom
+Multiple R-squared:  0.8505,    Adjusted R-squared:  0.8437 
+F-statistic: 124.2 on 6 and 131 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 </div>
 </section>

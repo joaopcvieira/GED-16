@@ -1580,7 +1580,7 @@ vif(rlm_le_south_america)
 
 Com os valores obtidos para os VIFs, verifica-se problema sério de multicolinearidade.
 
-### PARTE 3: Construção de Modelos
+# Construção de Modelos
 
 Utilize o procedimento para construir modelos de regressão para a resposta expectativa de vida (`life_expectancy`), considerando um dos conjuntos de variáveis explicativas:
 
@@ -1615,49 +1615,104 @@ Forneça interpretações e discussão para os resultados obtidos.
 
 Escolhe-se o modelo de regressão I com as variáveis `continent`, `birth_rate`, `expected_schooling` e `milk_consumption_pc`.
 
-## Separando os dados de interesse para o modelo
+## Inclusão de termos contendo as variáveis quantitativas
+
+### Separando os dados de interesse para o modelo
+
+Para o modelo escolhido, será trabalhado o subconjunto das variáveis definidas para o modelo 1: `continent`, `birth_rate`, `expected_schooling` e `milk_consumption_pc`. A partir das análises anteriores, é sabido que, dentro desse subconjunto, as variáveis quantitativas são `birth_rate`, `expected_schooling` e `milk_consumption_pc`. Assim sendo, o procedimento de construção do modelo começará por tratar essas variáveis:
 
 ```{r}
 # Filtrando os dados para o ano de 2015
 model1_data <- owid %>% filter(year == 2015)
 
 # Selecionando somente as variáveis de interesse
-model1_data <- model1_data[,c(1,5,15,18,19)]
+model1_data <- model1_data[, c(1, 5, 15, 18, 19)]
 
 # Retirando os dados referentes a oceania
 model1_data <- subset(model1_data, model1_data$continent != "Oceania")
 
-# Juntando os dados referentes às Américas do Norte e Sul
-model1_data <- model1_data %>%
-  mutate(continent = dplyr::recode(continent, "North America" = "America", "South America" = "America"))
 ```
 
-# Criando o modelo de regressão
+Note que já foram retirados os dados referentes ao continente `Oceania`, conforme orientado no enunciado. O resumo dos dados pode ser visto abaixo:
+
+```{r}
+summary(model1_data)
+```
+
+A partir dessa análise inicial, é possível notar que a variável categórica `Continent` não está balanceada em número de observações. Por exemplo, enquanto a o continente `Europe` possui 40 observações, o continente `South_America` só possui 10. Para melhorar o balanceamento, as observações realizadas em `North_America` e `South_America` serão unificados para uma nova variável `America`:
+
+```{r}
+# Juntando os dados referentes às Américas do Norte e Sul
+model1_data <- model1_data %>%
+    mutate(continent = dplyr::recode(continent, "North America" = "America", "South America" = "America"))
+
+summary(model1_data)
+```
+
+### Criando o modelo de regressão
+
+Com os dados preparados, gera-se a matriz de gráficos de dispersão para verificar as relações par-a-par entre as variáveis.
 
 ```{r}
 # Gráfico de dispersão dos dados
 plot(model1_data)
 ```
 
-# Verificando correlação entre as variáveis explicativas
+A partir de uma análise inicial, é possível observar que as variáveis `milk_consumption_pc` e `life_expectancy` não aparentam possuir uma relação linear. Isto posto, pode-se tentar uma transformação da variável `milk_conumption_pc`. Para tanto, pode ser analisada se alguma transformação do tipo $Y' = Y^\lambda$ melhoraria a relação linear utilizando o procedimento Box-Cox:
 
 ```{r}
-cor(model1_data$birth_rate,model1_data$expected_schooling)
+# Transformação Box-Cox
+library(MASS)
+
+bc_milk <- boxcox(lm(milk_consumption_pc ~ life_expectancy, data = model1_data),
+             lambda = seq(-2, 2, by = 0.1), plotit = TRUE)
 ```
 
 ```{r}
-cor(model1_data$birth_rate,model1_data$milk_consumption_pc)
+lambda_milk <- bc_milk$x[which.max(bc_milk$y)]
+cat(lambda_milk)
+cat('\n')
+```
+
+Assim, aplica-se a transformação da variável para melhorar a aproximação linear entre as variáveis.
+
+```{r}
+model1_data <- model1_data |>
+  mutate(new_milk_consumption_pc  = milk_consumption_pc^lambda_milk)
+
+model1_data <- model1_data[, -c(5)]
+```
+
+Após, gera-se a nova matriz de gráficos de dispersão:
+
+```{r}
+# Gráfico de dispersão dos dados
+plot(model1_data)
+```
+
+Após esse procedimento, percebe-se que a variável `new_milk_consumption_pc` possui uma relação mais próxima de linear que `milk_consumption_pc` com a variável resposta `life_expectancy`. Outrossim, as demais variáveis quantitativas apresentam uma relação próxima da linear entre si. A partir daí, pode-se pensar num modelo de segunda ordem para as variáveis quantitativas conforme abaixo:
+
+\\\[E\[life\\\_expectancy\] = \\beta_0 + \\beta_1 new\\\_milk\\\_consumption\\\_pc + \\beta\_{11} new\\\_milk\\\_consumption\\\_pc\^2 + \\beta_2 birth\\\_rate + \\beta\_{22} birth\\\_rate\^2 + \\beta_3 expected\\\_schooling + \\beta\_{33} expected\\\_schooling\^2 + \\beta\_{12} new\\\_milk\\\_consumption\\\_pc \\cdot birth\\\_rate +\\beta\_{13} new\\\_milk\\\_consumption\\\_pc cdot expected\\\_schooling+ \\beta\_{23} birth\\\_rate \\cdot expected\\\_schooling\\\]
+
+### Verificando correlação entre as variáveis explicativas
+
+A partir da idealização do modelo acima, pode-se verificar a relação linear entre as variáveis explicativas de primeira ordem:
+
+```{r}
+cor(model1_data$birth_rate, model1_data$expected_schooling)
 ```
 
 ```{r}
-cor(model1_data$expected_schooling,model1_data$milk_consumption_pc)
+cor(model1_data$birth_rate, model1_data$new_milk_consumption_pc)
 ```
 
-É possível perceber que existe correlação entre as variáveis explicativas. A correlação mais forte é entre as variáveis "birth_rate" e "expected_schooling".
+```{r}
+cor(model1_data$expected_schooling, model1_data$new_milk_consumption_pc)
+```
 
-Verificando correlação entre termos quadráticos e lineares das variáveis explicativas
+É possível perceber que existe correlação entre as variáveis explicativas. A correlação mais forte é entre as variáveis `birth_rate` e `expected_schooling`. Agora, verificando correlação entre termos quadráticos e lineares das variáveis explicativas
 
-Para a variável `birth_rate`
+Para a variável `birth_rate`:
 
 ```{r}
 # Correlação para birth rate
@@ -1671,26 +1726,40 @@ Para a variável `expected_schooling`
 cor(model1_data$expected_schooling, model1_data$expected_schooling^2)
 ```
 
-Para a variável `milk_consumption_pc`
+Para a variável transformada `new_milk_consumption_pc`
 
 ```{r}
-# Correlação para milk_consumption_pc
-cor(model1_data$milk_consumption_pc, model1_data$milk_consumption_pc^2)
+# Correlação para a variavel transformada de milk_consumption_pc
+cor(model1_data$new_milk_consumption_pc, model1_data$new_milk_consumption_pc^2)
 ```
 
-Conclui-se que para todas as três variáveis quantitativas do modelo a correlação entre seus valores lineares e seus valores quadráticos é muito elevada. Para diminuir esse efeito no modelo, centraliza-se as variáveis explicativas antes da construção do modelo.
+Conclui-se que para todas as variáveis quantitativas do modelo a correlação entre seus valores lineares e seus valores quadráticos é elevada. Para diminuir esse efeito no modelo, centraliza-se as variáveis explicativas antes da construção do modelo.
 
-Gráficos de dispersão das variaveis explicativas com seus quadrados
+Gráficos de dispersão das variáveis explicativas com seus quadrados
 
-```{r}
-ggplot(model1_data , aes(x = birth_rate, y = birth_rate^2)) + 
-  geom_point()
+```{r echo=FALSE, fig.height = 10}
+#| layout-ncol: 3
 
-ggplot(model1_data, aes(x = expected_schooling, y = expected_schooling^2)) + 
-  geom_point()
+ggplot(model1_data, aes(x = birth_rate, y = birth_rate^2)) +
+    geom_point() +
+    theme(
+        axis.text = element_text(size = 15),
+        axis.title = element_text(size = 20, face = "bold")
+    )
 
-ggplot(model1_data, aes(x = milk_consumption_pc, y = milk_consumption_pc^2)) + 
-  geom_point()
+ggplot(model1_data, aes(x = expected_schooling, y = expected_schooling^2)) +
+    geom_point() +
+    theme(
+        axis.text = element_text(size = 15),
+        axis.title = element_text(size = 20, face = "bold")
+    )
+
+ggplot(model1_data, aes(x = new_milk_consumption_pc, y = new_milk_consumption_pc^2)) +
+    geom_point() +
+    theme(
+        axis.text = element_text(size = 15),
+        axis.title = element_text(size = 20, face = "bold")
+    )
 ```
 
 É possível perceber que apesar do aspecto quadrático dos pontos, a variação é monotônica e possui caráter aproximadamente linear. Assim, as variáveis explicativas foram centralizadas.
@@ -1698,74 +1767,292 @@ ggplot(model1_data, aes(x = milk_consumption_pc, y = milk_consumption_pc^2)) +
 ```{r}
 # Criando variáveis quantitativas centralizadas
 model1_data <- model1_data %>%
-  mutate (birth_rate_c = birth_rate - mean(birth_rate),
-          expected_schooling_c = expected_schooling - mean(expected_schooling),
-          milk_consumption_pc_c = milk_consumption_pc - mean(milk_consumption_pc))
+    mutate(
+        birth_rate_c = birth_rate - mean(birth_rate),
+        expected_schooling_c = expected_schooling - mean(expected_schooling),
+        new_milk_consumption_pc_c = new_milk_consumption_pc - mean(new_milk_consumption_pc)
+    )
 
 ```
 
 Verificando novamente as correlações
 
-Para a variável `birth_rate_c`
+Para a variável `birth_rate_c`:
 
 ```{r}
 # Correlação para birth rate
 cor(model1_data$birth_rate_c, model1_data$birth_rate_c^2)
 ```
 
-Para a variável `expected_schooling_c`
+Para a variável `expected_schooling_c`:
 
 ```{r}
 # Correlação para expected schooling
 cor(model1_data$expected_schooling_c, model1_data$expected_schooling_c^2)
 ```
 
-Para a variável `milk_consumption_pc_c`
+Para a variável `new_milk_consumption_pc_c`:
 
 ```{r}
-# Correlação para milk_consumption_pc
-cor(model1_data$milk_consumption_pc_c, model1_data$milk_consumption_pc_c^2)
+# Correlação para a variavel transformada de milk_consumption_pc
+cor(model1_data$new_milk_consumption_pc_c, model1_data$new_milk_consumption_pc_c^2)
 ```
 
 É possível observar que as correlações entre os termos lineares e quadráticos diminuíram para todas as variáveis explicativas quantitativas do modelo após centralizadas pela média dos valores.
 
 Assim, os gráficos de dispersão das variáveis explicativas centralizadas com seus respectivos quadrados são dados por:
 
-```{r}
-ggplot(model1_data , aes(x = birth_rate_c, y = birth_rate_c^2)) + 
-  geom_point()
+```{r echo=FALSE, fig.height = 10}
+#| layout-ncol: 3
+ggplot(model1_data, aes(x = birth_rate_c, y = birth_rate_c^2)) +
+    geom_point() +
+    theme(
+        axis.text = element_text(size = 15),
+        axis.title = element_text(size = 20, face = "bold")
+    )
 
-ggplot(model1_data, aes(x = expected_schooling_c, y = expected_schooling_c^2)) + 
-  geom_point()
+ggplot(model1_data, aes(x = expected_schooling_c, y = expected_schooling_c^2)) +
+    geom_point() +
+    theme(
+        axis.text = element_text(size = 15),
+        axis.title = element_text(size = 20, face = "bold")
+    )
 
-ggplot(model1_data, aes(x = milk_consumption_pc_c, y = milk_consumption_pc_c^2)) + 
-  geom_point()
+
+ggplot(model1_data, aes(x = new_milk_consumption_pc_c, y = new_milk_consumption_pc_c^2)) +
+    geom_point() +
+    theme(
+        axis.text = element_text(size = 15),
+        axis.title = element_text(size = 20, face = "bold")
+    )
 ```
 
-É possível pereber que ao centralizar as variáveis explicativas, o perfil parabólico do gráfico de dispersão se torna mais acentuado, mostrando de forma qualitativa que a correlação linear entre as variáveis diminuiu. Verificando novamente os coeficientes de correlação obtém-se:
+É possível perceber que, ao centralizar as variáveis explicativas, o perfil parabólico do gráfico de dispersão se torna mais acentuado, mostrando de forma qualitativa que a correlação linear entre as variáveis diminuiu. Verificando novamente os coeficientes de correlação obtém-se:
 
 ```{r}
-cor(model1_data$birth_rate_c,model1_data$expected_schooling_c)
+cor(model1_data$birth_rate_c, model1_data$expected_schooling_c)
 ```
 
 ```{r}
-cor(model1_data$birth_rate_c,model1_data$milk_consumption_pc_c)
+cor(model1_data$birth_rate_c, model1_data$new_milk_consumption_pc_c)
 ```
 
 ```{r}
-cor(model1_data$expected_schooling_c,model1_data$milk_consumption_pc_c)
+cor(model1_data$expected_schooling_c, model1_data$new_milk_consumption_pc_c)
 ```
 
-As correlações entre as variáveis explicativas permanecem inalteradas, mostrando que a centralização das variáveis não diminui suas correlações entre si.
+### Criando o modelo de regressão
 
-## Criando o modelo de regressão
+A partir da preparação dos dados feita até então, incluindo a sua centralização, o modelo polinomial de ordem 2 é ajustado considerando as variáveis explicativas e suas interações, conforme modelo descrito anteriormente:
 
 ```{r}
 # Modelo de regressão linear com as variáveis explicativas "birth_rate_c", "expected_schooling_c" e "milk_consumption_pc_c"
 
 # Modelo polinomial de segunda ordem completo com as variáveis quantitativas
-model1_quant <- lm(life_expectancy ~ I(birth_rate_c^2) + I(expected_schooling_c^2) + I(milk_consumption_pc_c^2) + birth_rate_c*expected_schooling_c + birth_rate_c*milk_consumption_pc_c + expected_schooling_c*milk_consumption_pc_c, data = model1_data )
+model1_quant <- lm(
+    life_expectancy ~ I(birth_rate_c^2) + I(expected_schooling_c^2) + I(new_milk_consumption_pc_c^2) + birth_rate_c * expected_schooling_c + birth_rate_c * new_milk_consumption_pc_c + expected_schooling_c * new_milk_consumption_pc_c, data = model1_data)
 
 
 summary(model1_quant)
+```
+
+Com o modelo geral concebido, é possível verificar que ele é significativo (passa no teste-F global com valor-p da ordem de e-16) e o coeficiente de determinação indica que aproximadamente 85.3% da variabilidade na resposta é explicada pelo modelo (não há grande diferença entre R^2^ e R^2^ ajustado). No entanto, após algumas inspeções com o teste ANOVA, verifica-se que os seguintes termos não são significativos e podem ser removidos: `birth_rate_c^2`, `expected_schooling^2`, `new_milk_consumption_pc_c^2`, `birth_rate_c:expected_schooling_c`, `expected_schooling_c:new_milk_consumption_pc_c`.
+
+A partir dessa análise, pode-se construir um modelo reduzido, removendo os termos não significativos para o modelo, chegando-se à expressão:
+
+$E[life\_expectancy] = \beta_0 + \beta_1 new\_milk\_consumption\_pc\_c + \beta_2 birth\_rate + \beta_3 expected\_schooling + \beta_{12}new\_milk\_consumption\_pc\cdot birth\_rate$
+
+```{r}
+# Modelo reduzido
+model1_quant_red <- lm(
+    life_expectancy ~ new_milk_consumption_pc_c + birth_rate_c + expected_schooling_c + new_milk_consumption_pc_c * birth_rate_c, data = model1_data)
+
+
+summary(model1_quant_red)
+```
+
+O modelo reduzido é significativo (passa no teste-F global com valor-p da ordem de e-16). Todos os coeficientes são significativos e o coeficiente de determinação indica que aproximadamente 82.9% da variabilidade na resposta é explicada pelo modelo (não há grande diferença, se comparado ao coeficiente de determinação ajustado).
+
+Também é possível comparar o modelo completo ao reduzido utilizando a abordagem do teste linear geral. As hipóteses sendo testadas na comparação dos modelos aninhados são as seguintes:
+
+```{r}
+# teste-F
+# H_0: Betas(11, 22, 33, 13 e 23) == 0
+# H_a: Nem todos são nulos
+
+anova(model1_quant_red, model1_quant, test="F")
+```
+
+Como o resultado da comparação é não-significativo (valor-p \> 0.05), a hipótese nula não pode ser rejeitada e, portanto, conclui-se que os termos eliminados do modelo completo são estatisticamente iguais a zero.
+
+### Análise de Resíduos
+
+Prosseguindo para a análise de resíduos do modelo:
+
+```{r}
+# Constrói tabela com dados do modelo `model1_quant_red`
+model1_quant_red_data <- model1_data %>%
+  # inclui coluna com valores ajustados
+  mutate(fitted = model1_quant_red$fit) %>%
+  mutate(resid = model1_quant_red$res)
+
+# Gera gráficos dos resíduos:
+ggplot(model1_quant_red_data, aes(x = fitted, y = resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("gráfico de resíduos: modelo life_expectancy ~ new_milk_consumption_pc_c + birth_rate_c + expected_schooling_c + new_milk_consumption_pc_c * birth_rate_c") +
+  labs(y = "resíduos", x = "resposta ajustada (life_expectancy)")
+# Gráfico de quantis
+ggplot(model1_quant_red_data, aes(sample = resid)) +
+  stat_qq() + stat_qq_line() +
+  ggtitle("gráfico de quantis normais") +
+  labs(y = "quantis amostrais", x = "quantis teóricos (dist. normal)") 
+```
+
+Não parece haver variação sistemática no gráfico dos resíduos. O gráfico de quantis sugere desvio da normalidade nas extremidades. Realizando o procedimento formal de testes de hipóteses:
+
+```{r}
+# Teste de Homoscedasticidade de Breusch-Pagan
+# Ho: sigma^2  = cte
+# Ha: sigma^2 != cte
+
+library(lmtest)
+library(zoo)
+bptest(model1_quant_red)
+```
+
+```{r}
+# Teste de Normalidade de Shapiro-Wilk
+# Ho: normal
+# Ha: não-normal
+
+shapiro.test(model1_quant_red_data$resid)
+```
+
+A partir da análise do valor-p para os testes de Breusch-Pagan (0.3456) e de Shapiro-Wilk (0.7515), verifica-se que a hipótese nula não pode ser rejeitada e, para amostra de dados utilizada, podem ser consideradas as hipóteses de homoscedasticidade e normalidade.
+
+## Inclusão de variáveis qualitativas e suas interações
+
+Agora, analisa-se o impacto do modelo de regressão com a inclusão da variável categórica `continent`. Para tanto, considera-se que o modelo, além dos termos polinomiais (quadrático e linear) para as variáveis quantitativas, inclui efeitos das variável categórica `continent`. Dessa forma, o modelo geral ficaria:
+
+$E[life\_expectancy] = \beta_0 + \beta_1 new\_milk\_consumption\_pc\_c + \beta_2 birth\_rate + \beta_3 expected\_schooling + \beta_{12}new\_milk\_consumption\_pc\cdot birth\_rate + \beta_4 continent$
+
+```{r}
+# Modelo reduzido
+model1_quali <- lm(
+    life_expectancy ~ new_milk_consumption_pc_c + birth_rate_c + expected_schooling_c + new_milk_consumption_pc_c * birth_rate_c + continent, data = model1_data)
+
+
+summary(model1_quali)
+```
+
+Do resumo da regressão, é possível notar que o modelo é significativo (baixo valor-p para a estatística-F do teste global para a regressão), e a variável categórica contribui com informação adicional, já que o coeficiente de determinação ajustado é um pouco superior àquele do modelo sem a variável categórica. Ressalta-se que o coeficiente de `continentEurope` é o menos significativo comparado aos outros continentes. Avaliando a significância incremental das variáveis explicativas, utilizando ANOVA:
+
+```{r}
+# Tabela ANOVA
+anova(model1_quali)
+
+```
+
+À excessão da variável `new_milk_consumption_pc_c:birth_rate_c`, todos os termos contribuem de maneira significativa (e incluídos nesta ordem) para reduzir a variabilidade da resposta. Além disso, pode-se realizar o teste ANOVA entre o modelo quando este não incluía a variável categórica e agora, incluindo a variável `continent`.
+
+```{r}
+# Teste ANOVA
+anova(model1_quali, model1_quant_red, test="F")
+
+```
+
+De fato, o valor-p expresso para o teste F mostra que a variável `continent` agrega valor ao modelo.
+
+## Inclusão de termos de interação entre variáveis quantitativas e qualitativas
+
+Agora, considera-se a existência de interação entre as variáveis quantitativas `birth_rate_c`, `expected_schooling_c` e `new_milk_consumption_pc_c` e a variável categórica `continent`. Inicia-se a análise visualizando se há evidências de interação entre tais variáveis. Interação entre variáveis são evidenciadas pela presença de diferentes curvas para diferentes combinações dos níveis das variáveis categóricas. Verificando graficamente se há interação entre as variáveis `birth_rate_c`, `expected_schooling_c` e `new_milk_consumption_pc_c` com a variável categórica `continent`:
+
+```{r}
+ggplot(model1_data, aes(x = birth_rate_c, y = life_expectancy)) +
+  # adiciona pontos 
+  # (cores e símbolos distintos para diferentes valores de `continent`)
+  geom_point(aes(color = continent, shape = continent)) + 
+  # adiciona retas de tendência
+  geom_smooth(aes(color = continent), method = "lm", se = FALSE) +
+  ggtitle("`life_expectancy` x `birth_rate_c`, para diferentes níveis de `continent`")
+
+ggplot(model1_data, aes(x = expected_schooling_c, y = life_expectancy)) +
+  # adiciona pontos 
+  # (cores e símbolos distintos para diferentes valores de `continent`)
+  geom_point(aes(color = continent, shape = continent)) + 
+  # adiciona retas de tendência
+  geom_smooth(aes(color = continent), method = "lm", se = FALSE) +
+  ggtitle("`life_expectancy` x `expected_schooling_c`, para diferentes níveis de `continent`")
+
+ggplot(model1_data, aes(x = new_milk_consumption_pc_c, y = life_expectancy)) +
+  # adiciona pontos 
+  # (cores e símbolos distintos para diferentes valores de `continent`)
+  geom_point(aes(color = continent, shape = continent)) + 
+  # adiciona retas de tendência
+  geom_smooth(aes(color = continent), method = "lm", se = FALSE) +
+  ggtitle("`life_expectancy` x `new_milk_consumption_pc`, para diferentes níveis de `continent`")
+```
+
+Os gráficos apresentados mostram que aparentemente a interação entre as variáveis `birth_rate_c` e `expected_schooling_c` com a variável `continent` não aparentam ser relevantes, diferente para o que ocorre para a variável `new_milk_consumption_pc`, que apresenta diferentes curvas. Para definir se isso quantitativamente é adotado o procedimento a seguir, construindo o modelo contendo todas as interações possíveis:
+
+$E[life\_expectancy] = \beta_0 + \beta_1 new\_milk\_consumption\_pc\_c + \beta_2 birth\_rate + \beta_3 expected\_schooling + \beta_{12}new\_milk\_consumption\_pc\cdot birth\_rate + \beta_4 continent + \beta_{14} new\_milk\_consumption\_pc\_c \cdot continent + \beta_{24} birth\_rate \cdot continent + \beta_{34} expected\_schooling \cdot continent + \beta_{124}new\_milk\_consumption\_pc\cdot birth\_rate \cdot continent$
+
+```{r}
+# Criando modelo de regressão com todas as interações possíveis
+model1_all <- lm(
+    life_expectancy ~ new_milk_consumption_pc_c + birth_rate_c + expected_schooling_c + new_milk_consumption_pc_c * birth_rate_c + continent + continent * new_milk_consumption_pc_c + continent * birth_rate_c + continent * expected_schooling_c + continent * new_milk_consumption_pc_c * birth_rate_c, data = model1_data 
+)
+
+summary(model1_all)
+```
+
+O modelo é significativo (veja o valor-p da estatística-F global), porém nenhum termo de interação com a variável categórica `continent` é significativo. O coeficiente de determinação ajustado aumentou em relação ao anterior. Verificando a tabela ANOVA:
+
+```{r}
+# tabela ANOVA
+anova(model1_all)
+```
+
+Note que nenhum dos termos de interação com a variável categórica é significativo. Assim, pode-se verificar usando a abordagem do teste linear geral:
+
+```{r}
+# H_0: Betas(14, 24, 34, 124) = 0
+# H_a: Nem todos os coeficientes são nulos
+
+# Verificando a inclusao das novas alterações
+anova(model1_quali,model1_all, test="F")
+```
+
+No modelo completo, têm-se 130-118 = 12 parâmetros adicionais (Df 12). A comparação resultou em valor-p de aproximadamente 0.5922; portanto, os efeitos de interação considerados não são significativos e podem ser descartados do modelo. Ao observar a estatística do teste F é possível concluir que a inclusão das interações entre as variáveis quantitativas e a variável categórica `continent` não traz benefício para o modelo criado. Assim, o modelo a ser utilizado será o modelo `m_quali` sem a inclusão das interações.
+
+## Modelo Final
+
+Até agora, tem-se o seguinte modelo:
+
+$E[life\_expectancy] = \beta_0 + \beta_1 new\_milk\_consumption\_pc\_c + \beta_2 birth\_rate + \beta_3 expected\_schooling + \beta_{12}new\_milk\_consumption\_pc\cdot birth\_rate + \beta_4 continent$
+
+```{r}
+# Resumo do modelo final
+summary(model1_quali)
+```
+
+O modelo é significativo (valor-p associado à estatística-F global na ordem de e-16), o coeficiente de determinação de aproximadamente 85.35% indica que boa parte da variação da resposta é explicada pelo modelo. Pode-se verificar que a inclusão da variável categórica faz com que o termo de interação `new_milk_consumption_pc_c:birth_rate_c` deixe de ser significativo. Assim, pode-se removê-lo para um modelo final:
+
+```{r}
+# Criando modelo de regressão com todas as interações possíveis
+model1_final <- lm(
+    life_expectancy ~ new_milk_consumption_pc_c + birth_rate_c + expected_schooling_c  + continent, data = model1_data 
+)
+
+anova(model1_final, model1_quali, test="F")
+```
+
+A comparação resultou em valor-p de aproximadamente 0.1049; portanto, como esperado, o efeito do termo cruzado não é significativo e pode ser descartado do modelo. Obtendo o resumo para o modelo final:
+
+$E[life\_expectancy] = \beta_0 + \beta_1 new\_milk\_consumption\_pc\_c + \beta_2 birth\_rate + \beta_3 expected\_schooling + \beta_4 continent$
+
+```{r}
+# tabela ANOVA
+summary(model1_final)
 ```
